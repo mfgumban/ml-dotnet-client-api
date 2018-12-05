@@ -4,6 +4,7 @@
 .project
 ._build.gradle
 .vs
+.classpath
 build
 obj/
 bin/

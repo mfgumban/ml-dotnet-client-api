@@ -1,0 +1,5 @@
+{
+  "endpointDirectory": "/inventory/part/",
+  "$javaClass": "com.ds.inventory.PartService",
+  "desc": "Provides the necessary functions to inspect parts currently in inventory."
+}

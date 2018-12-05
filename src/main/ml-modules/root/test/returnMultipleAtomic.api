@@ -1,0 +1,22 @@
+{
+  "functionName": "returnMultipleAtomic",
+  "desc": "Accepts multiple atomic values and returns a multi-line string containing the server-side values.",
+  "params": [{
+    "name": "value1",
+    "datatype": "string",
+    "nullable": false
+  }, {
+    "name": "value2",
+    "datatype": "int",
+    "nullable": false
+  }, {
+    "name": "value3",
+    "datatype": "dateTime",
+    "nullable": false,
+    "$javaClass": "java.time.LocalDateTime"
+  }],
+  "return": {
+    "datatype": "string"
+  },
+  "errorDetail": "return"
+}

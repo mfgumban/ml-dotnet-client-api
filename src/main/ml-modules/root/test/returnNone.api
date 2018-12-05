@@ -1,0 +1,5 @@
+{
+  "functionName": "returnNone",
+  "desc": "No parameters and empty response.",
+  "errorDetail": "return"
+}

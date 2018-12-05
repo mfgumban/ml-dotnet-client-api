@@ -1,0 +1,34 @@
+plugins {
+  id 'java'
+  id 'com.marklogic.ml-gradle' version '3.9.0'
+  id 'com.marklogic.ml-development-tools' version '4.1.1'
+}
+
+repositories {
+  jcenter()
+}
+
+dependencies {
+  compile group: 'com.marklogic', name: 'marklogic-client-api', version : '4.1.1'
+  testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.1'
+  testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.1'
+}
+
+task generateInventory(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask) {
+  serviceDeclarationFile = 'src/main/ml-modules/root/inventory/part/service.json'
+}
+
+task generateTestService(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask) {
+  serviceDeclarationFile = 'src/main/ml-modules/root/test/service.json'
+}
+
+compileJava.dependsOn generateInventory
+compileJava.dependsOn generateTestService
+
+test {
+  useJUnitPlatform()
+
+  testLogging {
+    showStandardStreams = true
+  }
+}

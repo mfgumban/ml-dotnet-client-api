@@ -1,0 +1,27 @@
+{
+  "functionName": "listParts",
+  "desc": "Returns all available parts.",
+  "params": [{
+    "name": "pageLength",
+    "desc": "The maximum number of items to retrieve.",
+    "datatype": "int",
+    "nullable": true
+  }, {
+    "name": "options",
+    "desc": "Test multiple parameters option.",
+    "datatype": "string",
+    "nullable": true,
+    "multiple": true
+  }, {
+    "name": "doc",
+    "desc": "Test doc parameter",
+    "datatype": "xmlDocument",
+    "nullable": true
+  }],
+  "return": {
+    "desc": "Test multiple returns.",
+    "datatype": "string",
+    "multiple": true
+  },
+  "errorDetail": "return"
+}

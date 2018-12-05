@@ -1,0 +1,15 @@
+{
+  "functionName": "returnMultiValue",
+  "desc": "Accepts and returns a single parameter with multiple values.",
+  "params": [{
+    "name": "values",
+    "datatype": "int",
+    "nullable": false,
+    "multiple": true
+  }],
+  "return": {
+    "datatype": "int",
+    "multiple": true
+  },
+  "errorDetail": "return"
+}

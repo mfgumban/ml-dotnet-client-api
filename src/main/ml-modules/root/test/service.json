@@ -1,0 +1,5 @@
+{
+  "endpointDirectory": "/test/",
+  "$javaClass": "com.ds.test.TestService",
+  "desc": "Test service endpoints."
+}

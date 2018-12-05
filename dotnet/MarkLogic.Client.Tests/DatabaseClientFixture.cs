@@ -10,7 +10,8 @@ namespace MarkLogic.Client.Tests
         {
             DbClient = DatabaseClientFactory.Create(
                 UriScheme.Http, 
-                "192.168.1.103",//"localhost", 
+                //"192.168.1.103",
+                "localhost", 
                 8019,
                 new NetworkCredential("admin", "admin", "public"),
                 AuthenticationType.Digest);

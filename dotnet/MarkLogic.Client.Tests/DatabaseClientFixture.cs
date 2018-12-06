@@ -1,19 +1,28 @@
 using System;
 using System.Net;
-using MarkLogic.Client;
 
 namespace MarkLogic.Client.Tests
 {
     public class DatabaseClientFixture : IDisposable
     {
+        private static class ConfigKey
+        {
+            public const string Host = "marklogic:host";
+            public const string Port = "marklogic:port";
+            public const string Username = "marklogic:username";
+            public const string Password = "marklogic:password";
+        }
+
         public DatabaseClientFixture()
         {
             DbClient = DatabaseClientFactory.Create(
-                UriScheme.Http, 
-                //"192.168.1.103",
-                "localhost", 
-                8019,
-                new NetworkCredential("admin", "admin", "public"),
+                UriScheme.Http,
+                Configuration.Instance.Get(ConfigKey.Host),
+                Configuration.Instance.GetInt(ConfigKey.Port),
+                new NetworkCredential(
+                    Configuration.Instance.Get(ConfigKey.Username),
+                    Configuration.Instance.Get(ConfigKey.Password),
+                    "public"),
                 AuthenticationType.Digest);
         }
 

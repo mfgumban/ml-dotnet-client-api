@@ -1,21 +1,16 @@
+using MarkLogic.Client.Tests.DataServices;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace MarkLogic.Client.Tests
+namespace MarkLogic.Client.Tests.FunctionalTests
 {
-    public class PartServiceTests : IClassFixture<DatabaseClientFixture>
+    public class PartServiceTests : DbTestBase, IClassFixture<DatabaseClientFixture>
     {
-        private readonly DatabaseClientFixture _dbClientFixture;
-        private readonly ITestOutputHelper _output;
-
         public PartServiceTests(DatabaseClientFixture dbClientFixture, ITestOutputHelper output)
+            : base(dbClientFixture, output)
         {
-            _dbClientFixture = dbClientFixture;
-            _output = output;
         }
-
-        private IDatabaseClient DbClient => _dbClientFixture.DbClient;
 
         [Fact]
         public async void TestListParts()
@@ -29,7 +24,7 @@ namespace MarkLogic.Client.Tests
 
             foreach(var result in results)
             {
-                _output.WriteLine(result);
+                Output.WriteLine(result);
             }
         }
     }

@@ -1,11 +1,9 @@
 ﻿using MarkLogic.Client.DataService;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace MarkLogic.Client.Tests
+namespace MarkLogic.Client.Tests.DataServices
 {
     public interface IPartService
     {

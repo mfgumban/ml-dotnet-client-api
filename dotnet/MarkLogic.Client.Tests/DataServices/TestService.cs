@@ -1,4 +1,5 @@
 ﻿using MarkLogic.Client.DataService;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -27,12 +28,28 @@ namespace MarkLogic.Client.Tests.DataServices
             return new TestService(dbClient);
         }
 
+        public Task<JArray> returnArray(JArray value)
+        {
+            return CreateRequest("returnArray.xqy")
+                .WithParameters(
+                    new SingleParameter<JArray>("value", false, value, Marshal.JsonArray))
+                .RequestSingle<JArray>(false, Unmarshal.JsonArray);
+        }
+
         public Task<DateTime> returnDateTime(DateTime value)
         {
             return CreateRequest("returnDateTime.xqy")
                 .WithParameters(
                     new SingleParameter<DateTime>("value", false, value, Marshal.DateTime))
                 .RequestSingle<DateTime>(false, Unmarshal.DateTime);
+        }
+
+        public Task<JObject> returnObject(JObject value)
+        {
+            return CreateRequest("returnObject.xqy")
+                .WithParameters(
+                    new SingleParameter<JObject>("value", false, value, Marshal.JsonObject))
+                .RequestSingle<JObject>(false, Unmarshal.JsonObject);
         }
 
         public Task<string> returnMultipleAtomic(string value1, int value2, DateTime value3)

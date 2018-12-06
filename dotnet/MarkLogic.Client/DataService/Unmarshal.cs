@@ -1,7 +1,6 @@
+using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 
 namespace MarkLogic.Client.DataService
 {
@@ -20,6 +19,16 @@ namespace MarkLogic.Client.DataService
         public static DateTime DateTime(string value)
         {
             return System.DateTime.Parse(value, null, DateTimeStyles.RoundtripKind);
+        }
+
+        public static JObject JsonObject(string value)
+        {
+            return JObject.Parse(value);
+        }
+
+        public static JArray JsonArray(string value)
+        {
+            return JArray.Parse(value);
         }
     }
 }

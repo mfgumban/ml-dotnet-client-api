@@ -1,0 +1,13 @@
+{
+  "functionName": "returnObjectNode",
+  "desc": "Accepts and returns a (JSON) object.",
+  "params": [{
+    "name": "value",
+    "datatype": "object",
+    "nullable": false
+  }],
+  "return": {
+    "datatype": "object"
+  },
+  "errorDetail": "return"
+}

@@ -1,3 +1,5 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,6 +11,7 @@ namespace MarkLogic.Client.DataService
         public static class MediaTypes
         {
             public const string Text = "text/plain";
+            public const string Json = "application/json";
             public const string Xml = "application/xml";
         }
 
@@ -40,6 +43,16 @@ namespace MarkLogic.Client.DataService
         public static Marshal TextReaderAsXML(TextReader reader)
         {
             return new Marshal(reader.ReadToEnd(), MediaTypes.Xml); // TODO: see if we can do "side-effect-free"
+        }
+
+        public static Marshal JsonObject(JObject value)
+        {
+            return new Marshal(value.ToString(Formatting.None), MediaTypes.Json);
+        }
+
+        public static Marshal JsonArray(JArray value)
+        {
+            return new Marshal(value.ToString(Formatting.None), MediaTypes.Json);
         }
     }
 }

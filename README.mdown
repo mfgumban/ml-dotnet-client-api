@@ -1,0 +1,25 @@
+# MarkLogic Client Library .NET
+
+## Planned Data Type Support
+
+| Data Type       | Server Type        | Default .NET Type | Other .NET Type(s)           |
+|-----------------|--------------------|-------------------|------------------------------|
+| boolean         | xs:boolean         | bool              | string                       |
+| string          | xs:string          | string            |                              |
+| date            | xs:date            | DateTime          | string                       |
+| time            | xs:time            | DateTime          | string                       |
+| dateTime        | xs:dateTime        | DateTime          | string                       |
+| dayTimeDuration | xs:dayTimeDuration | TimeSpan          | string                       |
+| decimal         | xs:decimal         | decimal           | string                       |
+| double          | xs:double          | double            | string                       |
+| float           | xs:float           | float             | string                       |
+| int             | xs:int             | int               | string                       |
+| unsignedInt     | xs:unsignedInt     | uint              | string                       |
+| long            | xs:long            | long              | string                       |
+| unsignedLong    | xs:unsignedLong    | ulong             | string                       |
+| array (JSON)    | array-node()       | string            | System.IO.Stream, System.IO.TextReader, Newtonsoft.Json.Linq.JArray  |
+| object (JSON)   | object-node()      | string            | System.IO.Stream, System.IO.TextReader, Newtonsoft.Json.Linq.JObject |
+| binaryDocument  | binary-node()      | System.IO.Stream  | string, System.IO.TextReader                     |
+| jsonDocument    | document-node()    | System.IO.Stream  | string, System.IO.TextReader                     |
+| textDocument    | text-node()?       | System.IO.Stream  | string, System.IO.TextReader                     |
+| xmlDocument     | document-node()    | System.IO.Stream  | string, System.IO.TextReader                     |

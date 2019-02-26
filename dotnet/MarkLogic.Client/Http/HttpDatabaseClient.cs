@@ -7,15 +7,13 @@ namespace MarkLogic.Client.Http
 {
     public class HttpDatabaseClient : IDatabaseClient
     {
-        private readonly HttpClient _http;
-
         internal HttpDatabaseClient(HttpClient httpClient)
         {
             // Check.NotNull
-            _http = httpClient;
+            Http = httpClient;
         }
 
-        internal HttpClient Http => _http;
+        internal HttpClient Http { get; }
 
         public IDataServiceRequest CreateDataServiceRequest(string servicePath, string moduleName)
         {
@@ -24,7 +22,7 @@ namespace MarkLogic.Client.Http
 
         public void Dispose()
         {
-            _http.Dispose();
+            Http.Dispose();
         }
     }
 }

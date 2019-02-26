@@ -12,38 +12,45 @@ namespace MarkLogic.Client.Http
     {
         private readonly List<DataServiceParameter> _parameters = new List<DataServiceParameter>();
         private readonly HttpDatabaseClient _dbClient;
-        private readonly HttpSessionState _sessionState;
-        private readonly string _servicePath;
-        private readonly string _moduleName;
-
-        internal HttpDataServiceRequest(HttpDatabaseClient dbClient, string servicePath, string moduleName, ISessionState sessionState = null)
+        
+        internal HttpDataServiceRequest(HttpDatabaseClient dbClient, string servicePath, string moduleName)
         {
             _dbClient = dbClient;
-            _servicePath = servicePath;
-            _moduleName = moduleName;
+            ServicePath = servicePath;
+            ModuleName = moduleName;
             HttpMethod = HttpMethod.Post; // default
-
-            if (sessionState != null)
-            {
-                if (!(sessionState is HttpSessionState)) 
-                {
-                    throw new InvalidOperationException("sessionState must be HttpSessionState."); // TODO: replace exception 
-                }
-                _sessionState = (HttpSessionState)sessionState;
-            }
         }
 
-        public bool HasSession => _sessionState != null;
+        public string ServicePath { get; }
 
-        public ISessionState SessionState => _sessionState;
+        public string ModuleName { get; }
 
-        public string ServicePath => _servicePath;
+        public HttpMethod HttpMethod { get; }
 
-        public string ModuleName => _moduleName;
+        public bool HasSession => Session != null;
 
-        public HttpMethod HttpMethod { get; private set; }
+        public ISessionState Session => HttpSession;
+
+        internal HttpSessionState HttpSession { get; private set; }
 
         public IEnumerable<DataServiceParameter> Parameters => _parameters;
+
+        public IDataServiceRequest WithSession(ISessionState session)
+        {
+            if (HttpSession == null)
+            {
+                HttpSession = null;
+            }
+            else if (!(session is HttpSessionState))
+            {
+                throw new InvalidOperationException("sessionState must be HttpSessionState."); // TODO: replace exception 
+            }
+            else
+            {
+                HttpSession = session as HttpSessionState;
+            }
+            return this;
+        }
 
         public IDataServiceRequest WithParameters(params DataServiceParameter[] parameters)
         {
@@ -70,7 +77,7 @@ namespace MarkLogic.Client.Http
             {
                 if (HasSession)
                 {
-                    _sessionState.PrepareRequest(request.RequestUri, request);
+                    HttpSession.PrepareRequest(request.RequestUri, request);
                 }
 
                 HttpContent content = null;
@@ -98,7 +105,7 @@ namespace MarkLogic.Client.Http
 
                 if (HasSession)
                 {
-                    _sessionState.ProcessResponse(request.RequestUri, response);
+                    HttpSession.ProcessResponse(request.RequestUri, response);
                 }
 
                 content?.Dispose();

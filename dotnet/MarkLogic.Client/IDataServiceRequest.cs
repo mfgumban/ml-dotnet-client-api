@@ -11,6 +11,10 @@ namespace MarkLogic.Client
 
         string ModuleName { get; }
 
+        ISessionState Session { get; }
+
+        IDataServiceRequest WithSession(ISessionState session);
+
         IEnumerable<DataServiceParameter> Parameters { get; }
 
         IDataServiceRequest WithParameters(params DataServiceParameter[] parameters);

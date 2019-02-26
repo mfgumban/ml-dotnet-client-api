@@ -65,5 +65,13 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
 
             Assert.True(JToken.DeepEquals(value, result));
         }
+
+        [Fact]
+        public async void TestErrorDetailLog()
+        {
+            var exception = await Assert.ThrowsAsync<DataServiceRequestException>(() => BasicTestsService.Create(DbClient).errorDetailLog());
+            Assert.Equal(500, exception.StatusCode); // Internal Server Error
+            Assert.Equal("Deliberate error", exception.MessageDetailTitle);
+        }
     }
 }

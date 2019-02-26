@@ -56,5 +56,11 @@ namespace MarkLogic.Client.Tests.DataServices
             return CreateRequest("returnNone.xqy")
                 .RequestNone();
         }
+
+        public Task errorDetailLog()
+        {
+            return CreateRequest("errorDetailLog.xqy")
+                .RequestNone();
+        }
     }
 }

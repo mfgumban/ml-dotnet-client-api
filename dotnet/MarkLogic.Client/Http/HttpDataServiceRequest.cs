@@ -101,14 +101,18 @@ namespace MarkLogic.Client.Http
 
                 request.Content = content ?? request.Content;
                 var response = await _dbClient.Http.SendAsync(request);
-                response.EnsureSuccessStatusCode();
+                content?.Dispose();
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var responseText = await response.Content.ReadAsStringAsync();
+                    throw DataServiceRequestException.CreateFromResponse(responseText);
+                }
 
                 if (HasSession)
                 {
                     HttpSession.ProcessResponse(request.RequestUri, response);
                 }
-
-                content?.Dispose();
 
                 return response;
             }

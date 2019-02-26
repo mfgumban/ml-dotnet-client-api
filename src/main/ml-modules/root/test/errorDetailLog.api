@@ -1,0 +1,5 @@
+{
+  "functionName": "errorDetailLog",
+  "desc": "Explicitly causes an error response.",
+  "errorDetail": "log"
+}

@@ -19,7 +19,8 @@ namespace MarkLogic.Client
                 Port = port,
                 Scheme = scheme == UriScheme.Https ? Uri.UriSchemeHttps : Uri.UriSchemeHttp
             };
-            var clientHandler = new HttpClientHandler() { Credentials = _credentialCache, PreAuthenticate = true };
+            // UseCookies set to false to manually set per-SessionState values
+            var clientHandler = new HttpClientHandler() { Credentials = _credentialCache, PreAuthenticate = true, UseCookies = false };
             var httpClient = new HttpClient(clientHandler) { BaseAddress = uriBuilder.Uri };
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

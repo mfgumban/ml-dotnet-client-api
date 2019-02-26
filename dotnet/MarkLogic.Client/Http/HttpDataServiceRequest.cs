@@ -10,20 +10,36 @@ namespace MarkLogic.Client.Http
 {
     public class HttpDataServiceRequest : IDataServiceRequest
     {
-        private List<DataServiceParameter> _parameters = new List<DataServiceParameter>();
-        private HttpDatabaseClient _dbClient;
+        private readonly List<DataServiceParameter> _parameters = new List<DataServiceParameter>();
+        private readonly HttpDatabaseClient _dbClient;
+        private readonly HttpSessionState _sessionState;
+        private readonly string _servicePath;
+        private readonly string _moduleName;
 
-        internal HttpDataServiceRequest(HttpDatabaseClient dbClient, string servicePath, string moduleName)
+        internal HttpDataServiceRequest(HttpDatabaseClient dbClient, string servicePath, string moduleName, ISessionState sessionState = null)
         {
             _dbClient = dbClient;
-            ServicePath = servicePath;
-            ModuleName = moduleName;
+            _servicePath = servicePath;
+            _moduleName = moduleName;
             HttpMethod = HttpMethod.Post; // default
+
+            if (sessionState != null)
+            {
+                if (!(sessionState is HttpSessionState)) 
+                {
+                    throw new InvalidOperationException("sessionState must be HttpSessionState."); // TODO: replace exception 
+                }
+                _sessionState = (HttpSessionState)sessionState;
+            }
         }
 
-        public string ServicePath { get; private set; }
+        public bool HasSession => _sessionState != null;
 
-        public string ModuleName { get; private set; }
+        public ISessionState SessionState => _sessionState;
+
+        public string ServicePath => _servicePath;
+
+        public string ModuleName => _moduleName;
 
         public HttpMethod HttpMethod { get; private set; }
 
@@ -52,6 +68,11 @@ namespace MarkLogic.Client.Http
         {
             using (var request = new HttpRequestMessage(HttpMethod, $"{ServicePath}{ModuleName}"))
             {
+                if (HasSession)
+                {
+                    _sessionState.PrepareRequest(request.RequestUri, request);
+                }
+
                 HttpContent content = null;
                 if (_parameters.Count > 0)
                 {
@@ -74,6 +95,12 @@ namespace MarkLogic.Client.Http
                 request.Content = content ?? request.Content;
                 var response = await _dbClient.Http.SendAsync(request);
                 response.EnsureSuccessStatusCode();
+
+                if (HasSession)
+                {
+                    _sessionState.ProcessResponse(request.RequestUri, response);
+                }
+
                 content?.Dispose();
 
                 return response;

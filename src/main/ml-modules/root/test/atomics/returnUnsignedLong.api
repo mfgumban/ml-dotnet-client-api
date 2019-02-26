@@ -1,0 +1,14 @@
+{
+  "functionName": "returnUnsignedLong",
+  "desc": "Accepts and returns an unsigned long.",
+  "params": [{
+    "name": "value",
+    "datatype": "unsignedLong",
+    "nullable": false
+  }],
+  "return": {
+    "datatype": "unsignedLong",
+    "multiple": false
+  },
+  "errorDetail": "return"
+}

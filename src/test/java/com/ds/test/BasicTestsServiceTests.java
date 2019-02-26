@@ -11,7 +11,7 @@ import com.ds.TestBase;
 import com.ds.test.TestService;
 
 
-public class TestServiceTests extends TestBase {
+public class BasicTestsServiceTests extends TestBase {
   private static DatabaseClient dbClient;
   private static TestService testService;
 
@@ -43,12 +43,5 @@ public class TestServiceTests extends TestBase {
     Stream<Integer> response = testService.returnMultiValue(values.stream());
     List<Integer> results = response.collect(Collectors.toList());
     results.forEach(System.out::println);
-  }
-
-  @Test
-  public void testReturnDateTime() throws IOException {
-    LocalDateTime parameter = LocalDateTime.now();
-    LocalDateTime response = testService.returnDateTime(parameter);
-    System.out.println(String.format("Parameter: %s\nResponse: %s", parameter, response));
   }
 }

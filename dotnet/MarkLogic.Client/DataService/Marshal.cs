@@ -25,6 +25,11 @@ namespace MarkLogic.Client.DataService
 
         public string MediaType { get; private set; }
 
+        public static Marshal Boolean(bool value)
+        {
+            return new Marshal(Convert.ToString(value));
+        }
+
         public static Marshal String(string value)
         {
             return new Marshal(value);
@@ -35,9 +40,39 @@ namespace MarkLogic.Client.DataService
             return new Marshal(Convert.ToString(value));
         }
 
+        public static Marshal UnsignedInteger(uint value)
+        {
+            return new Marshal(Convert.ToString(value));
+        }
+
+        public static Marshal Long(long value)
+        {
+            return new Marshal(Convert.ToString(value));
+        }
+
+        public static Marshal UnsignedLong(ulong value)
+        {
+            return new Marshal(Convert.ToString(value));
+        }
+
+        public static Marshal Float(float value)
+        {
+            return new Marshal(Convert.ToString(value));
+        }
+
+        public static Marshal Double(double value)
+        {
+            return new Marshal(Convert.ToString(value));
+        }
+
+        public static Marshal Decimal(decimal value)
+        {
+            return new Marshal(Convert.ToString(value));
+        }
+
         public static Marshal DateTime(DateTime value)
         {
-            return new Marshal(value.ToISO8601_3Decimals());
+            return new Marshal(value.ToISO8601_DateTime_3Decimals());
         }
 
         public static Marshal TextReaderAsXML(TextReader reader)

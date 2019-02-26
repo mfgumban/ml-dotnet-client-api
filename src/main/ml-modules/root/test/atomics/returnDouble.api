@@ -1,0 +1,14 @@
+{
+  "functionName": "returnDouble",
+  "desc": "Accepts and returns a double.",
+  "params": [{
+    "name": "value",
+    "datatype": "double",
+    "nullable": false
+  }],
+  "return": {
+    "datatype": "double",
+    "multiple": false
+  },
+  "errorDetail": "return"
+}

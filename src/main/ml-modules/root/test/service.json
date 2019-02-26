@@ -1,5 +1,5 @@
 {
   "endpointDirectory": "/test/",
-  "$javaClass": "com.ds.test.TestService",
-  "desc": "Test service endpoints."
+  "$javaClass": "com.ds.test.BasicTestsService",
+  "desc": "API endpoints to test basic data service operations."
 }

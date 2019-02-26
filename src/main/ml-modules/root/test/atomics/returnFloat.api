@@ -1,0 +1,14 @@
+{
+  "functionName": "returnFloat",
+  "desc": "Accepts and returns a float.",
+  "params": [{
+    "name": "value",
+    "datatype": "float",
+    "nullable": false
+  }],
+  "return": {
+    "datatype": "float",
+    "multiple": false
+  },
+  "errorDetail": "return"
+}

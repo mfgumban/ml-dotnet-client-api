@@ -1,0 +1,14 @@
+{
+  "functionName": "returnString",
+  "desc": "Accepts and returns a string.",
+  "params": [{
+    "name": "value",
+    "datatype": "string",
+    "nullable": false
+  }],
+  "return": {
+    "datatype": "string",
+    "multiple": false
+  },
+  "errorDetail": "return"
+}

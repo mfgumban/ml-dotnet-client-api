@@ -1,0 +1,5 @@
+{
+  "endpointDirectory": "/test/atomics/",
+  "$javaClass": "com.ds.test.atomics.AtomicTestsService",
+  "desc": "API endpoints to test atomic data types."
+}

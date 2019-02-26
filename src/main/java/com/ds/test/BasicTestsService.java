@@ -12,11 +12,11 @@ import com.marklogic.client.DatabaseClient;
 import com.marklogic.client.impl.BaseProxy;
 
 /**
- * Test service endpoints.
+ * API endpoints to test basic data service operations.
  */
-public interface TestService {
+public interface BasicTestsService {
     /**
-     * Creates a TestService object for executing operations on the database server.
+     * Creates a BasicTestsService object for executing operations on the database server.
      *
      * The DatabaseClientFactory class can create the DatabaseClient parameter. A single
      * client object can be used for any number of requests and in multiple threads.
@@ -24,11 +24,11 @@ public interface TestService {
      * @param db	provides a client for communicating with the database server
      * @return	an object for session state
      */
-    static TestService on(DatabaseClient db) {
-        final class TestServiceImpl implements TestService {
+    static BasicTestsService on(DatabaseClient db) {
+        final class BasicTestsServiceImpl implements BasicTestsService {
             private BaseProxy baseProxy;
 
-            private TestServiceImpl(DatabaseClient dbClient) {
+            private BasicTestsServiceImpl(DatabaseClient dbClient) {
                 baseProxy = new BaseProxy(dbClient, "/test/");
             }
 
@@ -42,48 +42,6 @@ public interface TestService {
                     BaseProxy.documentParam("value", false, BaseProxy.ArrayType.fromReader(value)))
                 .withMethod("POST")
                 .responseSingle(false, Format.JSON)
-                );
-            }
-
-
-            @Override
-            public Boolean returnBoolean(Boolean value) {
-              return BaseProxy.BooleanType.toBoolean(
-                baseProxy
-                .request("returnBoolean.xqy", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
-                .withSession()
-                .withParams(
-                    BaseProxy.atomicParam("value", false, BaseProxy.BooleanType.fromBoolean(value)))
-                .withMethod("POST")
-                .responseSingle(false, null)
-                );
-            }
-
-
-            @Override
-            public java.time.LocalDateTime returnDateTime(java.time.LocalDateTime value) {
-              return BaseProxy.DateTimeType.toLocalDateTime(
-                baseProxy
-                .request("returnDateTime.xqy", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
-                .withSession()
-                .withParams(
-                    BaseProxy.atomicParam("value", false, BaseProxy.DateTimeType.fromLocalDateTime(value)))
-                .withMethod("POST")
-                .responseSingle(false, null)
-                );
-            }
-
-
-            @Override
-            public String returnDecimal(String value) {
-              return BaseProxy.DecimalType.toString(
-                baseProxy
-                .request("returnDecimal.xqy", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
-                .withSession()
-                .withParams(
-                    BaseProxy.atomicParam("value", false, BaseProxy.DecimalType.fromString(value)))
-                .withMethod("POST")
-                .responseSingle(false, null)
                 );
             }
 
@@ -145,7 +103,7 @@ public interface TestService {
 
         }
 
-        return new TestServiceImpl(db);
+        return new BasicTestsServiceImpl(db);
     }
 
   /**
@@ -155,30 +113,6 @@ public interface TestService {
    * @return	as output
    */
     Reader returnArray(Reader value);
-
-  /**
-   * Accepts and returns a boolean.
-   *
-   * @param value	provides input
-   * @return	as output
-   */
-    Boolean returnBoolean(Boolean value);
-
-  /**
-   * Accepts and returns a dateTime.
-   *
-   * @param value	provides input
-   * @return	as output
-   */
-    java.time.LocalDateTime returnDateTime(java.time.LocalDateTime value);
-
-  /**
-   * Accepts and returns a decimal.
-   *
-   * @param value	provides input
-   * @return	as output
-   */
-    String returnDecimal(String value);
 
   /**
    * Accepts multiple atomic values and returns a multi-line string containing the server-side values.

@@ -1,0 +1,14 @@
+{
+  "functionName": "returnUnsignedInteger",
+  "desc": "Accepts and returns an unsigned integer.",
+  "params": [{
+    "name": "value",
+    "datatype": "unsignedInt",
+    "nullable": false
+  }],
+  "return": {
+    "datatype": "unsignedInt",
+    "multiple": false
+  },
+  "errorDetail": "return"
+}

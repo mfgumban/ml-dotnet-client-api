@@ -1,0 +1,14 @@
+{
+  "functionName": "returnLong",
+  "desc": "Accepts and returns a long.",
+  "params": [{
+    "name": "value",
+    "datatype": "long",
+    "nullable": false
+  }],
+  "return": {
+    "datatype": "long",
+    "multiple": false
+  },
+  "errorDetail": "return"
+}

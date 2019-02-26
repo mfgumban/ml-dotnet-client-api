@@ -1,0 +1,14 @@
+{
+  "functionName": "returnInteger",
+  "desc": "Accepts and returns an integer.",
+  "params": [{
+    "name": "value",
+    "datatype": "int",
+    "nullable": false
+  }],
+  "return": {
+    "datatype": "int",
+    "multiple": false
+  },
+  "errorDetail": "return"
+}

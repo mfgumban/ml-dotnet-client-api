@@ -17,7 +17,7 @@ namespace MarkLogic.Client.Tests.FunctionalTests
         [Fact]
         public async void TestGetSessionId()
         {
-            await TestService.Create(DbClient).returnNone();
+            await BasicTestsService.Create(DbClient).returnNone();
         }
     }
 }

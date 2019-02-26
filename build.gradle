@@ -18,12 +18,17 @@ task generateInventory(type: com.marklogic.client.tools.gradle.EndpointProxiesGe
   serviceDeclarationFile = 'src/main/ml-modules/root/inventory/part/service.json'
 }
 
-task generateTestService(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask) {
+task generateBasicTestsService(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask) {
   serviceDeclarationFile = 'src/main/ml-modules/root/test/service.json'
 }
 
+task generateAtomicTestsService(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask) {
+  serviceDeclarationFile = 'src/main/ml-modules/root/test/atomics/service.json'
+}
+
 compileJava.dependsOn generateInventory
-compileJava.dependsOn generateTestService
+compileJava.dependsOn generateBasicTestsService
+compileJava.dependsOn generateAtomicTestsService
 
 test {
   useJUnitPlatform()

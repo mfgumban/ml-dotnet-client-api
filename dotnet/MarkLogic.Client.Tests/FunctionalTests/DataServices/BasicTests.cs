@@ -5,11 +5,11 @@ using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace MarkLogic.Client.Tests.FunctionalTests
+namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
 {
-    public class TestServiceTest : DbTestBase, IClassFixture<DatabaseClientFixture>
+    public class BasicTests : DbTestBase, IClassFixture<DatabaseClientFixture>
     {
-        public TestServiceTest(DatabaseClientFixture dbClientFixture, ITestOutputHelper output)
+        public BasicTests(DatabaseClientFixture dbClientFixture, ITestOutputHelper output)
             : base(dbClientFixture, output)
         {
         }
@@ -17,7 +17,7 @@ namespace MarkLogic.Client.Tests.FunctionalTests
         [Fact]
         public async void TestReturnNone()
         {
-            await TestService.Create(DbClient).returnNone();
+            await BasicTestsService.Create(DbClient).returnNone();
         }
 
         [Fact]
@@ -26,41 +26,31 @@ namespace MarkLogic.Client.Tests.FunctionalTests
             var value1 = "the quick brown fox";
             var value2 = 1234;
             var value3 = DateTime.Now;
-            var response = await TestService.Create(DbClient).returnMultipleAtomic(value1, value2, value3);
+            var response = await BasicTestsService.Create(DbClient).returnMultipleAtomic(value1, value2, value3);
             Output.WriteLine(response);
 
             var results = response.Split("\n");
             Assert.Equal(3, results.Length);
             Assert.Equal(value1, results[0]);
             Assert.Equal(value2.ToString(), results[1]);
-            Assert.Equal(value3.ToISO8601_3Decimals(), results[2]);
+            Assert.Equal(value3.ToISO8601_DateTime_3Decimals(), results[2]);
         }
 
         [Fact]
         public async void TestReturnMultiValue()
         {
             var values = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-            var results = await TestService.Create(DbClient).returnMultiValue(values);
+            var results = await BasicTestsService.Create(DbClient).returnMultiValue(values);
             results.ToList().ForEach(r => Output.WriteLine(r.ToString()));
 
             Assert.Equal(values, results);
         }
 
         [Fact]
-        public async void TestReturnDateTime()
-        {
-            var value = DateTime.Now;
-            var result = await TestService.Create(DbClient).returnDateTime(value);
-            Output.WriteLine(result.ToISO8601_3Decimals());
-
-            Assert.Equal(value.ToISO8601_3Decimals(), result.ToISO8601_3Decimals());
-        }
-
-        [Fact]
         public async void TestReturnArray()
         {
             var value = JArray.Parse("[\"the\", \"quick\", \"brown\", \"fox\", 1, 2, 3]");
-            var result = await TestService.Create(DbClient).returnArray(value);
+            var result = await BasicTestsService.Create(DbClient).returnArray(value);
             Output.WriteLine(result.ToString());
 
             Assert.True(JToken.DeepEquals(value, result));
@@ -70,7 +60,7 @@ namespace MarkLogic.Client.Tests.FunctionalTests
         public async void TestReturnObject()
         {
             var value = JObject.Parse("{ \"array\": [\"the\", \"quick\", \"brown\", \"fox\", 1, 2, 3], \"object\": { \"key\": \"k1\", \"value\": 1234 } }");
-            var result = await TestService.Create(DbClient).returnObject(value);
+            var result = await BasicTestsService.Create(DbClient).returnObject(value);
             Output.WriteLine(result.ToString());
 
             Assert.True(JToken.DeepEquals(value, result));

@@ -6,26 +6,15 @@ using System.Threading.Tasks;
 
 namespace MarkLogic.Client.Tests.DataServices
 {
-    public interface ITestService
+    public class BasicTestsService : DataServiceBase
     {
-        Task<DateTime> returnDateTime(DateTime value);
-
-        Task<string> returnMultipleAtomic(string value1, int value2, DateTime value3);
-
-        Task<IEnumerable<int>> returnMultiValue(IEnumerable<int> values);
-
-        Task returnNone();
-    }
-
-    public class TestService : DataServiceBase, ITestService
-    {
-        protected TestService(IDatabaseClient dbClient) : base(dbClient, "/test/")
+        protected BasicTestsService(IDatabaseClient dbClient) : base(dbClient, "/test/")
         {
         }
 
-        public static TestService Create(IDatabaseClient dbClient)
+        public static BasicTestsService Create(IDatabaseClient dbClient)
         {
-            return new TestService(dbClient);
+            return new BasicTestsService(dbClient);
         }
 
         public Task<JArray> returnArray(JArray value)
@@ -34,14 +23,6 @@ namespace MarkLogic.Client.Tests.DataServices
                 .WithParameters(
                     new SingleParameter<JArray>("value", false, value, Marshal.JsonArray))
                 .RequestSingle<JArray>(false, Unmarshal.JsonArray);
-        }
-
-        public Task<DateTime> returnDateTime(DateTime value)
-        {
-            return CreateRequest("returnDateTime.xqy")
-                .WithParameters(
-                    new SingleParameter<DateTime>("value", false, value, Marshal.DateTime))
-                .RequestSingle<DateTime>(false, Unmarshal.DateTime);
         }
 
         public Task<JObject> returnObject(JObject value)

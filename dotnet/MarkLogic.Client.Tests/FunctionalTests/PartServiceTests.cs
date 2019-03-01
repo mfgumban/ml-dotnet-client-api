@@ -17,7 +17,12 @@ namespace MarkLogic.Client.Tests.FunctionalTests
         {
             var pageLength = 10;
             var options = new string[] { "the", "quick", "brown", "fox" };
-            var doc = new StringReader("<test><node>1</node></test>");
+            var doc = new MemoryStream();
+            var docWriter = new StreamWriter(doc);
+            
+            docWriter.Write("<test><node>1</node></test>");
+            docWriter.Flush();
+            doc.Position = 0;
 
             var ps = PartService.Create(DbClient); 
             var results = await ps.listParts(pageLength, options, doc);
@@ -26,6 +31,9 @@ namespace MarkLogic.Client.Tests.FunctionalTests
             {
                 Output.WriteLine(result);
             }
+
+            docWriter.Dispose();
+            doc.Dispose();
         }
     }
 }

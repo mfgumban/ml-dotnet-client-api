@@ -1,0 +1,16 @@
+{
+  "functionName": "returnTime",
+  "desc": "Accepts and returns a time.",
+  "params": [{
+    "name": "value",
+    "datatype": "time",
+    "nullable": false,
+    "$javaClass": "java.time.LocalTime"
+  }],
+  "return": {
+    "datatype": "time",
+    "multiple": false,
+    "$javaClass": "java.time.LocalTime"
+  },
+  "errorDetail": "return"
+}

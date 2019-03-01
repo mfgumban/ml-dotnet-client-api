@@ -5,12 +5,7 @@ using System.Threading.Tasks;
 
 namespace MarkLogic.Client.Tests.DataServices
 {
-    public interface IPartService
-    {
-        Task<IEnumerable<string>> listParts(int pageLength, IEnumerable<string> options, TextReader doc);
-    }
-
-    public class PartService : DataServiceBase, IPartService
+    public class PartService : DataServiceBase
     {
         protected PartService(IDatabaseClient dbClient) : base(dbClient, "/inventory/part/")
         {
@@ -21,13 +16,13 @@ namespace MarkLogic.Client.Tests.DataServices
             return new PartService(dbClient);
         }
 
-        public Task<IEnumerable<string>> listParts(int pageLength, IEnumerable<string> options, TextReader doc)
+        public Task<IEnumerable<string>> listParts(int pageLength, IEnumerable<string> options, Stream doc)
         {
             return CreateRequest("listParts.xqy")
                 .WithParameters(
                     new SingleParameter<int>("pageLength", true, pageLength, Marshal.Integer),
                     new MultipleParameter<string>("options", true, options, Marshal.String),
-                    new SingleParameter<TextReader>("doc", true, doc, Marshal.TextReaderAsXML))
+                    new SingleParameter<Stream>("doc", true, doc, Marshal.StreamAsXml))
                 .RequestMultiple<string>(true, Unmarshal.String);
         }
     }

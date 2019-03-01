@@ -44,6 +44,20 @@ public interface AtomicTestsService {
 
 
             @Override
+            public java.time.LocalDate returnDate(java.time.LocalDate value) {
+              return BaseProxy.DateType.toLocalDate(
+                baseProxy
+                .request("returnDate.xqy", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
+                .withSession()
+                .withParams(
+                    BaseProxy.atomicParam("value", false, BaseProxy.DateType.fromLocalDate(value)))
+                .withMethod("POST")
+                .responseSingle(false, null)
+                );
+            }
+
+
+            @Override
             public java.time.LocalDateTime returnDateTime(java.time.LocalDateTime value) {
               return BaseProxy.DateTimeType.toLocalDateTime(
                 baseProxy
@@ -70,6 +84,118 @@ public interface AtomicTestsService {
                 );
             }
 
+
+            @Override
+            public Double returnDouble(Double value) {
+              return BaseProxy.DoubleType.toDouble(
+                baseProxy
+                .request("returnDouble.xqy", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
+                .withSession()
+                .withParams(
+                    BaseProxy.atomicParam("value", false, BaseProxy.DoubleType.fromDouble(value)))
+                .withMethod("POST")
+                .responseSingle(false, null)
+                );
+            }
+
+
+            @Override
+            public Float returnFloat(Float value) {
+              return BaseProxy.FloatType.toFloat(
+                baseProxy
+                .request("returnFloat.xqy", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
+                .withSession()
+                .withParams(
+                    BaseProxy.atomicParam("value", false, BaseProxy.FloatType.fromFloat(value)))
+                .withMethod("POST")
+                .responseSingle(false, null)
+                );
+            }
+
+
+            @Override
+            public Integer returnInteger(Integer value) {
+              return BaseProxy.IntegerType.toInteger(
+                baseProxy
+                .request("returnInteger.xqy", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
+                .withSession()
+                .withParams(
+                    BaseProxy.atomicParam("value", false, BaseProxy.IntegerType.fromInteger(value)))
+                .withMethod("POST")
+                .responseSingle(false, null)
+                );
+            }
+
+
+            @Override
+            public Long returnLong(Long value) {
+              return BaseProxy.LongType.toLong(
+                baseProxy
+                .request("returnLong.xqy", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
+                .withSession()
+                .withParams(
+                    BaseProxy.atomicParam("value", false, BaseProxy.LongType.fromLong(value)))
+                .withMethod("POST")
+                .responseSingle(false, null)
+                );
+            }
+
+
+            @Override
+            public String returnString(String value) {
+              return BaseProxy.StringType.toString(
+                baseProxy
+                .request("returnString.xqy", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
+                .withSession()
+                .withParams(
+                    BaseProxy.atomicParam("value", false, BaseProxy.StringType.fromString(value)))
+                .withMethod("POST")
+                .responseSingle(false, null)
+                );
+            }
+
+
+            @Override
+            public java.time.LocalTime returnTime(java.time.LocalTime value) {
+              return BaseProxy.TimeType.toLocalTime(
+                baseProxy
+                .request("returnTime.xqy", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
+                .withSession()
+                .withParams(
+                    BaseProxy.atomicParam("value", false, BaseProxy.TimeType.fromLocalTime(value)))
+                .withMethod("POST")
+                .responseSingle(false, null)
+                );
+            }
+
+
+            @Override
+            public Integer returnUnsignedInteger(Integer value) {
+              return BaseProxy.UnsignedIntegerType.toInteger(
+                baseProxy
+                .request("returnUnsignedInteger.xqy", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
+                .withSession()
+                .withParams(
+                    BaseProxy.atomicParam("value", false, BaseProxy.UnsignedIntegerType.fromInteger(value)))
+                .withMethod("POST")
+                .responseSingle(false, null)
+                );
+            }
+
+
+            @Override
+            public Long returnUnsignedLong(Long value) {
+              return BaseProxy.UnsignedLongType.toLong(
+                baseProxy
+                .request("returnUnsignedLong.xqy", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
+                .withSession()
+                .withParams(
+                    BaseProxy.atomicParam("value", false, BaseProxy.UnsignedLongType.fromLong(value)))
+                .withMethod("POST")
+                .responseSingle(false, null)
+                );
+            }
+
         }
 
         return new AtomicTestsServiceImpl(db);
@@ -82,6 +208,14 @@ public interface AtomicTestsService {
    * @return	as output
    */
     Boolean returnBoolean(Boolean value);
+
+  /**
+   * Accepts and returns a date.
+   *
+   * @param value	provides input
+   * @return	as output
+   */
+    java.time.LocalDate returnDate(java.time.LocalDate value);
 
   /**
    * Accepts and returns a dateTime.
@@ -98,5 +232,69 @@ public interface AtomicTestsService {
    * @return	as output
    */
     String returnDecimal(String value);
+
+  /**
+   * Accepts and returns a double.
+   *
+   * @param value	provides input
+   * @return	as output
+   */
+    Double returnDouble(Double value);
+
+  /**
+   * Accepts and returns a float.
+   *
+   * @param value	provides input
+   * @return	as output
+   */
+    Float returnFloat(Float value);
+
+  /**
+   * Accepts and returns an integer.
+   *
+   * @param value	provides input
+   * @return	as output
+   */
+    Integer returnInteger(Integer value);
+
+  /**
+   * Accepts and returns a long.
+   *
+   * @param value	provides input
+   * @return	as output
+   */
+    Long returnLong(Long value);
+
+  /**
+   * Accepts and returns a string.
+   *
+   * @param value	provides input
+   * @return	as output
+   */
+    String returnString(String value);
+
+  /**
+   * Accepts and returns a time.
+   *
+   * @param value	provides input
+   * @return	as output
+   */
+    java.time.LocalTime returnTime(java.time.LocalTime value);
+
+  /**
+   * Accepts and returns an unsigned integer.
+   *
+   * @param value	provides input
+   * @return	as output
+   */
+    Integer returnUnsignedInteger(Integer value);
+
+  /**
+   * Accepts and returns an unsigned long.
+   *
+   * @param value	provides input
+   * @return	as output
+   */
+    Long returnUnsignedLong(Long value);
 
 }

@@ -63,7 +63,7 @@ namespace MarkLogic.Client.Http
             var contents = new List<HttpContent>();
             foreach(var marshal in parameter.GetMarshals())
             {
-                var content = new StringContent(marshal.Value);
+                var content = marshal.IsStream ? new StreamContent(marshal.Stream) as HttpContent : new StringContent(marshal.Value);
                 content.Headers.ContentType = new MediaTypeHeaderValue(marshal.MediaType);
                 content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data") { Name = "\"" + parameter.Name + "\"" };
                 contents.Add(content);

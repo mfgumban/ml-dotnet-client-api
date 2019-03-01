@@ -56,6 +56,16 @@ namespace MarkLogic.Client.DataService
             return System.DateTime.Parse(value, null, DateTimeStyles.RoundtripKind);
         }
 
+        public static DateTime Date(string value)
+        {
+            return System.DateTime.ParseExact(value, "yyyy-MM-dd", null);
+        }
+
+        public static DateTime Time(string value)
+        {
+            return System.DateTime.ParseExact(value, "HH:mm:ss.fff", null);
+        }
+
         public static JObject JsonObject(string value)
         {
             return JObject.Parse(value);

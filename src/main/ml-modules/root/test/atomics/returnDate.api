@@ -1,0 +1,16 @@
+{
+  "functionName": "returnDate",
+  "desc": "Accepts and returns a date.",
+  "params": [{
+    "name": "value",
+    "datatype": "date",
+    "nullable": false,
+    "$javaClass": "java.time.LocalDate"
+  }],
+  "return": {
+    "datatype": "date",
+    "multiple": false,
+    "$javaClass": "java.time.LocalDate"
+  },
+  "errorDetail": "return"
+}

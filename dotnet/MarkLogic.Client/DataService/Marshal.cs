@@ -21,9 +21,19 @@ namespace MarkLogic.Client.DataService
             MediaType = mediaType;
         }
 
+        protected Marshal(Stream marshalledStream, string mediaType)
+        {
+            Stream = marshalledStream;
+            MediaType = mediaType;
+        }
+
         public string Value { get; private set; }
 
         public string MediaType { get; private set; }
+
+        public Stream Stream { get; private set; }
+
+        public bool IsStream => Stream != null;
 
         public static Marshal Boolean(bool value)
         {
@@ -75,9 +85,24 @@ namespace MarkLogic.Client.DataService
             return new Marshal(value.ToISO8601_DateTime_3Decimals());
         }
 
-        public static Marshal TextReaderAsXML(TextReader reader)
+        public static Marshal Date(DateTime value)
         {
-            return new Marshal(reader.ReadToEnd(), MediaTypes.Xml); // TODO: see if we can do "side-effect-free"
+            return new Marshal(value.ToISO8601_Date());
+        }
+
+        public static Marshal Time(DateTime value)
+        {
+            return new Marshal(value.ToISO8601_Time_3Decimals());
+        }
+
+        public static Marshal StreamAsXml(Stream stream)
+        {
+            return new Marshal(stream, MediaTypes.Xml);
+        }
+
+        public static Marshal StreamAsJson(Stream stream)
+        {
+            return new Marshal(stream, MediaTypes.Json);
         }
 
         public static Marshal JsonObject(JObject value)

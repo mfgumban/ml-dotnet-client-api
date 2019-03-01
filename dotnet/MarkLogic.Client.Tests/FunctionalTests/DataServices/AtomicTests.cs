@@ -238,8 +238,51 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
         {
             var value = DateTime.Now;
             var result = await AtomicTestsService.Create(DbClient).returnDateTime(value);
-            OutputResults(value.ToISO8601_DateTime_3Decimals(), result.ToISO8601_DateTime_3Decimals());
-            Assert.Equal(value.ToISO8601_DateTime_3Decimals(), result.ToISO8601_DateTime_3Decimals());
+            OutputResults(value, result);
+            Assert.Equal(value, result);
+        }
+
+        [Fact]
+        public async void TestReturnDateTimeMin()
+        {
+            var value = DateTime.MinValue;
+            var result = await AtomicTestsService.Create(DbClient).returnDateTime(value);
+            OutputResults(value, result);
+            Assert.Equal(value, result);
+        }
+
+        [Fact]
+        public async void TestReturnDateTimeMax()
+        {
+            var value = DateTime.MaxValue;
+            var result = await AtomicTestsService.Create(DbClient).returnDateTime(value);
+            OutputResults(value, result);
+            Assert.Equal(value, result);
+        }
+
+        [Fact]
+        public async void TestReturnDate()
+        {
+            var value = DateTime.Now.Date;
+            var result = await AtomicTestsService.Create(DbClient).returnDate(value);
+            OutputResults(value, result);
+            Assert.Equal(value, result);
+        }
+
+        [Fact]
+        public async void TestReturnTime()
+        {
+            var now = DateTime.Now;
+            var value = new DateTime(
+                DateTime.MinValue.Year,
+                DateTime.MinValue.Month,
+                DateTime.MinValue.Day,
+                now.Hour,
+                now.Minute,
+                now.Second);
+            var result = await AtomicTestsService.Create(DbClient).returnDateTime(value);
+            OutputResults(value, result);
+            Assert.Equal(value, result);
         }
     }
 }

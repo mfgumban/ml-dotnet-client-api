@@ -94,5 +94,21 @@ namespace MarkLogic.Client.Tests.DataServices
                     new SingleParameter<DateTime>("value", false, value, Marshal.DateTime))
                 .RequestSingle<DateTime>(false, Unmarshal.DateTime);
         }
+
+        public Task<DateTime> returnDate(DateTime value)
+        {
+            return CreateRequest("returnDate.xqy")
+                .WithParameters(
+                    new SingleParameter<DateTime>("value", false, value, Marshal.Date))
+                .RequestSingle<DateTime>(false, Unmarshal.Date);
+        }
+
+        public Task<DateTime> returnTime(DateTime value)
+        {
+            return CreateRequest("returnTime.xqy")
+                .WithParameters(
+                    new SingleParameter<DateTime>("value", false, value, Marshal.Time))
+                .RequestSingle<DateTime>(false, Unmarshal.Time);
+        }
     }
 }

@@ -1,9 +1,4 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -11,116 +6,108 @@ namespace MarkLogic.Client.DataService.CodeGen
 {
     internal class ServiceCSharp
     {
-        private const string DataServiceBaseClassName = "DataServiceBase";
-        private const string DatabaseClientInterface = "IDatabaseClient";
+        const string Indent = "\t";
+        const string Indent4 = "\t\t\t\t";
 
         public static void Generate(Service serviceDecl, Endpoint[] endpointDecls, TextWriter output)
         {
             // TODO: validate inputs
 
-            var cu = SyntaxFactory.CompilationUnit();
-            var nsDecl = GenerateNamespace(serviceDecl);
-            nsDecl.WithMembers(SyntaxFactory.SingletonList<MemberDeclarationSyntax>(GenerateClass(serviceDecl, endpointDecls)));
-            cu.WithMembers(SyntaxFactory.SingletonList<MemberDeclarationSyntax>(nsDecl));
-            cu.NormalizeWhitespace();
-            cu.WriteTo(output);
-        }
-
-        private static NamespaceDeclarationSyntax GenerateNamespace(Service serviceDecl)
-        {
-            Debug.Assert(serviceDecl != null);
-            var nsTokens = serviceDecl.NamespaceTokens;
-            Debug.Assert(nsTokens != null);
-            Debug.Assert(nsTokens.Length > 0);
-
-            var syntax = new Stack<NameSyntax>(nsTokens.Select(n => SyntaxFactory.IdentifierName(n)).Reverse());
-            while (syntax.Count > 1)
+            WriteUsings(serviceDecl, endpointDecls, output);
+            WritePreamble(serviceDecl, output);
+            foreach (var endpointDecl in endpointDecls)
             {
-                var left = syntax.Pop();
-                var right = syntax.Pop();
-                Debug.Assert(right is SimpleNameSyntax); // right should always be an IdentifierNameSyntax
-                syntax.Push(SyntaxFactory.QualifiedName(left, (SimpleNameSyntax)right));
+                WriteEndpoint(serviceDecl, endpointDecl, output);
             }
-            return SyntaxFactory.NamespaceDeclaration(syntax.Pop());
+            WriteAfterword(output);
         }
 
-        private static ClassDeclarationSyntax GenerateClass(Service serviceDecl, Endpoint[] endpointDecls)
+        private static readonly string[] StaticNamespaces = {
+            "MarkLogic.Client.DataService",
+            "System.Collections.Generic",
+            "System.IO",
+            "System.Threading.Tasks"
+        };
+
+        private static void WriteUsings(Service serviceDecl, Endpoint[] endpointDecls, TextWriter output)
         {
-            Debug.Assert(serviceDecl != null);
-
-            var cd = SyntaxFactory.ClassDeclaration(serviceDecl.ClassName)
-                .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.PublicKeyword)))
-                .WithBaseList(SyntaxFactory.BaseList(SyntaxFactory.SingletonSeparatedList<BaseTypeSyntax>(
-                    SyntaxFactory.SimpleBaseType(SyntaxFactory.IdentifierName(DataServiceBaseClassName)))));
-
-            var classMembers = new List<MemberDeclarationSyntax>(new MemberDeclarationSyntax[] 
+            foreach (var ns in StaticNamespaces)
             {
-                GenerateConstructor(serviceDecl),
-                GenerateCreateMethod(serviceDecl)
-            });
-            classMembers.AddRange(endpointDecls.Select(e => GenerateEndpointMethod(e)));
-            cd.WithMembers(SyntaxFactory.List(classMembers));
-
-            return cd;
+                output.WriteLine($"using {ns};");
+            }
+            // TODO: detect use for Newtonsoft.JSON and other optionals
         }
 
-        private static ConstructorDeclarationSyntax GenerateConstructor(Service serviceDecl)
+        private static void WritePreamble(Service serviceDecl, TextWriter output)
         {
-            Debug.Assert(serviceDecl != null);
+            output.WriteLine($@"
+namespace {serviceDecl.Namespace}
+{{
+    /// <summary>
+    /// {serviceDecl.Description}
+    /// </summary>
+    public class {serviceDecl.ClassName} : DataServiceBase
+    {{
+        /// <summary>
+        /// Constructs a new {serviceDecl.ClassName} object.
+        /// </summary>
+        /// <param name=""dbClient"">Client connection to a MarkLogic server.</param>
+        protected {serviceDecl.ClassName}(IDatabaseClient dbClient) : base(dbClient, {serviceDecl.EndpointDirectory})
+        {{
+        }}
 
-            const string DbClientVarName = "dbClient";
-
-            var cd = SyntaxFactory.ConstructorDeclaration(SyntaxFactory.Identifier(serviceDecl.ClassName))
-                .WithModifiers(SyntaxFactory.TokenList(SyntaxFactory.Token(SyntaxKind.ProtectedKeyword)))
-                .WithParameterList(SyntaxFactory.ParameterList(SyntaxFactory.SingletonSeparatedList(
-                    SyntaxFactory.Parameter(SyntaxFactory.Identifier(DbClientVarName))
-                        .WithType(SyntaxFactory.IdentifierName(DatabaseClientInterface)))))
-                .WithInitializer(SyntaxFactory.ConstructorInitializer(
-                    SyntaxKind.BaseConstructorInitializer,
-                    SyntaxFactory.ArgumentList(SyntaxFactory.SeparatedList<ArgumentSyntax>(new SyntaxNodeOrToken[]
-                    {
-                        SyntaxFactory.Argument(SyntaxFactory.IdentifierName(DbClientVarName)),
-                        SyntaxFactory.Token(SyntaxKind.CommaToken),
-                        SyntaxFactory.Argument(SyntaxFactory.LiteralExpression(
-                            SyntaxKind.StringLiteralExpression,
-                            SyntaxFactory.Literal(serviceDecl.EndpointDirectory)))
-                    }))))
-                .WithBody(SyntaxFactory.Block());
-
-            return cd;
+        /// <summary>
+        /// Constructs a new {serviceDecl.ClassName} object. 
+        /// </summary>
+        /// <param name=""dbClient"">Client connection to a MarkLogic server.</param>
+        /// <returns>A new {serviceDecl.ClassName} object.</returns>
+        public static {serviceDecl.ClassName} Create(IDatabaseClient dbClient)
+        {{
+            return new {serviceDecl.ClassName}(dbClient);
+        }}");
         }
 
-        private static MethodDeclarationSyntax GenerateCreateMethod(Service serviceDecl)
+        private static void WriteAfterword(TextWriter output)
         {
-            Debug.Assert(serviceDecl != null);
-
-            const string DbClientVarName = "dbClient";
-
-            var md = SyntaxFactory.MethodDeclaration(SyntaxFactory.IdentifierName(serviceDecl.ClassName), SyntaxFactory.Identifier("Create"))
-                .WithModifiers(SyntaxFactory.TokenList(new[]
-                {
-                    SyntaxFactory.Token(SyntaxKind.PublicKeyword),
-                    SyntaxFactory.Token(SyntaxKind.StaticKeyword)
-                }))
-                .WithParameterList(SyntaxFactory.ParameterList(SyntaxFactory.SingletonSeparatedList(
-                    SyntaxFactory.Parameter(SyntaxFactory.Identifier(DbClientVarName))
-                        .WithType(SyntaxFactory.IdentifierName(DatabaseClientInterface)))))
-                .WithBody(SyntaxFactory.Block(SyntaxFactory.SingletonList<StatementSyntax>(
-                    SyntaxFactory.ReturnStatement(
-                        SyntaxFactory.ObjectCreationExpression(
-                            SyntaxFactory.IdentifierName(serviceDecl.ClassName))
-                        .WithArgumentList(SyntaxFactory.ArgumentList(SyntaxFactory.SingletonSeparatedList(
-                            SyntaxFactory.Argument(SyntaxFactory.IdentifierName(DbClientVarName)))))))));
-
-            return md;
+            output.WriteLine(@"
+    }
+}");
         }
 
-        private static MethodDeclarationSyntax GenerateEndpointMethod(Endpoint endpointDecl)
+        private static void WriteEndpoint(Service serviceDecl, Endpoint endpointDecl, TextWriter output)
         {
-            Debug.Assert(endpointDecl != null);
+            output.WriteLine($"{Indent}/// <summary>");
+            output.WriteLine($"{Indent}/// {endpointDecl.Description}");
+            output.WriteLine($"{Indent}/// </sumary>");
+            foreach (var param in endpointDecl.Parameters)
+            {
+                output.WriteLine($"{Indent}/// <param name=\"{param.Name}\">{param.Description}</param>");
+            }
+            output.WriteLine($"{Indent}/// <returns>{endpointDecl.ReturnValue.Description}</returns>");
 
-            var md = SyntaxFactory.MethodDeclaration(SyntaxFactory.GenericName(SyntaxFactory.Factory.Identifier("Task"))
-                )
+            var returnType = GetReturnTypeSyntax(endpointDecl.ReturnValue);
+            var paramList = endpointDecl.Parameters.Select(p => $"{GetParameterType(p)} {p.Name}");
+
+            output.WriteLine($@"
+        public {returnType} {endpointDecl.FunctionName}({string.Join(", ", paramList)})
+        {{
+            return CreateRequest(""{endpointDecl.ModuleName}"")");
+
+            if (endpointDecl.RequireSession)
+            {
+                output.WriteLine()
+            }
+                .WithParameters(
+                    new SingleParameter<int>("pageLength", true, pageLength, Marshal.Integer),
+                    new MultipleParameter<string>("options", true, options, Marshal.String),
+                    new SingleParameter<Stream>("doc", true, doc, Marshal.StreamAsXml))
+                .RequestMultiple<string>(true, Unmarshal.String);
+        }}"
+        }
+
+        private static string GetParameterType(Parameter parameter)
+        {
+
         }
     }
 }

@@ -7,6 +7,7 @@ namespace MarkLogic.Client.DataService.CodeGen
     internal class ServiceCSharp
     {
         const string Indent = "\t";
+        const string Indent2 = "\t\t";
         const string Indent4 = "\t\t\t\t";
 
         public static void Generate(Service serviceDecl, Endpoint[] endpointDecls, TextWriter output)
@@ -76,14 +77,14 @@ namespace {serviceDecl.Namespace}
 
         private static void WriteEndpoint(Service serviceDecl, Endpoint endpointDecl, TextWriter output)
         {
-            output.WriteLine($"{Indent}/// <summary>");
-            output.WriteLine($"{Indent}/// {endpointDecl.Description}");
-            output.WriteLine($"{Indent}/// </sumary>");
+            output.WriteLine($"{Indent2}/// <summary>");
+            output.WriteLine($"{Indent2}/// {endpointDecl.Description}");
+            output.WriteLine($"{Indent2}/// </sumary>");
             foreach (var param in endpointDecl.Parameters)
             {
-                output.WriteLine($"{Indent}/// <param name=\"{param.Name}\">{param.Description}</param>");
+                output.WriteLine($"{Indent2}/// <param name=\"{param.Name}\">{param.Description}</param>");
             }
-            output.WriteLine($"{Indent}/// <returns>{endpointDecl.ReturnValue.Description}</returns>");
+            output.WriteLine($"{Indent2}/// <returns>{endpointDecl.ReturnValue.Description}</returns>");
 
             var returnType = GetReturnTypeSyntax(endpointDecl.ReturnValue);
             var paramList = endpointDecl.Parameters.Select(p => $"{GetParameterType(p)} {p.Name}");
@@ -95,8 +96,9 @@ namespace {serviceDecl.Namespace}
 
             if (endpointDecl.RequireSession)
             {
-                output.WriteLine()
+                output.WriteLine($"{Indent4}.WithSession(\"session\")");
             }
+
                 .WithParameters(
                     new SingleParameter<int>("pageLength", true, pageLength, Marshal.Integer),
                     new MultipleParameter<string>("options", true, options, Marshal.String),

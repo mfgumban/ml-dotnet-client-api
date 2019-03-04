@@ -31,6 +31,9 @@ namespace MarkLogic.Client.DataService.CodeGen
         [JsonProperty("errorDetail")]
         public string ErrorDetail { get; set; }
 
+        [JsonIgnore]
+        public bool RequireSession { get; }
+
         public static async Task<Endpoint> FromStreamAsync(Stream stream)
         {
             using (var reader = new StreamReader(stream))

@@ -1,8 +1,4 @@
-﻿using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using Newtonsoft.Json;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -46,31 +42,6 @@ namespace MarkLogic.Client.DataService.CodeGen
         public static Service FromString(string json)
         {
             return JsonConvert.DeserializeObject<Service>(json);
-        }
-
-        public static string GenerateCSharpClass(string filePath)
-        {
-            var serviceDecl = new Service();
-
-            SyntaxFactory.CompilationUnit()
-                .WithMembers(
-                    // namespace
-                    SyntaxFactory.SingletonList<MemberDeclarationSyntax>(GenerateCSharpNamespace(serviceDecl.Namespace))
-                )
-        }
-
-        private static MemberDeclarationSyntax GenerateCSharpNamespace(string ns)
-        {
-            var nsQNames = ns.Split('.'); // TODO RELACE WITH MOETHODS ABOVE
-            var syntax = new Stack<NameSyntax>(nsQNames.Select(n => SyntaxFactory.IdentifierName(n)).Reverse());
-            while (syntax.Count > 1)
-            {
-                var left = syntax.Pop();
-                var right = syntax.Pop();
-                Debug.Assert(right is SimpleNameSyntax); // right should always be an IdentifierNameSyntax
-                syntax.Push(SyntaxFactory.QualifiedName(left, (SimpleNameSyntax)right));
-            }
-            return SyntaxFactory.NamespaceDeclaration(syntax.Pop());
         }
     }
 }

@@ -1,15 +1,12 @@
 ﻿using MarkLogic.Client.DataService.CodeGen;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
+namespace MarkLogic.Client.Tests.FunctionalTests.DataServices.CodeGen
 {
-    public class CodeGenTests
+    public class ServiceAndEndpointTests
     {
-        public CodeGenTests(ITestOutputHelper output)
+        public ServiceAndEndpointTests(ITestOutputHelper output)
         {
             Output = output;
         }

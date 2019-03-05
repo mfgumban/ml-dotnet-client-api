@@ -28,6 +28,9 @@ namespace MarkLogic.Client.DataService.CodeGen
         [JsonProperty("return")]
         public Return ReturnValue { get; set; }
 
+        [JsonIgnore]
+        public bool ReturnVoid => ReturnValue == null;
+
         [JsonProperty("errorDetail")]
         public string ErrorDetail { get; set; }
 

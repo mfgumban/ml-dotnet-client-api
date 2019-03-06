@@ -1,0 +1,5 @@
+{
+  "endpointDirectory": "/test/complex/",
+  "$javaClass": "com.ds.test.complex.ComplexTypeTestsService",
+  "desc": "API endpoints to test complex data types."
+}

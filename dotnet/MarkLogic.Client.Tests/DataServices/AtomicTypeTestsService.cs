@@ -4,15 +4,15 @@ using System.Threading.Tasks;
 
 namespace MarkLogic.Client.Tests.DataServices
 {
-    public class AtomicTestsService : DataServiceBase
+    public class AtomicTypeTestsService : DataServiceBase
     {
-        protected AtomicTestsService(IDatabaseClient dbClient) : base(dbClient, "/test/atomics/")
+        protected AtomicTypeTestsService(IDatabaseClient dbClient) : base(dbClient, "/test/atomics/")
         {
         }
 
-        public static AtomicTestsService Create(IDatabaseClient dbClient)
+        public static AtomicTypeTestsService Create(IDatabaseClient dbClient)
         {
-            return new AtomicTestsService(dbClient);
+            return new AtomicTypeTestsService(dbClient);
         }
 
         public Task<bool> returnBoolean(bool value)
@@ -109,6 +109,14 @@ namespace MarkLogic.Client.Tests.DataServices
                 .WithParameters(
                     new SingleParameter<DateTime>("value", false, value, Marshal.Time))
                 .RequestSingle<DateTime>(false, Unmarshal.Time);
+        }
+
+        public Task<TimeSpan> returnTimeSpan(TimeSpan value)
+        {
+            return CreateRequest("returnTimeSpan.xqy")
+                .WithParameters(
+                    new SingleParameter<TimeSpan>("value", false, value, Marshal.TimeSpan))
+                .RequestSingle<TimeSpan>(false, Unmarshal.TimeSpan);
         }
     }
 }

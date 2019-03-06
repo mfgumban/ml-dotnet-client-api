@@ -37,7 +37,7 @@ namespace MarkLogic.Client.DataService
 
         public static Marshal Boolean(bool value)
         {
-            return new Marshal(Convert.ToString(value));
+            return new Marshal(value ? "true" : "false");
         }
 
         public static Marshal String(string value)
@@ -93,6 +93,16 @@ namespace MarkLogic.Client.DataService
         public static Marshal Time(DateTime value)
         {
             return new Marshal(value.ToISO8601_Time_3Decimals());
+        }
+
+        public static Marshal TimeSpan(TimeSpan value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static Marshal StreamAsText(Stream stream)
+        {
+            return new Marshal(stream, MediaTypes.Text);
         }
 
         public static Marshal StreamAsXml(Stream stream)

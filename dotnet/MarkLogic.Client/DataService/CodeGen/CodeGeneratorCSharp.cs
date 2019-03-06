@@ -97,7 +97,7 @@ namespace {serviceDecl.Namespace}
             var returnType = endpointDecl.ReturnVoid ? "Task" : $"Task<{GetReturnType(endpointDecl.ReturnValue, endpointDecl.ReturnValue.Multiple)}>";
             var paramList = endpointDecl.Parameters.Select(p => $"{GetParameterType(p, p.Multiple)} {p.Name}");
 
-            output.WriteLine($"{Indent2}public async {returnType} {endpointDecl.FunctionName}({string.Join(", ", paramList)})");
+            output.WriteLine($"{Indent2}public {returnType} {endpointDecl.FunctionName}({string.Join(", ", paramList)})");
             output.WriteLine($"{Indent2}{{");
             output.WriteLine($"{Indent3}return CreateRequest(\"{endpointDecl.ModuleName}\")");
 

@@ -66,6 +66,11 @@ namespace MarkLogic.Client.DataService
             return System.DateTime.ParseExact(value, "HH:mm:ss.fff", null);
         }
 
+        public static TimeSpan TimeSpan(string value)
+        {
+            throw new NotImplementedException();
+        }
+
         public static JObject JsonObject(string value)
         {
             return JObject.Parse(value);

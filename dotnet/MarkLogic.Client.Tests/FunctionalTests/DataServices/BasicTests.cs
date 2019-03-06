@@ -47,26 +47,6 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
         }
 
         [Fact]
-        public async void TestReturnArray()
-        {
-            var value = JArray.Parse("[\"the\", \"quick\", \"brown\", \"fox\", 1, 2, 3]");
-            var result = await BasicTestsService.Create(DbClient).returnArray(value);
-            Output.WriteLine(result.ToString());
-
-            Assert.True(JToken.DeepEquals(value, result));
-        }
-
-        [Fact]
-        public async void TestReturnObject()
-        {
-            var value = JObject.Parse("{ \"array\": [\"the\", \"quick\", \"brown\", \"fox\", 1, 2, 3], \"object\": { \"key\": \"k1\", \"value\": 1234 } }");
-            var result = await BasicTestsService.Create(DbClient).returnObject(value);
-            Output.WriteLine(result.ToString());
-
-            Assert.True(JToken.DeepEquals(value, result));
-        }
-
-        [Fact]
         public async void TestErrorDetailLog()
         {
             var exception = await Assert.ThrowsAsync<DataServiceRequestException>(() => BasicTestsService.Create(DbClient).errorDetailLog());

@@ -1,0 +1,13 @@
+{
+  "functionName": "returnBinary",
+  "desc": "Accepts and returns a binary.",
+  "params": [{
+    "name": "value",
+    "datatype": "binaryDocument",
+    "nullable": false
+  }],
+  "return": {
+    "datatype": "binaryDocument"
+  },
+  "errorDetail": "return"
+}

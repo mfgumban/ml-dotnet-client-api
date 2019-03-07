@@ -11,7 +11,7 @@ namespace MarkLogic.Client.DataService
             : base(name, allowNull)
         {
             _marshalledValue = marshalValue(value);
-            if (!allowNull && _marshalledValue.Value == null)
+            if (!allowNull && !_marshalledValue.HasValue)
             {
                 throw new InvalidOperationException("Parameter does not allow null values."); // TODO: replace exception
             }

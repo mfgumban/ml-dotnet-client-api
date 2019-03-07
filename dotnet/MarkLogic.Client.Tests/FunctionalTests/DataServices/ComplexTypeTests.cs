@@ -1,6 +1,8 @@
 ﻿using MarkLogic.Client.Tests.DataServices;
 using Newtonsoft.Json.Linq;
 using System;
+using System.IO;
+using System.Reflection;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -36,6 +38,35 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
             Output.WriteLine(result.ToString());
 
             Assert.True(JToken.DeepEquals(value, result));
+        }
+
+        [Fact]
+        public async void TestReturnBinary()
+        {
+            var binary = Assembly.GetExecutingAssembly().GetManifestResourceStream("MarkLogic.Client.Tests.Resources.marklogic-logo-social.jpg");
+
+            // copy bytes before it gets disposed by the service call
+            var input = new MemoryStream();
+            await binary.CopyToAsync(input);
+            var inputBytes = input.ToArray();
+            input.Position = 0;
+
+            var result = await ComplexTypeTestsService.Create(DbClient).returnBinary(input);
+
+            Assert.NotNull(result);
+
+            // get bytes to compare
+            var resultCopy = new MemoryStream();
+            await result.CopyToAsync(resultCopy);
+            var resultBytes = resultCopy.ToArray();
+            resultCopy.Dispose();
+
+            OutputResults(inputBytes.Length, resultBytes.Length);
+            Assert.Equal(inputBytes.Length, resultBytes.Length);
+            Assert.Equal(inputBytes, resultBytes);
+
+            input.Dispose();
+            result.Dispose();
         }
     }
 }

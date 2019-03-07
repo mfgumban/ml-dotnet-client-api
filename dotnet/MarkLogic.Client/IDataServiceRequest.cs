@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
-using MarkLogic.Client.DataService;
 
 namespace MarkLogic.Client
 {
@@ -21,8 +21,8 @@ namespace MarkLogic.Client
 
         Task RequestNone();
 
-        Task<TResult> RequestSingle<TResult>(bool allowNull, Func<string, TResult> unmarshalValue);
+        Task<TResult> RequestSingle<TResult>(bool allowNull, Func<Stream, Task<TResult>> unmarshalValue);
 
-        Task<IEnumerable<TResult>> RequestMultiple<TResult>(bool allowNull, Func<string, TResult> unmarshalValue);
+        Task<IEnumerable<TResult>> RequestMultiple<TResult>(bool allowNull, Func<Stream, Task<TResult>> unmarshalValue);
     }
 }

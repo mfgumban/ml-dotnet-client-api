@@ -1,6 +1,7 @@
 ﻿using MarkLogic.Client.DataService;
 using Newtonsoft.Json.Linq;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace MarkLogic.Client.Tests.DataServices
@@ -30,6 +31,14 @@ namespace MarkLogic.Client.Tests.DataServices
                 .WithParameters(
                     new SingleParameter<JObject>("value", false, value, Marshal.JsonObject))
                 .RequestSingle<JObject>(false, Unmarshal.JsonObject);
+        }
+
+        public Task<Stream> returnBinary(Stream value)
+        {
+            return CreateRequest("returnBinary.xqy")
+                .WithParameters(
+                    new SingleParameter<Stream>("value", false, value, Marshal.StreamAsBinary))
+                .RequestSingle<Stream>(false, Unmarshal.Stream);
         }
     }
 }

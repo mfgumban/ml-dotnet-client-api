@@ -14,6 +14,7 @@ namespace MarkLogic.Client.DataService
             public const string Text = "text/plain";
             public const string Json = "application/json";
             public const string Xml = "application/xml";
+            public const string Binary = "application/octet-stream";
         }
 
         /// <summary>
@@ -45,6 +46,8 @@ namespace MarkLogic.Client.DataService
         public Stream Stream { get; private set; }
 
         public bool IsStream => Stream != null;
+
+        public bool HasValue => IsStream || Value != null;
 
         public static Marshal Boolean(bool value)
         {
@@ -128,6 +131,11 @@ namespace MarkLogic.Client.DataService
         public static Marshal StreamAsJson(Stream stream)
         {
             return new Marshal(stream, MediaTypes.Json);
+        }
+
+        public static Marshal StreamAsBinary(Stream stream)
+        {
+            return new Marshal(stream, MediaTypes.Binary);
         }
 
         public static Marshal JsonObject(JObject value)

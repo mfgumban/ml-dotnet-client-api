@@ -13,11 +13,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Data\marklogic-logo-social.jpg" />
+    <None Remove="Resources\marklogic-logo-social.jpg" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Data\marklogic-logo-social.jpg" />
+    <EmbeddedResource Include="Resources\marklogic-logo-social.jpg" />
   </ItemGroup>
 
   <ItemGroup>

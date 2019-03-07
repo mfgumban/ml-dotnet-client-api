@@ -1,4 +1,4 @@
-package com.ds.test.atomics;
+package com.ds.test;
 
 // IMPORTANT: Do not edit. This file is generated.
 

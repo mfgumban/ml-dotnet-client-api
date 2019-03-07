@@ -8,17 +8,17 @@ import java.time.*;
 import org.junit.jupiter.api.*;
 import com.marklogic.client.*;
 import com.ds.TestBase;
-import com.ds.test.TestService;
+import com.ds.test.ComplexTypeTestsService;
 
 
 public class ComplexTypeTests extends TestBase {
   private static DatabaseClient dbClient;
-  private static TestService testService;
+  private static ComplexTypeTestsService testService;
 
   @BeforeAll
   public static void setUp() {
     dbClient = getClient();
-    testService = TestService.on(dbClient);
+    testService = ComplexTypeTestsService.on(dbClient);
   }
   
   @AfterAll
@@ -27,9 +27,10 @@ public class ComplexTypeTests extends TestBase {
   }
   
   @Test
-  public void testReturnDateTime() throws IOException {
-    LocalDateTime parameter = LocalDateTime.now();
-    LocalDateTime response = testService.returnDateTime(parameter);
-    System.out.println(String.format("Parameter: %s\nResponse: %s", parameter, response));
+  public void testReturnBinary() throws IOException {
+    System.out.println("Working Directory = " + System.getProperty("user.dir"));
+    File file = new File("src/test/resources/marklogic-logo-social.jpg");
+    InputStream parameter = new FileInputStream(file);
+    InputStream response = testService.returnBinary(parameter);
   }
 }

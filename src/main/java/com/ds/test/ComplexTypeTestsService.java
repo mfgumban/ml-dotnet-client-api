@@ -1,4 +1,4 @@
-package com.ds.test.complex;
+package com.ds.test;
 
 // IMPORTANT: Do not edit. This file is generated.
 

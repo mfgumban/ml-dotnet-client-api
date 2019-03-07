@@ -8,17 +8,17 @@ import java.time.*;
 import org.junit.jupiter.api.*;
 import com.marklogic.client.*;
 import com.ds.TestBase;
-import com.ds.test.TestService;
+import com.ds.test.BasicTestsService;
 
 
-public class BasicTestsServiceTests extends TestBase {
+public class BasicTests extends TestBase {
   private static DatabaseClient dbClient;
-  private static TestService testService;
+  private static BasicTestsService testService;
 
   @BeforeAll
   public static void setUp() {
     dbClient = getClient();
-    testService = TestService.on(dbClient);
+    testService = BasicTestsService.on(dbClient);
   }
   
   @AfterAll

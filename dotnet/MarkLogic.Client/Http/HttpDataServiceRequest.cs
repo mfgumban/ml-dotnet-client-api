@@ -1,6 +1,7 @@
 using MarkLogic.Client.DataService;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -123,7 +124,7 @@ namespace MarkLogic.Client.Http
             var response = await RequestAsync();
         }
 
-        public async Task<TResult> RequestSingle<TResult>(bool allowNull, Func<string, TResult> unmarshalValue)
+        public async Task<TResult> RequestSingle<TResult>(bool allowNull, Func<Stream, Task<TResult>> unmarshalValue)
         {
             var response = await RequestAsync();
             if (response.Content.IsMimeMultipartContent())
@@ -131,7 +132,7 @@ namespace MarkLogic.Client.Http
                 throw new InvalidOperationException("Expected content not multipart"); // TODO: replace exception
             }
 
-            var value = unmarshalValue(await response.Content.ReadAsStringAsync());
+            var value = await unmarshalValue(await response.Content.ReadAsStreamAsync());
             if (!allowNull && value == null)
             {
                 throw new InvalidOperationException("Null return value not allowed"); // TODO: replace exception
@@ -141,7 +142,7 @@ namespace MarkLogic.Client.Http
             return value;
         }
 
-        public async Task<IEnumerable<TResult>> RequestMultiple<TResult>(bool allowNull, Func<string, TResult> unmarshalValue)
+        public async Task<IEnumerable<TResult>> RequestMultiple<TResult>(bool allowNull, Func<Stream, Task<TResult>> unmarshalValue)
         {
             var response = await RequestAsync();
             if (!response.Content.IsMimeMultipartContent())
@@ -153,8 +154,7 @@ namespace MarkLogic.Client.Http
             var values = new List<TResult>();
             foreach (var content in contentStream.Contents)
             {
-                // TODO: check custom header "X-Primitive" and validate against TResult
-                var value = unmarshalValue(await content.ReadAsStringAsync());
+                var value = await unmarshalValue(await content.ReadAsStreamAsync());
                 values.Add(value);
             }
             response.Dispose();

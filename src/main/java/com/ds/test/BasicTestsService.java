@@ -2,8 +2,6 @@ package com.ds.test;
 
 // IMPORTANT: Do not edit. This file is generated.
 
-import com.marklogic.client.io.Format;
-import java.io.Reader;
 import java.util.stream.Stream;
 
 
@@ -33,16 +31,14 @@ public interface BasicTestsService {
             }
 
             @Override
-            public Reader returnArray(Reader value) {
-              return BaseProxy.ArrayType.toReader(
-                baseProxy
-                .request("returnArray.xqy", BaseProxy.ParameterValuesKind.SINGLE_NODE)
+            public void errorDetailLog() {
+              baseProxy
+                .request("errorDetailLog.xqy", BaseProxy.ParameterValuesKind.NONE)
                 .withSession()
                 .withParams(
-                    BaseProxy.documentParam("value", false, BaseProxy.ArrayType.fromReader(value)))
+                    )
                 .withMethod("POST")
-                .responseSingle(false, Format.JSON)
-                );
+                .responseNone();
             }
 
 
@@ -87,32 +83,18 @@ public interface BasicTestsService {
                 .responseNone();
             }
 
-
-            @Override
-            public Reader returnObjectNode(Reader value) {
-              return BaseProxy.ObjectType.toReader(
-                baseProxy
-                .request("returnObject.xqy", BaseProxy.ParameterValuesKind.SINGLE_NODE)
-                .withSession()
-                .withParams(
-                    BaseProxy.documentParam("value", false, BaseProxy.ObjectType.fromReader(value)))
-                .withMethod("POST")
-                .responseSingle(false, Format.JSON)
-                );
-            }
-
         }
 
         return new BasicTestsServiceImpl(db);
     }
 
   /**
-   * Accepts and returns a (JSON) array.
+   * Explicitly causes an error response.
    *
-   * @param value	provides input
-   * @return	as output
+   * 
+   * 
    */
-    Reader returnArray(Reader value);
+    void errorDetailLog();
 
   /**
    * Accepts multiple atomic values and returns a multi-line string containing the server-side values.
@@ -139,13 +121,5 @@ public interface BasicTestsService {
    * 
    */
     void returnNone();
-
-  /**
-   * Accepts and returns a (JSON) object.
-   *
-   * @param value	provides input
-   * @return	as output
-   */
-    Reader returnObjectNode(Reader value);
 
 }

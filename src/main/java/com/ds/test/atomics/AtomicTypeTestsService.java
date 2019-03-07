@@ -11,9 +11,9 @@ import com.marklogic.client.impl.BaseProxy;
 /**
  * API endpoints to test atomic data types.
  */
-public interface AtomicTestsService {
+public interface AtomicTypeTestsService {
     /**
-     * Creates a AtomicTestsService object for executing operations on the database server.
+     * Creates a AtomicTypeTestsService object for executing operations on the database server.
      *
      * The DatabaseClientFactory class can create the DatabaseClient parameter. A single
      * client object can be used for any number of requests and in multiple threads.
@@ -21,11 +21,11 @@ public interface AtomicTestsService {
      * @param db	provides a client for communicating with the database server
      * @return	an object for session state
      */
-    static AtomicTestsService on(DatabaseClient db) {
-        final class AtomicTestsServiceImpl implements AtomicTestsService {
+    static AtomicTypeTestsService on(DatabaseClient db) {
+        final class AtomicTypeTestsServiceImpl implements AtomicTypeTestsService {
             private BaseProxy baseProxy;
 
-            private AtomicTestsServiceImpl(DatabaseClient dbClient) {
+            private AtomicTypeTestsServiceImpl(DatabaseClient dbClient) {
                 baseProxy = new BaseProxy(dbClient, "/test/atomics/");
             }
 
@@ -170,6 +170,20 @@ public interface AtomicTestsService {
 
 
             @Override
+            public String returnTimeSpan(String value) {
+              return BaseProxy.DayTimeDurationType.toString(
+                baseProxy
+                .request("returnTimeSpan.xqy", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
+                .withSession()
+                .withParams(
+                    BaseProxy.atomicParam("value", false, BaseProxy.DayTimeDurationType.fromString(value)))
+                .withMethod("POST")
+                .responseSingle(false, null)
+                );
+            }
+
+
+            @Override
             public Integer returnUnsignedInteger(Integer value) {
               return BaseProxy.UnsignedIntegerType.toInteger(
                 baseProxy
@@ -198,7 +212,7 @@ public interface AtomicTestsService {
 
         }
 
-        return new AtomicTestsServiceImpl(db);
+        return new AtomicTypeTestsServiceImpl(db);
     }
 
   /**
@@ -280,6 +294,14 @@ public interface AtomicTestsService {
    * @return	as output
    */
     java.time.LocalTime returnTime(java.time.LocalTime value);
+
+  /**
+   * Accepts and returns a time span (dayTimeDuration).
+   *
+   * @param value	provides input
+   * @return	as output
+   */
+    String returnTimeSpan(String value);
 
   /**
    * Accepts and returns an unsigned integer.

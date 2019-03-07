@@ -33,7 +33,7 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
             Assert.Equal(3, results.Length);
             Assert.Equal(value1, results[0]);
             Assert.Equal(value2.ToString(), results[1]);
-            Assert.Equal(value3.ToISO8601_DateTime_3Decimals(), results[2]);
+            Assert.Equal(value3.ToISODateTime(), results[2]);
         }
 
         [Fact]

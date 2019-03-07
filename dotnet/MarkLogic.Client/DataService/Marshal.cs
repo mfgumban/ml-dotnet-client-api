@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 
 namespace MarkLogic.Client.DataService
 {
@@ -14,6 +15,16 @@ namespace MarkLogic.Client.DataService
             public const string Json = "application/json";
             public const string Xml = "application/xml";
         }
+
+        /// <summary>
+        /// The minimum value for xs:decimal in MarkLogic.
+        /// </summary>
+        public static readonly decimal MinDecimal = decimal.Parse("-18446744073709551615");
+
+        /// <summary>
+        /// The maximum value for xs:decimal in MarkLogic.
+        /// </summary>
+        public static readonly decimal MaxDecimal = 18446744073709551615;
 
         protected Marshal(string marshalledValue, string mediaType = MediaTypes.Text)
         {
@@ -47,57 +58,61 @@ namespace MarkLogic.Client.DataService
 
         public static Marshal Integer(int value)
         {
-            return new Marshal(Convert.ToString(value));
+            return new Marshal(XmlConvert.ToString(value));
         }
 
         public static Marshal UnsignedInteger(uint value)
         {
-            return new Marshal(Convert.ToString(value));
+            return new Marshal(XmlConvert.ToString(value));
         }
 
         public static Marshal Long(long value)
         {
-            return new Marshal(Convert.ToString(value));
+            return new Marshal(XmlConvert.ToString(value));
         }
 
         public static Marshal UnsignedLong(ulong value)
         {
-            return new Marshal(Convert.ToString(value));
+            return new Marshal(XmlConvert.ToString(value));
         }
 
         public static Marshal Float(float value)
         {
-            return new Marshal(Convert.ToString(value));
+            return new Marshal(XmlConvert.ToString(value));
         }
 
         public static Marshal Double(double value)
         {
-            return new Marshal(Convert.ToString(value));
+            return new Marshal(XmlConvert.ToString(value));
         }
 
         public static Marshal Decimal(decimal value)
         {
-            return new Marshal(Convert.ToString(value));
+            if (value < MinDecimal || value > MaxDecimal)
+            {
+                throw new ArgumentOutOfRangeException("value", value, $"MarkLogic xs:decimal will only support values between {MinDecimal} and {MaxDecimal}.");
+            }
+            return new Marshal(XmlConvert.ToString(value));
         }
 
         public static Marshal DateTime(DateTime value)
         {
-            return new Marshal(value.ToISO8601_DateTime_3Decimals());
+            return new Marshal(value.ToISODateTime());
         }
 
         public static Marshal Date(DateTime value)
         {
-            return new Marshal(value.ToISO8601_Date());
+            return new Marshal(value.ToISODate());
         }
 
         public static Marshal Time(DateTime value)
         {
-            return new Marshal(value.ToISO8601_Time_3Decimals());
+            return new Marshal(value.ToISOTime());
         }
 
         public static Marshal TimeSpan(TimeSpan value)
         {
-            throw new NotImplementedException();
+            return new Marshal(XmlConvert.ToString(value));
         }
 
         public static Marshal StreamAsText(Stream stream)
@@ -117,12 +132,12 @@ namespace MarkLogic.Client.DataService
 
         public static Marshal JsonObject(JObject value)
         {
-            return new Marshal(value.ToString(Formatting.None), MediaTypes.Json);
+            return new Marshal(value.ToString(Newtonsoft.Json.Formatting.None), MediaTypes.Json);
         }
 
         public static Marshal JsonArray(JArray value)
         {
-            return new Marshal(value.ToString(Formatting.None), MediaTypes.Json);
+            return new Marshal(value.ToString(Newtonsoft.Json.Formatting.None), MediaTypes.Json);
         }
     }
 }

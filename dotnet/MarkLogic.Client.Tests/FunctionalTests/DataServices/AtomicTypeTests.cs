@@ -219,24 +219,20 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
         public async void TestReturnDecimalMin()
         {
             var value = decimal.MinValue;
-            var result = await AtomicTypeTestsService.Create(DbClient).returnDecimal(value);
-            OutputResults(value, result);
-            Assert.Equal(value, result);
+            var result = await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await AtomicTypeTestsService.Create(DbClient).returnDecimal(value));
         }
 
         [Fact]
         public async void TestReturnDecimalMax()
         {
             var value = decimal.MaxValue;
-            var result = await AtomicTypeTestsService.Create(DbClient).returnDecimal(value);
-            OutputResults(value, result);
-            Assert.Equal(value, result);
+            var result = await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await AtomicTypeTestsService.Create(DbClient).returnDecimal(value));
         }
 
         [Fact]
         public async void TestReturnDateTime()
         {
-            var value = DateTime.Now;
+            var value = DateTime.Now.AsISO8601();
             var result = await AtomicTypeTestsService.Create(DbClient).returnDateTime(value);
             OutputResults(value, result);
             Assert.Equal(value, result);
@@ -245,7 +241,7 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
         [Fact]
         public async void TestReturnDateTimeMin()
         {
-            var value = DateTime.MinValue;
+            var value = DateTime.MinValue.AsISO8601();
             var result = await AtomicTypeTestsService.Create(DbClient).returnDateTime(value);
             OutputResults(value, result);
             Assert.Equal(value, result);
@@ -254,7 +250,7 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
         [Fact]
         public async void TestReturnDateTimeMax()
         {
-            var value = DateTime.MaxValue;
+            var value = DateTime.MaxValue.AsISO8601();
             var result = await AtomicTypeTestsService.Create(DbClient).returnDateTime(value);
             OutputResults(value, result);
             Assert.Equal(value, result);
@@ -272,14 +268,7 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
         [Fact]
         public async void TestReturnTime()
         {
-            var now = DateTime.Now;
-            var value = new DateTime(
-                DateTime.MinValue.Year,
-                DateTime.MinValue.Month,
-                DateTime.MinValue.Day,
-                now.Hour,
-                now.Minute,
-                now.Second);
+            var value = DateTime.Now.AsISO8601();
             var result = await AtomicTypeTestsService.Create(DbClient).returnDateTime(value);
             OutputResults(value, result);
             Assert.Equal(value, result);

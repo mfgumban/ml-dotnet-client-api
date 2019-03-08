@@ -59,13 +59,31 @@ namespace MarkLogic.Client.Http
             return this;
         }
 
+        private static string GetContentType(Marshal.MediaTypes mediaType)
+        {
+            switch(mediaType)
+            {
+                case Marshal.MediaTypes.String:
+                case Marshal.MediaTypes.Text:
+                    return "text/plain";
+                case Marshal.MediaTypes.Json:
+                    return "application/json";
+                case Marshal.MediaTypes.Xml:
+                    return "application/xml";
+                case Marshal.MediaTypes.Binary:
+                    return "application/octet-stream";
+                default:
+                    throw new InvalidOperationException("Unsupported marshal media type.");
+            }
+        }
+
         private static List<HttpContent> BuildParameterHttpContent(DataServiceParameter parameter)
         {
             var contents = new List<HttpContent>();
             foreach(var marshal in parameter.GetMarshals())
             {
                 var content = marshal.IsStream ? new StreamContent(marshal.Stream) as HttpContent : new StringContent(marshal.Value);
-                content.Headers.ContentType = new MediaTypeHeaderValue(marshal.MediaType);
+                content.Headers.ContentType = new MediaTypeHeaderValue(GetContentType(marshal.MediaType));
                 content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data") { Name = "\"" + parameter.Name + "\"" };
                 contents.Add(content);
             }
@@ -84,7 +102,7 @@ namespace MarkLogic.Client.Http
                 HttpContent content = null;
                 if (_parameters.Count > 0)
                 {
-                    var requireMultipart = _parameters.SelectMany(p => p.GetMarshals()).FirstOrDefault(m => m.MediaType != Marshal.MediaTypes.Text) != null;
+                    var requireMultipart = _parameters.SelectMany(p => p.GetMarshals()).FirstOrDefault(m => m.MediaType != Marshal.MediaTypes.String) != null;
                     if (requireMultipart)
                     {
                         var multiPartContent = new MultipartFormDataContent();

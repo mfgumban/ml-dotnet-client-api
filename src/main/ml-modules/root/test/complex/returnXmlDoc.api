@@ -1,0 +1,13 @@
+{
+  "functionName": "returnXmlDoc",
+  "desc": "Accepts and returns an XML document.",
+  "params": [{
+    "name": "value",
+    "datatype": "xmlDocument",
+    "nullable": false
+  }],
+  "return": {
+    "datatype": "xmlDocument"
+  },
+  "errorDetail": "return"
+}

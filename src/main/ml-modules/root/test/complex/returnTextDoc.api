@@ -1,0 +1,13 @@
+{
+  "functionName": "returnTextDoc",
+  "desc": "Accepts and returns a text document.",
+  "params": [{
+    "name": "value",
+    "datatype": "textDocument",
+    "nullable": false
+  }],
+  "return": {
+    "datatype": "textDocument"
+  },
+  "errorDetail": "return"
+}

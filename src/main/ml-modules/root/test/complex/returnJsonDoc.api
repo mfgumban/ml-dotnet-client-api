@@ -1,0 +1,13 @@
+{
+  "functionName": "returnJsonDoc",
+  "desc": "Accepts and returns a JSON document.",
+  "params": [{
+    "name": "value",
+    "datatype": "jsonDocument",
+    "nullable": false
+  }],
+  "return": {
+    "datatype": "jsonDocument"
+  },
+  "errorDetail": "return"
+}

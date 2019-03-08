@@ -61,6 +61,20 @@ public interface ComplexTypeTestsService {
 
 
             @Override
+            public Reader returnJsonDoc(Reader value) {
+              return BaseProxy.JsonDocumentType.toReader(
+                baseProxy
+                .request("returnJsonDoc.xqy", BaseProxy.ParameterValuesKind.SINGLE_NODE)
+                .withSession()
+                .withParams(
+                    BaseProxy.documentParam("value", false, BaseProxy.JsonDocumentType.fromReader(value)))
+                .withMethod("POST")
+                .responseSingle(false, Format.JSON)
+                );
+            }
+
+
+            @Override
             public Reader returnObjectNode(Reader value) {
               return BaseProxy.ObjectType.toReader(
                 baseProxy
@@ -70,6 +84,34 @@ public interface ComplexTypeTestsService {
                     BaseProxy.documentParam("value", false, BaseProxy.ObjectType.fromReader(value)))
                 .withMethod("POST")
                 .responseSingle(false, Format.JSON)
+                );
+            }
+
+
+            @Override
+            public Reader returnTextDoc(Reader value) {
+              return BaseProxy.TextDocumentType.toReader(
+                baseProxy
+                .request("returnTextDoc.xqy", BaseProxy.ParameterValuesKind.SINGLE_NODE)
+                .withSession()
+                .withParams(
+                    BaseProxy.documentParam("value", false, BaseProxy.TextDocumentType.fromReader(value)))
+                .withMethod("POST")
+                .responseSingle(false, Format.TEXT)
+                );
+            }
+
+
+            @Override
+            public Reader returnXmlDoc(Reader value) {
+              return BaseProxy.XmlDocumentType.toReader(
+                baseProxy
+                .request("returnXmlDoc.xqy", BaseProxy.ParameterValuesKind.SINGLE_NODE)
+                .withSession()
+                .withParams(
+                    BaseProxy.documentParam("value", false, BaseProxy.XmlDocumentType.fromReader(value)))
+                .withMethod("POST")
+                .responseSingle(false, Format.XML)
                 );
             }
 
@@ -95,11 +137,35 @@ public interface ComplexTypeTestsService {
     InputStream returnBinary(InputStream value);
 
   /**
+   * Accepts and returns a JSON document.
+   *
+   * @param value	provides input
+   * @return	as output
+   */
+    Reader returnJsonDoc(Reader value);
+
+  /**
    * Accepts and returns a (JSON) object.
    *
    * @param value	provides input
    * @return	as output
    */
     Reader returnObjectNode(Reader value);
+
+  /**
+   * Accepts and returns a text document.
+   *
+   * @param value	provides input
+   * @return	as output
+   */
+    Reader returnTextDoc(Reader value);
+
+  /**
+   * Accepts and returns an XML document.
+   *
+   * @param value	provides input
+   * @return	as output
+   */
+    Reader returnXmlDoc(Reader value);
 
 }

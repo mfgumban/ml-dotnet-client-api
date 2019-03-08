@@ -40,5 +40,29 @@ namespace MarkLogic.Client.Tests.DataServices
                     new SingleParameter<Stream>("value", false, value, Marshal.StreamAsBinary))
                 .RequestSingle<Stream>(false, Unmarshal.Stream);
         }
+
+        public Task<Stream> returnTextDoc(Stream value)
+        {
+            return CreateRequest("returnTextDoc.xqy")
+                .WithParameters(
+                    new SingleParameter<Stream>("value", false, value, Marshal.StreamAsText))
+                .RequestSingle<Stream>(false, Unmarshal.Stream);
+        }
+
+        public Task<Stream> returnJsonDoc(Stream value)
+        {
+            return CreateRequest("returnJsonDoc.xqy")
+                .WithParameters(
+                    new SingleParameter<Stream>("value", false, value, Marshal.StreamAsJson))
+                .RequestSingle<Stream>(false, Unmarshal.Stream);
+        }
+
+        public Task<Stream> returnXmlDoc(Stream value)
+        {
+            return CreateRequest("returnXmlDoc.xqy")
+                .WithParameters(
+                    new SingleParameter<Stream>("value", false, value, Marshal.StreamAsXml))
+                .RequestSingle<Stream>(false, Unmarshal.Stream);
+        }
     }
 }

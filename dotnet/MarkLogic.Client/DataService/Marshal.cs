@@ -1,7 +1,5 @@
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
@@ -9,14 +7,15 @@ namespace MarkLogic.Client.DataService
 {
     public class Marshal
     {
-        public static class MediaTypes
+        public enum MediaTypes
         {
-            public const string Text = "text/plain";
-            public const string Json = "application/json";
-            public const string Xml = "application/xml";
-            public const string Binary = "application/octet-stream";
+            String,
+            Text,
+            Json,
+            Xml,
+            Binary
         }
-
+        
         /// <summary>
         /// The minimum value for xs:decimal in MarkLogic.
         /// </summary>
@@ -27,13 +26,13 @@ namespace MarkLogic.Client.DataService
         /// </summary>
         public static readonly decimal MaxDecimal = 18446744073709551615;
 
-        protected Marshal(string marshalledValue, string mediaType = MediaTypes.Text)
+        protected Marshal(string marshalledValue, MediaTypes mediaType = MediaTypes.String)
         {
             Value = marshalledValue;
             MediaType = mediaType;
         }
 
-        protected Marshal(Stream marshalledStream, string mediaType)
+        protected Marshal(Stream marshalledStream, MediaTypes mediaType)
         {
             Stream = marshalledStream;
             MediaType = mediaType;
@@ -41,7 +40,7 @@ namespace MarkLogic.Client.DataService
 
         public string Value { get; private set; }
 
-        public string MediaType { get; private set; }
+        public MediaTypes MediaType { get; private set; }
 
         public Stream Stream { get; private set; }
 

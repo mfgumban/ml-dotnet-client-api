@@ -68,5 +68,30 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
             input.Dispose();
             result.Dispose();
         }
+
+        [Fact]
+        public async void TestReturnTextDoc()
+        {
+            var inputData = "The quick brown fox jumped over the lazy dog beside the riverbank.";
+            var input = new MemoryStream();
+            var inputWriter = new StreamWriter(input);
+            await inputWriter.WriteAsync(inputData);
+            inputWriter.Flush();
+            input.Position = 0;
+
+            var result = await ComplexTypeTestsService.Create(DbClient).returnTextDoc(input);
+
+            Assert.NotNull(result);
+
+            var resultReader = new StreamReader(result);
+            var resultData = await resultReader.ReadToEndAsync();
+            OutputResults(inputData, resultData);
+            Assert.Equal(inputData, resultData);
+
+            inputWriter.Dispose();
+            resultReader.Dispose();
+            input.Dispose();
+            result.Dispose();
+        }
     }
 }

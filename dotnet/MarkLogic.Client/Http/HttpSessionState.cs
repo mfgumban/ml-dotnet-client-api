@@ -18,7 +18,7 @@ namespace MarkLogic.Client.Http
         {
             var idBytes = new byte[8];
             _idGenerator.Value.GetNonZeroBytes(idBytes);
-            SessionId = BitConverter.ToInt64(idBytes, 0).ToString();
+            SessionId = BitConverter.ToUInt64(idBytes, 0).ToString();
             _cookieJar = new CookieContainer();
         }
 
@@ -26,13 +26,9 @@ namespace MarkLogic.Client.Http
 
         internal void PrepareRequest(Uri requestUri, HttpRequestMessage request)
         {
-            var cookies = _cookieJar.GetCookies(requestUri);
-            if (cookies.Count > 0)
-            {
-                _cookieJar.Add(requestUri, new Cookie(HeaderNames.Cookie, $"SessionID={SessionId}"));
-                var cookieHeader = _cookieJar.GetCookieHeader(requestUri);
-                request.Headers.Add(HeaderNames.Cookie, cookieHeader);
-            }
+            _cookieJar.Add(requestUri, new Cookie("SessionID", SessionId));
+            var cookieHeader = _cookieJar.GetCookieHeader(requestUri);
+            request.Headers.Add(HeaderNames.Cookie, cookieHeader);
         }
 
         internal void ProcessResponse(Uri requestUri, HttpResponseMessage response)

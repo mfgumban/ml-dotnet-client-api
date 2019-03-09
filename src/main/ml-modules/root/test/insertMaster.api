@@ -1,0 +1,18 @@
+{
+  "functionName": "insertMaster",
+  "desc": "Inserts a document representing a top-level entity.",
+  "params": [{
+    "name": "name",
+    "datatype": "string",
+    "nullable": false
+  }, {
+    "name": "session",
+    "datatype": "session",
+    "nullable": false
+  }],
+  "return": {
+    "datatype": "string",
+    "desc": "The entity's unique ID."
+  },
+  "errorDetail": "return"
+}

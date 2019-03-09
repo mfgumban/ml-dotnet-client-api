@@ -1,0 +1,21 @@
+{
+  "functionName": "insertDetail",
+  "desc": "Inserts a document representing a child entity and commits the transaction.",
+  "params": [{
+    "name": "id",
+    "datatype": "string",
+    "nullable": false
+  }, {
+    "name": "itemName",
+    "datatype": "string",
+    "nullable": false
+  }, {
+    "name": "session",
+    "datatype": "session",
+    "nullable": false
+  }],
+  "return": {
+    "datatype": "jsonDocument"
+  },
+  "errorDetail": "return"
+}

@@ -38,7 +38,7 @@ namespace MarkLogic.Client.Http
 
         public IDataServiceRequest WithSession(ISessionState session)
         {
-            if (HttpSession == null)
+            if (session == null)
             {
                 HttpSession = null;
             }
@@ -94,9 +94,10 @@ namespace MarkLogic.Client.Http
         {
             using (var request = new HttpRequestMessage(HttpMethod, $"{ServicePath}{ModuleName}"))
             {
+                var absRequestUri = new Uri(_dbClient.Http.BaseAddress, request.RequestUri);
                 if (HasSession)
                 {
-                    HttpSession.PrepareRequest(request.RequestUri, request);
+                    HttpSession.PrepareRequest(absRequestUri, request);
                 }
 
                 HttpContent content = null;
@@ -130,7 +131,7 @@ namespace MarkLogic.Client.Http
 
                 if (HasSession)
                 {
-                    HttpSession.ProcessResponse(request.RequestUri, response);
+                    HttpSession.ProcessResponse(absRequestUri, response);
                 }
 
                 return response;

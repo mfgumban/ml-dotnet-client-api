@@ -1,4 +1,5 @@
 ﻿using MarkLogic.Client.DataService;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -14,6 +15,11 @@ namespace MarkLogic.Client.Tests.DataServices
         public static BasicTestsService Create(IDatabaseClient dbClient)
         {
             return new BasicTestsService(dbClient);
+        }
+
+        public ISessionState NewSession()
+        {
+            return DbClient.CreateSession();
         }
 
         public Task<string> returnMultipleAtomic(string value1, int value2, DateTime value3)
@@ -44,6 +50,25 @@ namespace MarkLogic.Client.Tests.DataServices
         {
             return CreateRequest("errorDetailLog.xqy")
                 .RequestNone();
+        }
+
+        public Task<string> insertMaster(string name, ISessionState session)
+        {
+            return CreateRequest("insertMaster.xqy")
+                .WithSession(session)
+                .WithParameters(
+                    new SingleParameter<string>("name", false, name, Marshal.String))
+                .RequestSingle<string>(false, Unmarshal.String);
+        }
+
+        public Task<JObject> insertDetail(string id, string name, ISessionState session)
+        {
+            return CreateRequest("insertMaster.xqy")
+                .WithSession(session)
+                .WithParameters(
+                    new SingleParameter<string>("id", false, name, Marshal.String),
+                    new SingleParameter<string>("name", false, name, Marshal.String))
+                .RequestSingle<JObject>(false, Unmarshal.JsonObject);
         }
     }
 }

@@ -44,4 +44,11 @@ public class BasicTests extends TestBase {
     List<Integer> results = response.collect(Collectors.toList());
     results.forEach(System.out::println);
   }
+
+  @Test
+  public void testSession() throws IOException {
+    SessionState session = testService.newSessionState();
+    String id = testService.insertMaster("Purchase Order 1", session);
+    Reader result = testService.insertDetail(id, "PO Item 1", session);
+  }
 }

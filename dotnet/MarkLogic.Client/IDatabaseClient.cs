@@ -19,5 +19,7 @@ namespace MarkLogic.Client
     public interface IDatabaseClient : IDisposable
     {
         IDataServiceRequest CreateDataServiceRequest(string servicePath, string moduleName);
+
+        ISessionState CreateSession();
     }
 }

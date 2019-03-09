@@ -20,6 +20,11 @@ namespace MarkLogic.Client.Http
             return new HttpDataServiceRequest(this, servicePath, moduleName);
         }
 
+        public ISessionState CreateSession()
+        {
+            return new HttpSessionState();
+        }
+
         public void Dispose()
         {
             Http.Dispose();

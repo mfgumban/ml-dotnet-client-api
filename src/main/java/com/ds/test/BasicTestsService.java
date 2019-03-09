@@ -2,6 +2,9 @@ package com.ds.test;
 
 // IMPORTANT: Do not edit. This file is generated.
 
+import com.marklogic.client.SessionState;
+import com.marklogic.client.io.Format;
+import java.io.Reader;
 import java.util.stream.Stream;
 
 
@@ -29,6 +32,10 @@ public interface BasicTestsService {
             private BasicTestsServiceImpl(DatabaseClient dbClient) {
                 baseProxy = new BaseProxy(dbClient, "/test/");
             }
+            @Override
+            public SessionState newSessionState() {
+              return baseProxy.newSessionState();
+            }
 
             @Override
             public void errorDetailLog() {
@@ -39,6 +46,35 @@ public interface BasicTestsService {
                     )
                 .withMethod("POST")
                 .responseNone();
+            }
+
+
+            @Override
+            public Reader insertDetail(String id, String itemName, SessionState session) {
+              return BaseProxy.JsonDocumentType.toReader(
+                baseProxy
+                .request("insertDetail.xqy", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS)
+                .withSession("session", session, false)
+                .withParams(
+                    BaseProxy.atomicParam("id", false, BaseProxy.StringType.fromString(id)),
+                    BaseProxy.atomicParam("itemName", false, BaseProxy.StringType.fromString(itemName)))
+                .withMethod("POST")
+                .responseSingle(false, Format.JSON)
+                );
+            }
+
+
+            @Override
+            public String insertMaster(String name, SessionState session) {
+              return BaseProxy.StringType.toString(
+                baseProxy
+                .request("insertMaster.xqy", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
+                .withSession("session", session, false)
+                .withParams(
+                    BaseProxy.atomicParam("name", false, BaseProxy.StringType.fromString(name)))
+                .withMethod("POST")
+                .responseSingle(false, null)
+                );
             }
 
 
@@ -87,6 +123,13 @@ public interface BasicTestsService {
 
         return new BasicTestsServiceImpl(db);
     }
+    /**
+     * Creates an object to track a session for a set of operations
+     * that require session state on the database server.
+     *
+     * @return	an object for session state
+     */
+    SessionState newSessionState();
 
   /**
    * Explicitly causes an error response.
@@ -95,6 +138,25 @@ public interface BasicTestsService {
    * 
    */
     void errorDetailLog();
+
+  /**
+   * Inserts a document representing a child entity and commits the transaction.
+   *
+   * @param id	provides input
+   * @param itemName	provides input
+   * @param session	provides input
+   * @return	as output
+   */
+    Reader insertDetail(String id, String itemName, SessionState session);
+
+  /**
+   * Inserts a document representing a top-level entity.
+   *
+   * @param name	provides input
+   * @param session	provides input
+   * @return	The entity's unique ID.
+   */
+    String insertMaster(String name, SessionState session);
 
   /**
    * Accepts multiple atomic values and returns a multi-line string containing the server-side values.

@@ -53,5 +53,19 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
             Assert.Equal(500, exception.StatusCode); // Internal Server Error
             Assert.Equal("Deliberate error", exception.MessageDetailTitle);
         }
+
+        [Fact]
+        public async void TestSession()
+        {
+            var service = BasicTestsService.Create(DbClient);
+
+            var entityName = "Master Entity Name 1";
+            var itemName = "Item Name 1";
+            var session = service.NewSession();
+            var id = await service.insertMaster(entityName, session);
+            var result = await service.insertDetail(id, itemName, session);
+
+            Assert.NotNull(result);
+        }
     }
 }

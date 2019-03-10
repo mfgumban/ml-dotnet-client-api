@@ -8,11 +8,13 @@ declare variable $itemName as xs:string external;
 declare variable $session as xs:string external;
 
 let $uri := fn:concat("/test/insertMaster/", $id, ".json")
+let $_ := xdmp:set-session-field("uri", $uri)
 return (
   xdmp:node-insert-child(
     fn:doc($uri)/object-node()/array-node("items"),
     object-node {
       "itemName": $itemName
     }),
-  xdmp:commit(),
-  fn:doc($uri))
+  xdmp:commit());
+
+fn:doc(xdmp:get-session-field("uri"))

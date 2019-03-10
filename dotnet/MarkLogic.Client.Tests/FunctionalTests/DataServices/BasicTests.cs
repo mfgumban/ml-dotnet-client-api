@@ -66,6 +66,9 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
             var result = await service.insertDetail(id, itemName, session);
 
             Assert.NotNull(result);
+            Assert.Equal(id, result.Value<string>("id"));
+            Assert.Equal(entityName, result.Value<string>("name"));
+            Assert.Equal(itemName, result.SelectToken("items[0].itemName").Value<string>());
         }
     }
 }

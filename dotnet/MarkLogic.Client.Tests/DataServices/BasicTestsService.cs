@@ -61,13 +61,13 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<string>(false, Unmarshal.String);
         }
 
-        public Task<JObject> insertDetail(string id, string name, ISessionState session)
+        public Task<JObject> insertDetail(string id, string itemName, ISessionState session)
         {
-            return CreateRequest("insertMaster.xqy")
+            return CreateRequest("insertDetail.xqy")
                 .WithSession(session)
                 .WithParameters(
-                    new SingleParameter<string>("id", false, name, Marshal.String),
-                    new SingleParameter<string>("name", false, name, Marshal.String))
+                    new SingleParameter<string>("id", false, id, Marshal.String),
+                    new SingleParameter<string>("itemName", false, itemName, Marshal.String))
                 .RequestSingle<JObject>(false, Unmarshal.JsonObject);
         }
     }

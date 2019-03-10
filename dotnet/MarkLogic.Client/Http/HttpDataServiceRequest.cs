@@ -106,7 +106,7 @@ namespace MarkLogic.Client.Http
                     var requireMultipart = _parameters.SelectMany(p => p.GetMarshals()).FirstOrDefault(m => m.MediaType != Marshal.MediaTypes.String) != null;
                     if (requireMultipart)
                     {
-                        var multiPartContent = new MultipartFormDataContent();
+                        var multiPartContent = new MultipartFormDataContent(); 
                         _parameters.ForEach(p => BuildParameterHttpContent(p).ForEach(paramContent => multiPartContent.Add(paramContent, p.Name)));
                         content = multiPartContent;
                     }

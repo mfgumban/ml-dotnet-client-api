@@ -19,5 +19,8 @@ namespace MarkLogic.Client.DataService.CodeGen
 
         [JsonProperty("multiple")]
         public bool Multiple { get; set; }
+
+        [JsonIgnore]
+        public bool IsSession => DataType.EqualsIgnoreCase("session");
     }
 }

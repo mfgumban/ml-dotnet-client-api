@@ -31,9 +31,7 @@ namespace MarkLogic.Client.Http
             {
                 cookies.Add(cookie);
             }
-            if (!_cookieJar.Any(c => 
-                c.Name.Equals("SessionID", StringComparison.InvariantCultureIgnoreCase) && 
-                c.Domain.Equals(requestUri.Host, StringComparison.InvariantCultureIgnoreCase)))
+            if (!_cookieJar.Any(c => c.Name.EqualsIgnoreCase("SessionID") && c.Domain.EqualsIgnoreCase(requestUri.Host)))
             {
                 cookies.Add(new Cookie("SessionID", SessionId, "/", requestUri.Host));
             }
@@ -53,9 +51,7 @@ namespace MarkLogic.Client.Http
                 }
                 foreach(Cookie cookie in cookies.GetCookies(requestUri))
                 {
-                    var existingCookie = _cookieJar.FirstOrDefault(c =>
-                        c.Name.Equals(cookie.Name, StringComparison.InvariantCultureIgnoreCase) &&
-                        c.Domain.Equals(requestUri.Host, StringComparison.InvariantCultureIgnoreCase));
+                    var existingCookie = _cookieJar.FirstOrDefault(c => c.Name.EqualsIgnoreCase(cookie.Name) && c.Domain.EqualsIgnoreCase(requestUri.Host));
                     if (existingCookie != null)
                     {
                         _cookieJar.Remove(existingCookie);

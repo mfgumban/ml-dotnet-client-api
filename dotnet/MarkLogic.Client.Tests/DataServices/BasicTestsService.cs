@@ -55,7 +55,7 @@ namespace MarkLogic.Client.Tests.DataServices
         public Task<string> insertMaster(string name, ISessionState session)
         {
             return CreateRequest("insertMaster.xqy")
-                .WithSession(session)
+                .WithSession(session, false)
                 .WithParameters(
                     new SingleParameter<string>("name", false, name, Marshal.String))
                 .RequestSingle<string>(false, Unmarshal.String);
@@ -64,7 +64,7 @@ namespace MarkLogic.Client.Tests.DataServices
         public Task<JObject> insertDetail(string id, string itemName, ISessionState session)
         {
             return CreateRequest("insertDetail.xqy")
-                .WithSession(session)
+                .WithSession(session, false)
                 .WithParameters(
                     new SingleParameter<string>("id", false, id, Marshal.String),
                     new SingleParameter<string>("itemName", false, itemName, Marshal.String))

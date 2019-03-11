@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace MarkLogic.Client.DataService.CodeGen
@@ -14,7 +15,7 @@ namespace MarkLogic.Client.DataService.CodeGen
             // TODO: validate inputs
 
             WriteUsings(serviceDecl, endpointDecls, output);
-            WritePreamble(serviceDecl, output);
+            WritePreamble(serviceDecl, endpointDecls, output);
             foreach (var endpointDecl in endpointDecls)
             {
                 WriteEndpoint(serviceDecl, endpointDecl, output);
@@ -37,7 +38,7 @@ namespace MarkLogic.Client.DataService.CodeGen
 
         private static void WriteUsings(Service serviceDecl, Endpoint[] endpointDecls, TextWriter output)
         {
-            var reqNs = endpointDecls.SelectMany(e => e.Parameters.Select(p => MatchDataType(p.DataType).DefaultType.Namespace)).Where(ns => !string.IsNullOrWhiteSpace(ns));
+            var reqNs = endpointDecls.SelectMany(e => e.ParametersNoSession.Select(p => MatchDataType(p.DataType).DefaultType.Namespace)).Where(ns => !string.IsNullOrWhiteSpace(ns));
             var allNs = StaticNamespaces.Union(reqNs).OrderBy(ns => ns);
             foreach (var ns in allNs)
             {
@@ -45,7 +46,7 @@ namespace MarkLogic.Client.DataService.CodeGen
             }
         }
 
-        private static void WritePreamble(Service serviceDecl, TextWriter output)
+        private static void WritePreamble(Service serviceDecl, Endpoint[] endpointDecls, TextWriter output)
         {
             output.WriteLine($@"
 namespace {serviceDecl.Namespace}
@@ -72,11 +73,24 @@ namespace {serviceDecl.Namespace}
         {{
             return new {serviceDecl.ClassName}(dbClient);
         }}");
+
+            if (endpointDecls.FirstOrDefault(e => e.HasSession) != null)
+            {
+                output.WriteLine(@"
+        /// <summary>
+        /// Creates a new session.
+        /// </summary>
+        /// <returns>A new ISessionState object.</returns>
+        public ISessionState NewSession()
+        {
+            return DbClient.CreateSession();
+        }");
+            }
         }
 
         private static void WriteAfterword(TextWriter output)
         {
-            output.WriteLine($"{Indent}}}\n}}");
+            output.WriteLine($"{ Indent}}}\n}}");
         }
 
         private static void WriteEndpoint(Service serviceDecl, Endpoint endpointDecl, TextWriter output)
@@ -101,15 +115,17 @@ namespace {serviceDecl.Namespace}
             output.WriteLine($"{Indent2}{{");
             output.WriteLine($"{Indent3}return CreateRequest(\"{endpointDecl.ModuleName}\")");
 
-            if (endpointDecl.RequireSession)
+            if (endpointDecl.HasSession)
             {
-                output.WriteLine($"{Indent4}.WithSession(\"session\")");
+                var sessionParam = endpointDecl.Session;
+                output.WriteLine($"{Indent4}.WithSession({sessionParam.Name}, {sessionParam.Nullable.ToString().ToLower()})");
             }
 
-            if (endpointDecl.Parameters.Count > 0)
+            var parameters = new List<Parameter>(endpointDecl.ParametersNoSession);
+            if (parameters.Count > 0)
             {
                 output.WriteLine($"{Indent4}.WithParameters(");
-                for(var i = 0; i < endpointDecl.Parameters.Count; i++)
+                for(var i = 0; i < parameters.Count; i++)
                 {
                     var param = endpointDecl.Parameters[i];
                     output.WriteLine($"{Indent5}new {(param.Multiple ? "MultipleParameter" : "SingleParameter")}<{GetParameterType(param, false)}>(\"{param.Name}\", {param.Nullable.ToString().ToLower()}, {param.Name}, Marshal.{GetMarshalMethod(param)}){(i == endpointDecl.Parameters.Count - 1 ? ")" : ", ")}");
@@ -136,7 +152,7 @@ namespace {serviceDecl.Namespace}
 
         private static string GetParameterType(Parameter param, bool isMultiple)
         {
-            return GetDataType(param.DataType, isMultiple, param.Nullable);
+            return param.IsSession ? "ISessionState" : GetDataType(param.DataType, isMultiple, param.Nullable);
         }
 
         private static string GetMarshalMethod(Parameter param)

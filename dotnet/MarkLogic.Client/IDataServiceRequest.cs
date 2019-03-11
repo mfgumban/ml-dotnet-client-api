@@ -13,7 +13,7 @@ namespace MarkLogic.Client
 
         ISessionState Session { get; }
 
-        IDataServiceRequest WithSession(ISessionState session);
+        IDataServiceRequest WithSession(ISessionState session, bool allowNull);
 
         IEnumerable<DataServiceParameter> Parameters { get; }
 

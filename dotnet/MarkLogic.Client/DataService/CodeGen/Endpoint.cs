@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MarkLogic.Client.DataService.CodeGen
@@ -35,7 +36,13 @@ namespace MarkLogic.Client.DataService.CodeGen
         public string ErrorDetail { get; set; }
 
         [JsonIgnore]
-        public bool RequireSession { get; }
+        public Parameter Session => Parameters.FirstOrDefault(p => p.IsSession);
+
+        [JsonIgnore]
+        public IEnumerable<Parameter> ParametersNoSession => Session == null ? Parameters : Parameters.Except(new[] { Session });
+
+        [JsonIgnore]
+        public bool HasSession => Session != null;
 
         public static async Task<Endpoint> FromStreamAsync(Stream stream)
         {

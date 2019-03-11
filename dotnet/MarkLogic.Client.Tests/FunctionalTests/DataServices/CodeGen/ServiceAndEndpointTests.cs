@@ -1,4 +1,5 @@
 ﻿using MarkLogic.Client.DataService.CodeGen;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -96,6 +97,45 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices.CodeGen
             Assert.NotNull(service);
             Assert.Equal("MyService", service.ClassName);
             Assert.True(string.IsNullOrWhiteSpace(service.Namespace));
+        }
+
+        public const string EndpointWithSessionDeclaration = @"
+        {
+          ""functionName"": ""testEndpointWithSession"",
+          ""desc"": ""The endpoint's declaration."",
+          ""params"": [{
+            ""name"": ""value1"",
+            ""desc"": ""The first parameter."",
+            ""datatype"": ""string"",
+            ""nullable"": false,
+            ""multiple"": false
+          }, {
+            ""name"": ""value2"",
+            ""datatype"": ""int"",
+            ""multiple"": true,
+            ""nullable"": false
+          }, {
+            ""name"": ""session"",
+            ""datatype"": ""session"",
+            ""nullable"": true
+          }],
+          ""return"": {
+            ""datatype"": ""string"",
+            ""desc"": ""The return value."",
+            ""nullable"": false,
+            ""multiple"": false
+          },
+          ""errorDetail"": ""return""
+        }";
+
+        [Fact]
+        public void TestEndpointWithSession()
+        {
+            var endpoint = Endpoint.FromString(EndpointWithSessionDeclaration);
+            Assert.NotNull(endpoint);
+            Assert.True(endpoint.HasSession);
+            Assert.True(endpoint.Session.Nullable);
+            Assert.Null(endpoint.ParametersNoSession.FirstOrDefault(p => p.Name.EqualsIgnoreCase("session")));
         }
     }
 }

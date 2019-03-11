@@ -36,8 +36,12 @@ namespace MarkLogic.Client.Http
 
         public IEnumerable<DataServiceParameter> Parameters => _parameters;
 
-        public IDataServiceRequest WithSession(ISessionState session)
+        public IDataServiceRequest WithSession(ISessionState session, bool allowNull)
         {
+            if (!allowNull && session == null)
+            {
+                throw new ArgumentNullException("session");
+            }
             if (session == null)
             {
                 HttpSession = null;

@@ -36,14 +36,22 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
             Assert.Equal(value3.ToISODateTime(), results[2]);
         }
 
-        [Fact]
-        public async void TestReturnMultiValue()
+        [Theory]
+        [InlineData(new[] { 1 })]
+        [InlineData(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 })]
+        public async void TestReturnMultiValue(int[] values)
         {
-            var values = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
             var results = await BasicTestsService.Create(DbClient).returnMultiValue(values);
-            results.ToList().ForEach(r => Output.WriteLine(r.ToString()));
-
+            OutputResults(string.Join(",", values), string.Join(",", results));
             Assert.Equal(values, results);
+        }
+
+        [Theory]
+        [InlineData(new int[0])]
+        [InlineData(null)]
+        public async void TestReturnMultiValueNull(int[] values)
+        {
+            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => BasicTestsService.Create(DbClient).returnMultiValue(values));
         }
 
         [Fact]

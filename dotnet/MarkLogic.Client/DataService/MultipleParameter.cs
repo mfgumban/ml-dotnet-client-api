@@ -11,15 +11,16 @@ namespace MarkLogic.Client.DataService
         public MultipleParameter(string name, bool allowNull, IEnumerable<T> values, Func<T, Marshal> marshalValue)
             : base(name, allowNull)
         {
-            foreach(var value in values)
+            var vs = values != null ? values.ToArray() : new T[0];
+            if (!allowNull && vs.Length == 0)
+            {
+                throw new ArgumentNullException(name, "Parameter does not allow null values.");
+            }
+
+            foreach (var value in values)
             {
                 _marshalledValues.Add(marshalValue(value));
             }
-            
-            if (!allowNull && _marshalledValues.Count == 0)
-            {
-                throw new InvalidOperationException("Parameter does not allow null values."); // TODO: replace exception
-            } 
         }
 
         public override IEnumerable<Marshal> GetMarshals()

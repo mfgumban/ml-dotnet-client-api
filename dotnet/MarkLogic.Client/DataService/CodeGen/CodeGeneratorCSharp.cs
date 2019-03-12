@@ -128,7 +128,7 @@ namespace {serviceDecl.Namespace}
                 for(var i = 0; i < parameters.Count; i++)
                 {
                     var param = endpointDecl.Parameters[i];
-                    output.WriteLine($"{Indent5}new {(param.Multiple ? "MultipleParameter" : "SingleParameter")}<{GetParameterType(param, false)}>(\"{param.Name}\", {param.Nullable.ToString().ToLower()}, {param.Name}, Marshal.{GetMarshalMethod(param)}){(i == endpointDecl.Parameters.Count - 1 ? ")" : ", ")}");
+                    output.WriteLine($"{Indent5}new {(param.Multiple ? "MultipleParameter" : "SingleParameter")}<{GetParameterType(param, false)}>(\"{param.Name}\", {param.Nullable.ToString().ToLower()}, {param.Name}, Marshal.{GetMarshalMethod(param)}){(i == parameters.Count - 1 ? ")" : ", ")}");
                 }
             }
 

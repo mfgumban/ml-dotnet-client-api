@@ -142,6 +142,20 @@ public interface AtomicTypeTestsService {
 
 
             @Override
+            public Integer returnNullableValueType(Integer value) {
+              return BaseProxy.IntegerType.toInteger(
+                baseProxy
+                .request("returnNullableValueType.xqy", BaseProxy.ParameterValuesKind.SINGLE_ATOMIC)
+                .withSession()
+                .withParams(
+                    BaseProxy.atomicParam("value", true, BaseProxy.IntegerType.fromInteger(value)))
+                .withMethod("POST")
+                .responseSingle(true, null)
+                );
+            }
+
+
+            @Override
             public String returnString(String value) {
               return BaseProxy.StringType.toString(
                 baseProxy
@@ -278,6 +292,14 @@ public interface AtomicTypeTestsService {
    * @return	as output
    */
     Long returnLong(Long value);
+
+  /**
+   * Test endpoint for a Nullable<T> type.
+   *
+   * @param value	provides input
+   * @return	as output
+   */
+    Integer returnNullableValueType(Integer value);
 
   /**
    * Accepts and returns a string.

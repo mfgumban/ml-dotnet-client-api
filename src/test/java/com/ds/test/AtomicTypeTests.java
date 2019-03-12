@@ -53,4 +53,10 @@ public class AtomicTypeTests extends TestBase {
     String response = testService.returnDecimal(parameter);
     System.out.println(String.format("Parameter: %s\nResponse: %s", parameter, response));
   }
+
+  @Test
+  public void testNullableValueType() throws IOException {
+    int response = testService.returnNullableValueType(null);
+    System.out.println(String.format("Parameter: null\nResponse: %s", response));
+  }
 }

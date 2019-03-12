@@ -13,6 +13,29 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
         }
 
         [Fact]
+        public async void TestNullableValueType()
+        {
+            var result = await AtomicTypeTestsService.Create(DbClient).returnNullableValueType(null);
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async void TestNullableValueTypeNullableNoValue()
+        {
+            var value = new int?();
+            var result = await AtomicTypeTestsService.Create(DbClient).returnNullableValueType(value);
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async void TestNullableValueTypeNonNull()
+        {
+            var value = 1234;
+            var result = await AtomicTypeTestsService.Create(DbClient).returnNullableValueType(value);
+            Assert.Equal(value, result);
+        }
+
+        [Fact]
         public async void TestReturnString()
         {
             var value = "The quick brown fox jumped over the lazy dog.";

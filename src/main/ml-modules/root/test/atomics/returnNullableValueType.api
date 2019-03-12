@@ -1,0 +1,14 @@
+{
+  "functionName": "returnNullableValueType",
+  "desc": "Test endpoint for a Nullable<T> type.",
+  "params": [{
+    "name": "value",
+    "datatype": "int",
+    "nullable": true
+  }],
+  "return": {
+    "datatype": "int",
+    "nullable": true
+  },
+  "errorDetail": "return"
+}

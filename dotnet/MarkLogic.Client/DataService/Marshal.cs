@@ -49,6 +49,11 @@ namespace MarkLogic.Client.DataService
 
         public bool HasValue => IsStream || Value != null;
 
+        public static Func<T?, Marshal> Nullable<T>(Func<T, Marshal> marshalValue) where T : struct, IComparable
+        {
+            return new Func<T?, Marshal>((value) => (value == null || !value.HasValue) ? new Marshal("") : marshalValue(value.Value));
+        }
+
         public static Marshal Boolean(bool value)
         {
             return new Marshal(value ? "true" : "false");

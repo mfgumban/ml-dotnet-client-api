@@ -18,6 +18,17 @@ namespace MarkLogic.Client.DataService
             reader.Close();
             return value;
         }
+
+        public static Func<Stream, Task<T?>> Nullable<T>(Func<Stream, Task<T>> unmarshalValue) where T : struct, IComparable
+        {
+            return new Func<Stream, Task<T?>>(async stream =>
+            {
+                var value = await unmarshalValue(stream);
+                // NOTE: which is better semantically, new T?() or null?
+                return string.IsNullOrWhiteSpace(value.ToString()) ? null : new T?(value);
+            });
+        }
+
         public static async Task<bool> Boolean(Stream stream)
         {
             var value = await ReadStreamAsString(stream);

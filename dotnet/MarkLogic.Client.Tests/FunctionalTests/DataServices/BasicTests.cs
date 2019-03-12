@@ -1,6 +1,7 @@
 ﻿using MarkLogic.Client.Tests.DataServices;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
@@ -20,20 +21,42 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
             await BasicTestsService.Create(DbClient).returnNone();
         }
 
-        [Fact]
-        public async void TestReturnMultipleAtomic()
+        public static IEnumerable<object[]> TestReturnMultipleAtomicData()
         {
-            var value1 = "the quick brown fox";
-            var value2 = 1234;
-            var value3 = DateTime.Now;
+            return new[]
+            {
+                new object[] { "", 1234, DateTime.Now.AsISO8601() },
+                new object[] { "the quick brown fox", 1234, DateTime.Now.AsISO8601() }
+            };
+        }
+
+        [Theory]
+        [MemberData(nameof(TestReturnMultipleAtomicData))]
+        public async void TestReturnMultipleAtomic(string value1, int value2, DateTime value3)
+        {
             var response = await BasicTestsService.Create(DbClient).returnMultipleAtomic(value1, value2, value3);
             Output.WriteLine(response);
-
             var results = response.Split("\n");
             Assert.Equal(3, results.Length);
             Assert.Equal(value1, results[0]);
             Assert.Equal(value2.ToString(), results[1]);
             Assert.Equal(value3.ToISODateTime(), results[2]);
+        }
+
+        public static IEnumerable<object[]> TestReturnMultipleAtomicNullData()
+        {
+            return new[]
+            {
+                new object[] { null, 1234, DateTime.Now.AsISO8601() }
+            };
+        }
+
+        [Theory]
+        [MemberData(nameof(TestReturnMultipleAtomicNullData))]
+        public async void TestReturnMultipleAtomicNull(string value1, int value2, DateTime value3)
+        {
+            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => BasicTestsService.Create(DbClient).returnMultipleAtomic(value1, value2, value3));
+            Assert.Equal("value1", exception.ParamName);
         }
 
         [Theory]
@@ -52,6 +75,7 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
         public async void TestReturnMultiValueNull(int[] values)
         {
             var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => BasicTestsService.Create(DbClient).returnMultiValue(values));
+            Assert.Equal("values", exception.ParamName);
         }
 
         [Fact]

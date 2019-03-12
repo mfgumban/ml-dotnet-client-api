@@ -16,5 +16,10 @@ namespace MarkLogic.Client.Tests.FunctionalTests
         protected ITestOutputHelper Output { get; private set; }
 
         protected IDatabaseClient DbClient => DbClientFixture.DbClient;
+
+        protected void OutputResults<T>(T value, T result)
+        {
+            Output.WriteLine("Value:\n{0}\nReturn:\n{1}", value, result);
+        }
     }
 }

@@ -106,6 +106,8 @@ namespace MarkLogic.Client.DataService.CodeGen
                     new RawType("string", "String", "String")),
                 new DataType("xmlDocument", false,
                     new RawType("System.IO.Stream", "StreamAsXml", "StreamAsXml"),
+                    new RawType("System.Xml.XmlDocument", "XmlDocument", "XmlDocument"),
+                    new RawType("System.Xml.Linq.XDocument", "XDocument", "XDocument"),
                     new RawType("string", "String", "String"))
             };
 

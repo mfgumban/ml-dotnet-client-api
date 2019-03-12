@@ -5,6 +5,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace MarkLogic.Client.DataService
 {
@@ -105,6 +106,21 @@ namespace MarkLogic.Client.DataService
         {
             var value = await ReadStreamAsString(stream);
             return JArray.Parse(value);
+        }
+
+        public static async Task<XmlDocument> XmlDocument(Stream stream)
+        {
+            return await Task.Run(() =>
+            {
+                var xmlDoc = new XmlDocument();
+                xmlDoc.Load(stream);
+                return xmlDoc;
+            });
+        }
+
+        public static async Task<XDocument> XDocument(Stream stream)
+        {
+            return await Task.Run(() => System.Xml.Linq.XDocument.Load(stream));
         }
 
         public static async Task<Stream> Stream(Stream stream)

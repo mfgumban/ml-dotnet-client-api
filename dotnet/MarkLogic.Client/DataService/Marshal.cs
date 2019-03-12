@@ -2,6 +2,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace MarkLogic.Client.DataService
 {
@@ -145,6 +146,16 @@ namespace MarkLogic.Client.DataService
         public static Marshal JsonArray(JArray value)
         {
             return new Marshal(value.ToString(Newtonsoft.Json.Formatting.None), MediaTypes.Json);
+        }
+
+        public static Marshal XmlDocument(XmlDocument value)
+        {
+            return new Marshal(value.OuterXml, MediaTypes.Xml);
+        }
+
+        public static Marshal XDocument(XDocument value)
+        {
+            return new Marshal(value.ToString(), MediaTypes.Xml);
         }
     }
 }

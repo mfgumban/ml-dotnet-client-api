@@ -12,11 +12,6 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
         {
         }
 
-        private void OutputResults<T>(T value, T result)
-        {
-            Output.WriteLine("Value: {0} Return: {1}", value, result);
-        }
-
         [Fact]
         public async void TestReturnString()
         {

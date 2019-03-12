@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace MarkLogic.Client
 {
@@ -28,6 +29,19 @@ namespace MarkLogic.Client
         public static string ToISOTime(this DateTime value)
         {
             return XmlConvert.ToString(AsISO8601(value), "HH:mm:ss.fff");
+        }
+
+        public static XDocument ToXDocument(this XmlDocument document)
+        {
+            return document.ToXDocument(LoadOptions.None);
+        }
+
+        public static XDocument ToXDocument(this XmlDocument document, LoadOptions options)
+        {
+            using (XmlNodeReader reader = new XmlNodeReader(document))
+            {
+                return XDocument.Load(reader, options);
+            }
         }
     }
 }

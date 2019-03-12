@@ -1,5 +1,7 @@
 ﻿using MarkLogic.Client.Tests.DataServices;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -12,290 +14,232 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
         {
         }
 
-        [Fact]
-        public async void TestNullableValueType()
+        public static IEnumerable<object[]> TestNullableValueTypeData()
         {
-            var result = await AtomicTypeTestsService.Create(DbClient).returnNullableValueType(null);
-            Assert.Null(result);
+            return new[]
+            {
+                new object[] { null, null },
+                new object[] { 1234, 1234 },
+                new object[] { new int?(), null }
+            };
         }
 
-        [Fact]
-        public async void TestNullableValueTypeNullableNoValue()
+        [Theory]
+        [MemberData(nameof(TestNullableValueTypeData))]
+        public async void TestNullableValueType(int? value, int? expectedResult)
         {
-            var value = new int?();
             var result = await AtomicTypeTestsService.Create(DbClient).returnNullableValueType(value);
-            Assert.Null(result);
+            Assert.Equal(expectedResult, result);
         }
 
-        [Fact]
-        public async void TestNullableValueTypeNonNull()
+        [Theory]
+        [InlineData("")]
+        [InlineData("The quick brown fox jumped over the lazy dog.")]
+        [InlineData(" ")]
+        [InlineData("\0")]
+        [InlineData("\n\t\r\f")]
+        public async void TestReturnString(string value)
         {
-            var value = 1234;
-            var result = await AtomicTypeTestsService.Create(DbClient).returnNullableValueType(value);
-            Assert.Equal(value, result);
-        }
-
-        [Fact]
-        public async void TestReturnString()
-        {
-            var value = "The quick brown fox jumped over the lazy dog.";
             var result = await AtomicTypeTestsService.Create(DbClient).returnString(value);
             OutputResults(value, result);
             Assert.Equal(value, result);
         }
 
-        [Fact]
-        public async void TestReturnBooleanTrue()
+        [Theory]
+        [InlineData(true)]
+        [InlineData(false)]
+        public async void TestReturnBoolean(bool value)
         {
-            var value = true;
-            var result = await AtomicTypeTestsService.Create(DbClient).returnBoolean(value);
-            
-            Assert.Equal(value, result);
-        }
-
-        [Fact]
-        public async void TestReturnBooleanFalse()
-        {
-            var value = false;
             var result = await AtomicTypeTestsService.Create(DbClient).returnBoolean(value);
             OutputResults(value, result);
             Assert.Equal(value, result);
         }
 
-        [Fact]
-        public async void TestReturnIntMin()
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        [InlineData(-1)]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        public async void TestReturnInt(int value)
         {
-            var value = int.MinValue;
             var result = await AtomicTypeTestsService.Create(DbClient).returnInteger(value);
             OutputResults(value, result);
             Assert.Equal(value, result);
         }
 
-        [Fact]
-        public async void TestReturnIntMax()
+        [Theory]
+        [InlineData(1)]
+        [InlineData(uint.MinValue)]
+        [InlineData(uint.MaxValue)]
+        public async void TestReturnUnsignedInt(uint value)
         {
-            var value = int.MaxValue;
-            var result = await AtomicTypeTestsService.Create(DbClient).returnInteger(value);
-            OutputResults(value, result);
-            Assert.Equal(value, result);
-        }
-
-        [Fact]
-        public async void TestReturnUnsignedIntMin()
-        {
-            var value = uint.MinValue;
             var result = await AtomicTypeTestsService.Create(DbClient).returnUnsignedInteger(value);
             OutputResults(value, result);
             Assert.Equal(value, result);
         }
 
-        [Fact]
-        public async void TestReturnUnsignedIntMax()
+        [Theory]
+        [InlineData(0)]
+        [InlineData(1)]
+        [InlineData(-1)]
+        [InlineData(long.MinValue)]
+        [InlineData(long.MaxValue)]
+        public async void TestReturnLong(long value)
         {
-            var value = uint.MaxValue;
-            var result = await AtomicTypeTestsService.Create(DbClient).returnUnsignedInteger(value);
-            OutputResults(value, result);
-            Assert.Equal(value, result);
-        }
-
-        [Fact]
-        public async void TestReturnLongMin()
-        {
-            var value = long.MinValue;
             var result = await AtomicTypeTestsService.Create(DbClient).returnLong(value);
             OutputResults(value, result);
             Assert.Equal(value, result);
         }
 
-        [Fact]
-        public async void TestReturnLongMax()
+        [Theory]
+        [InlineData(1)]
+        [InlineData(ulong.MinValue)]
+        [InlineData(ulong.MaxValue)]
+        public async void TestReturnUnsignedLong(ulong value)
         {
-            var value = long.MaxValue;
-            var result = await AtomicTypeTestsService.Create(DbClient).returnLong(value);
-            OutputResults(value, result);
-            Assert.Equal(value, result);
-        }
-
-        [Fact]
-        public async void TestReturnUnsignedLongMin()
-        {
-            var value = ulong.MinValue;
             var result = await AtomicTypeTestsService.Create(DbClient).returnUnsignedLong(value);
             OutputResults(value, result);
             Assert.Equal(value, result);
         }
 
-        [Fact]
-        public async void TestReturnUnsignedLongMax()
+        [Theory]
+        [InlineData(0.0f)]
+        [InlineData(1.0f)]
+        [InlineData(-1.0f)]
+        [InlineData(float.MinValue)]
+        [InlineData(float.MaxValue)]
+        [InlineData(float.Epsilon)]
+        [InlineData(float.NaN)]
+        [InlineData(float.NegativeInfinity)]
+        [InlineData(float.PositiveInfinity)]
+        public async void TestReturnFloat(float value)
         {
-            var value = ulong.MaxValue;
-            var result = await AtomicTypeTestsService.Create(DbClient).returnUnsignedLong(value);
-            OutputResults(value, result);
-            Assert.Equal(value, result);
-        }
-
-        [Fact]
-        public async void TestReturnFloatMin()
-        {
-            var value = float.MinValue;
             var result = await AtomicTypeTestsService.Create(DbClient).returnFloat(value);
             OutputResults(value, result);
             Assert.Equal(value, result);
         }
 
-        [Fact]
-        public async void TestReturnFloatMax()
+        [Theory]
+        [InlineData(0.0)]
+        [InlineData(1.0)]
+        [InlineData(-1.0)]
+        [InlineData(double.MinValue)]
+        [InlineData(double.MaxValue)]
+        [InlineData(double.Epsilon)]
+        [InlineData(double.NaN)]
+        [InlineData(double.NegativeInfinity)]
+        [InlineData(double.PositiveInfinity)]
+        public async void TestReturnDouble(double value)
         {
-            var value = float.MaxValue;
-            var result = await AtomicTypeTestsService.Create(DbClient).returnFloat(value);
-            OutputResults(value, result);
-            Assert.Equal(value, result);
-        }
-
-        [Fact]
-        public async void TestReturnFloatNaN()
-        {
-            var value = float.NaN;
-            var result = await AtomicTypeTestsService.Create(DbClient).returnFloat(value);
-            OutputResults(value, result);
-            Assert.Equal(value, result);
-        }
-
-        [Fact]
-        public async void TestReturnFloatPositiveInfinity()
-        {
-            var value = float.PositiveInfinity;
-            var result = await AtomicTypeTestsService.Create(DbClient).returnFloat(value);
-            OutputResults(value, result);
-            Assert.Equal(value, result);
-        }
-
-        [Fact]
-        public async void TestReturnFloatNegativeInfinity()
-        {
-            var value = float.NegativeInfinity;
-            var result = await AtomicTypeTestsService.Create(DbClient).returnFloat(value);
-            OutputResults(value, result);
-            Assert.Equal(value, result);
-        }
-
-        [Fact]
-        public async void TestReturnDoubleMin()
-        {
-            var value = double.MinValue;
             var result = await AtomicTypeTestsService.Create(DbClient).returnDouble(value);
             OutputResults(value, result);
             Assert.Equal(value, result);
         }
 
-        [Fact]
-        public async void TestReturnDoubleMax()
+        public static IEnumerable<object[]> TestReturnDecimalValidData()
         {
-            var value = double.MaxValue;
-            var result = await AtomicTypeTestsService.Create(DbClient).returnDouble(value);
-            OutputResults(value, result);
-            Assert.Equal(value, result);
+            return new[]
+            {
+                new object[] { decimal.Zero },
+                new object[] { decimal.One },
+                new object[] { decimal.MinusOne }
+            };
         }
 
-        [Fact]
-        public async void TestReturnDoubleNaN()
+        [Theory]
+        [MemberData(nameof(TestReturnDecimalValidData))]
+        public async void TestReturnDecimalValid(decimal value)
         {
-            var value = double.NaN;
-            var result = await AtomicTypeTestsService.Create(DbClient).returnDouble(value);
-            OutputResults(value, result);
-            Assert.Equal(value, result);
-        }
-
-        [Fact]
-        public async void TestReturnDoublePositiveInfinity()
-        {
-            var value = double.PositiveInfinity;
-            var result = await AtomicTypeTestsService.Create(DbClient).returnDouble(value);
-            OutputResults(value, result);
-            Assert.Equal(value, result);
-        }
-
-        [Fact]
-        public async void TestReturnDoubleNegativeInfinity()
-        {
-            var value = double.NegativeInfinity;
-            var result = await AtomicTypeTestsService.Create(DbClient).returnDouble(value);
-            OutputResults(value, result);
-            Assert.Equal(value, result);
-        }
-
-        [Fact]
-        public async void TestReturnDecimalOne()
-        {
-            var value = decimal.One;
             var result = await AtomicTypeTestsService.Create(DbClient).returnDecimal(value);
             OutputResults(value, result);
             Assert.Equal(value, result);
         }
 
-        [Fact]
-        public async void TestReturnDecimalMin()
+        public static IEnumerable<object[]> TestReturnDecimalInvalidData()
         {
-            var value = decimal.MinValue;
+            return new[]
+            {
+                new object[] { decimal.MinValue },
+                new object[] { decimal.MaxValue }
+            };
+        }
+
+        [Theory]
+        [MemberData(nameof(TestReturnDecimalInvalidData))]
+        public async void TestReturnDecimalInvalid(decimal value)
+        {
             var result = await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await AtomicTypeTestsService.Create(DbClient).returnDecimal(value));
         }
 
-        [Fact]
-        public async void TestReturnDecimalMax()
+        public enum TestReturnDateTimeDataType { DateTime = 0, Date, Time };
+
+        public static IEnumerable<object[]> TestReturnDateTimeData(TestReturnDateTimeDataType dataType)
         {
-            var value = decimal.MaxValue;
-            var result = await Assert.ThrowsAsync<ArgumentOutOfRangeException>(async () => await AtomicTypeTestsService.Create(DbClient).returnDecimal(value));
+            var now = DateTime.Now;
+            var data = new[]
+            {
+                now,
+                DateTime.MinValue,
+                DateTime.MaxValue,
+                new DateTime(now.Year, now.Month, now.Day, 0, 0, 1),
+                new DateTime(now.Year, now.Month, now.Day, 23, 59, 59)
+            };
+            switch (dataType)
+            {
+                case TestReturnDateTimeDataType.DateTime:
+                    return data.Select(dt => new object[] { dt.AsISO8601() });
+                case TestReturnDateTimeDataType.Date:
+                    return data.Select(dt => new object[] { dt.Date });
+                case TestReturnDateTimeDataType.Time:
+                    return data.Select(dt => new object[] { new DateTime(DateTime.MinValue.Year, DateTime.MinValue.Month, DateTime.MinValue.Day, dt.Hour, dt.Minute, dt.Second) });
+                default:
+                    throw new InvalidOperationException("Invalid dataType.");
+            }
         }
 
-        [Fact]
-        public async void TestReturnDateTime()
+        [Theory]
+        [MemberData(nameof(TestReturnDateTimeData), parameters: TestReturnDateTimeDataType.DateTime)]
+        public async void TestReturnDateTime(DateTime value)
         {
-            var value = DateTime.Now.AsISO8601();
             var result = await AtomicTypeTestsService.Create(DbClient).returnDateTime(value);
             OutputResults(value, result);
             Assert.Equal(value, result);
         }
 
-        [Fact]
-        public async void TestReturnDateTimeMin()
+        [Theory]
+        [MemberData(nameof(TestReturnDateTimeData), parameters: TestReturnDateTimeDataType.Date)]
+        public async void TestReturnDate(DateTime value)
         {
-            var value = DateTime.MinValue.AsISO8601();
-            var result = await AtomicTypeTestsService.Create(DbClient).returnDateTime(value);
-            OutputResults(value, result);
-            Assert.Equal(value, result);
-        }
-
-        [Fact]
-        public async void TestReturnDateTimeMax()
-        {
-            var value = DateTime.MaxValue.AsISO8601();
-            var result = await AtomicTypeTestsService.Create(DbClient).returnDateTime(value);
-            OutputResults(value, result);
-            Assert.Equal(value, result);
-        }
-
-        [Fact]
-        public async void TestReturnDate()
-        {
-            var value = DateTime.Now.Date;
             var result = await AtomicTypeTestsService.Create(DbClient).returnDate(value);
             OutputResults(value, result);
             Assert.Equal(value, result);
         }
 
-        [Fact]
-        public async void TestReturnTime()
+        [Theory]
+        [MemberData(nameof(TestReturnDateTimeData), parameters: TestReturnDateTimeDataType.Time)]
+        public async void TestReturnTime(DateTime value)
         {
-            var value = DateTime.Now.AsISO8601();
-            var result = await AtomicTypeTestsService.Create(DbClient).returnDateTime(value);
+            var result = await AtomicTypeTestsService.Create(DbClient).returnTime(value);
             OutputResults(value, result);
             Assert.Equal(value, result);
         }
 
-        [Fact]
-        public async void TestTimeSpan()
+        public static IEnumerable<object[]> TestReturnTimeSpanData()
         {
-            var value = new TimeSpan(5, 23, 15, 34, 0);
+            return new[]
+            {
+                new object[] { TimeSpan.MinValue },
+                new object[] { TimeSpan.MaxValue },
+                new object[] { TimeSpan.Zero },
+                new object[] { new TimeSpan(356 * 2, 23, 59, 59) }
+            };
+        }
+
+        [Theory]
+        [MemberData(nameof(TestReturnTimeSpanData))]
+        public async void TestReturnTimeSpan(TimeSpan value)
+        {
             var result = await AtomicTypeTestsService.Create(DbClient).returnTimeSpan(value);
             OutputResults(value, result);
             Assert.Equal(value, result);

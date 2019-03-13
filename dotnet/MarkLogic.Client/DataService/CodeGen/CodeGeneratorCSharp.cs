@@ -30,6 +30,7 @@ namespace MarkLogic.Client.DataService.CodeGen
         private static readonly string Indent5 = $"{Indent}{Indent}{Indent}{Indent}{Indent}";
 
         private static readonly string[] StaticNamespaces = {
+            "MarkLogic.Client",
             "MarkLogic.Client.DataService",
             "System.Collections.Generic",
             "System.IO",

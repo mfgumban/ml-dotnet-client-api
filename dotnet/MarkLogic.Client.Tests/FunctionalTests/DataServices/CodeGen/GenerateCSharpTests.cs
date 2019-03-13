@@ -59,6 +59,8 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices.CodeGen
 
         [Theory]
         [InlineData("../../../../../src/main/ml-modules/root/test")]
+        [InlineData("../../../../../src/main/ml-modules/root/test/atomics")]
+        [InlineData("../../../../../src/main/ml-modules/root/test/complex")]
         public async void TestGenerateService(string pathToService)
         {
             var output = new StringWriter();

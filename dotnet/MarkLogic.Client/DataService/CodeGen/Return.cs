@@ -3,7 +3,7 @@
 namespace MarkLogic.Client.DataService.CodeGen
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public class Return
+    public class Return : ITypeDeclaration
     {
         [JsonProperty("desc")]
         public string Description { get; set; }
@@ -16,5 +16,8 @@ namespace MarkLogic.Client.DataService.CodeGen
 
         [JsonProperty("multiple")]
         public bool Multiple { get; set; }
+
+        [JsonProperty("$netClass")]
+        public string NetClass { get; set; }
     }
 }

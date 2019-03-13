@@ -17,7 +17,6 @@ namespace MarkLogic.Client.DataService.CodeGen
         [JsonProperty("functionName")]
         public string FunctionName { get; set; }
 
-        [JsonIgnore]
         public string ModuleName => $"{FunctionName}.xqy";
 
         [JsonProperty("desc")]
@@ -35,13 +34,10 @@ namespace MarkLogic.Client.DataService.CodeGen
         [JsonProperty("errorDetail")]
         public string ErrorDetail { get; set; }
 
-        [JsonIgnore]
         public Parameter Session => Parameters.FirstOrDefault(p => p.IsSession);
 
-        [JsonIgnore]
         public IEnumerable<Parameter> ParametersNoSession => Session == null ? Parameters : Parameters.Except(new[] { Session });
 
-        [JsonIgnore]
         public bool HasSession => Session != null;
 
         public static async Task<Endpoint> FromStreamAsync(Stream stream)

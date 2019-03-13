@@ -3,7 +3,7 @@
 namespace MarkLogic.Client.DataService.CodeGen
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public class Parameter
+    public class Parameter : ITypeDeclaration
     {
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -20,7 +20,9 @@ namespace MarkLogic.Client.DataService.CodeGen
         [JsonProperty("multiple")]
         public bool Multiple { get; set; }
 
-        [JsonIgnore]
+        [JsonProperty("$netClass")]
+        public string NetClass { get; set; }
+
         public bool IsSession => DataType.EqualsIgnoreCase("session");
     }
 }

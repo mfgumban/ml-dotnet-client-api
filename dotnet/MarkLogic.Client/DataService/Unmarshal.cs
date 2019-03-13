@@ -98,7 +98,7 @@ namespace MarkLogic.Client.DataService
         public static async Task<DateTime> Time(Stream stream)
         {
             var value = await ReadStreamAsString(stream);
-            return System.DateTime.ParseExact(value, "HH:mm:ss.fff", null);
+            return System.DateTime.ParseExact(value, "HH:mm:ss.fff", CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault);
         }
 
         public static async Task<TimeSpan> TimeSpan(Stream stream)

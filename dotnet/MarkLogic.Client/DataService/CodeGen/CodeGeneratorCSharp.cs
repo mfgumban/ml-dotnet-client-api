@@ -39,7 +39,7 @@ namespace MarkLogic.Client.DataService.CodeGen
 
         private static void WriteUsings(Service serviceDecl, Endpoint[] endpointDecls, TextWriter output)
         {
-            var reqNs = endpointDecls.SelectMany(e => e.ParametersNoSession.Select(p => MatchDataType(p.DataType).DefaultType.Namespace)).Where(ns => !string.IsNullOrWhiteSpace(ns));
+            var reqNs = endpointDecls.SelectMany(e => e.ParametersNoSession.Select(p => GetMapping(p).Namespace)).Where(ns => !string.IsNullOrWhiteSpace(ns));
             var allNs = StaticNamespaces.Union(reqNs).OrderBy(ns => ns);
             foreach (var ns in allNs)
             {
@@ -55,7 +55,7 @@ namespace {serviceDecl.Namespace}
     /// <summary>
     /// {serviceDecl.Description}
     /// </summary>
-    public class {serviceDecl.ClassName} : DataServiceBase
+    public partial class {serviceDecl.ClassName} : DataServiceBase
     {{
         /// <summary>
         /// Constructs a new {serviceDecl.ClassName} object.
@@ -109,8 +109,8 @@ namespace {serviceDecl.Namespace}
                 output.WriteLine($"{Indent2}/// <returns>{endpointDecl.ReturnValue.Description}</returns>");
             }
 
-            var returnType = endpointDecl.ReturnVoid ? "Task" : $"Task<{GetReturnType(endpointDecl.ReturnValue, endpointDecl.ReturnValue.Multiple)}>";
-            var paramList = endpointDecl.Parameters.Select(p => $"{GetParameterType(p, p.Multiple)} {p.Name}");
+            var returnType = endpointDecl.ReturnVoid ? "Task" : $"Task<{GetTypeDeclaration(endpointDecl.ReturnValue)}>";
+            var paramList = endpointDecl.Parameters.Select(p => $"{GetParameterType(p)} {p.Name}");
 
             output.WriteLine($"{Indent2}public {returnType} {endpointDecl.FunctionName}({string.Join(", ", paramList)})");
             output.WriteLine($"{Indent2}{{");
@@ -129,7 +129,7 @@ namespace {serviceDecl.Namespace}
                 for(var i = 0; i < parameters.Count; i++)
                 {
                     var param = endpointDecl.Parameters[i];
-                    output.WriteLine($"{Indent5}new {(param.Multiple ? "MultipleParameter" : "SingleParameter")}<{GetParameterType(param, false)}>(\"{param.Name}\", {param.Nullable.ToString().ToLower()}, {param.Name}, Marshal.{GetMarshalMethod(param)}){(i == parameters.Count - 1 ? ")" : ", ")}");
+                    output.WriteLine($"{Indent5}new {(param.Multiple ? "MultipleParameter" : "SingleParameter")}<{GetParameterType(param, false)}>(\"{param.Name}\", {param.Nullable.ToString().ToLower()}, {param.Name}, {GetMarshalMethod(param)}){(i == parameters.Count - 1 ? ")" : ", ")}");
                 }
             }
 
@@ -140,30 +140,45 @@ namespace {serviceDecl.Namespace}
             else
             {
                 var ret = endpointDecl.ReturnValue;
-                output.WriteLine($"{Indent4}.{(endpointDecl.ReturnValue.Multiple ? "RequestMultiple" : "RequestSingle")}<{GetReturnType(endpointDecl.ReturnValue, false)}>({ret.Multiple.ToString().ToLower()}, Unmarshal.{GetUnmarshalMethod(ret)});");
+                output.WriteLine($"{Indent4}.{(endpointDecl.ReturnValue.Multiple ? "RequestMultiple" : "RequestSingle")}<{GetTypeDeclaration(endpointDecl.ReturnValue, false)}>({ret.Multiple.ToString().ToLower()}, {GetUnmarshalMethod(ret)});");
             }
 
             output.WriteLine($"{Indent2}}}");
         }
 
-        private static string GetReturnType(Return ret, bool isMultiple)
+        private static string GetTypeDeclaration(ITypeDeclaration typeDecl, bool allowMultiple = true)
         {
-            return GetDataType(ret.DataType, isMultiple, ret.Nullable);
+            var mapping = GetMapping(typeDecl);
+            var nullableValueType = typeDecl.Nullable && mapping.IsValueType;
+            var multiple = allowMultiple && typeDecl.Multiple;
+            return $"{(multiple ? "IEnumerable<" : "")}{mapping.TypeName}{(nullableValueType ? "?" : "")}{(multiple ? ">" : "")}";
         }
 
-        private static string GetParameterType(Parameter param, bool isMultiple)
+        private static string GetParameterType(Parameter param, bool allowMultiple = true)
         {
-            return param.IsSession ? "ISessionState" : GetDataType(param.DataType, isMultiple, param.Nullable);
+            return param.IsSession ? "ISessionState" : GetTypeDeclaration(param, allowMultiple);
         }
 
-        private static string GetMarshalMethod(Parameter param)
+        private static string GetMarshalMethod(ITypeDeclaration typeDecl)
         {
-            return MatchDataType(param.DataType).DefaultType.MarshalMethod;
+            var mapping = GetMapping(typeDecl);
+            var method = mapping.MarshalMethod;
+            if (typeDecl.Nullable && mapping.IsValueType)
+            {
+                method = $"Nullable<{mapping.TypeName}>(Marshal.{method})";
+            }
+            return $"Marshal.{method}";
         }
 
-        private static string GetUnmarshalMethod(Return ret)
+        private static string GetUnmarshalMethod(ITypeDeclaration typeDecl)
         {
-            return MatchDataType(ret.DataType).DefaultType.UnmarshalMethod;
+            var mapping = GetMapping(typeDecl);
+            var method = mapping.UnmarshalMethod;
+            if (typeDecl.Nullable && mapping.IsValueType)
+            {
+                method = $"Nullable(Unmarshal.{method})";
+            }
+            return $"Unmarshal.{method}";
         }
     }
 }

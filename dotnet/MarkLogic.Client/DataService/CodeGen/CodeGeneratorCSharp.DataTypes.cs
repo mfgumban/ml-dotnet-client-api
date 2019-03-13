@@ -6,18 +6,24 @@ namespace MarkLogic.Client.DataService.CodeGen
 {
     public sealed partial class CodeGeneratorCSharp
     {
-        private class RawType
+        public class TypeMapping
         {
-            public RawType(string typeFullName, string marshalMethod, string unmarshalMethod)
+            internal TypeMapping(string typeFullName, bool isValueType, string marshalMethod, string unmarshalMethod)
             {
+                TypeFullName = typeFullName;
                 var nameTokens = typeFullName.Split('.');
                 TypeName = nameTokens.Last();
+                IsValueType = isValueType;
                 Namespace = nameTokens.Length == 1 ? null : string.Join(".", nameTokens.Take(nameTokens.Length - 1));
                 MarshalMethod = marshalMethod;
                 UnmarshalMethod = unmarshalMethod;
             }
 
+            public string TypeFullName { get; }
+
             public string TypeName { get; }
+
+            public bool IsValueType { get; }
 
             public string Namespace { get; }
 
@@ -26,113 +32,132 @@ namespace MarkLogic.Client.DataService.CodeGen
             public string UnmarshalMethod { get; }
         }
 
-        private class DataType
+        public class ValueTypeMapping : TypeMapping
         {
-            public DataType(string declaredType, bool isValueType, params RawType[] supportedTypes)
+            internal ValueTypeMapping(string typeFullName, string marshalMethod, string unmarshalMethod)
+                : base(typeFullName, true, marshalMethod, unmarshalMethod)
             {
-                DeclaredType = declaredType;
-                IsValueType = isValueType;
-                SupportedTypes = supportedTypes;
             }
-
-            public string DeclaredType { get; }
-
-            public bool IsValueType { get; }
-
-            public IEnumerable<RawType> SupportedTypes { get; }
-
-            public RawType DefaultType => SupportedTypes.First();
         }
 
-        private static Lazy<Dictionary<string, DataType>> _dataTypeMap = new Lazy<Dictionary<string, DataType>>(() =>
+        public class RefTypeMapping : TypeMapping
+        {
+            internal RefTypeMapping(string typeFullName, string marshalMethod, string unmarshalMethod)
+                : base(typeFullName, false, marshalMethod, unmarshalMethod)
+            {
+            }
+        }
+
+        public class DataType
+        {
+            internal DataType(string name, params TypeMapping[] supportedTypes)
+            {
+                Name = name;
+                TypeMappings = supportedTypes;
+            }
+
+            public string Name { get; }
+
+            public IEnumerable<TypeMapping> TypeMappings { get; }
+
+            public TypeMapping DefaultMapping => TypeMappings.First();
+
+            public TypeMapping GetMapping(string typeFullName)
+            {
+                if (string.IsNullOrWhiteSpace(typeFullName))
+                {
+                    return DefaultMapping;
+                }
+                var mapping = TypeMappings.FirstOrDefault(t => t.TypeFullName == typeFullName);
+                return mapping ?? throw new DataTypeException(Name, typeFullName);
+            }
+        }
+
+        public static IReadOnlyDictionary<string, DataType> DataTypeMap => _dataTypeMap.Value;
+
+        private static Lazy<IReadOnlyDictionary<string, DataType>> _dataTypeMap = new Lazy<IReadOnlyDictionary<string, DataType>>(() =>
         {
             var mappings = new DataType[]
             {
-                new DataType("string", false,
-                    new RawType("string", "String", "String"),
-                    new RawType("System.IO.Stream", "StreamAsText", "StreamAsText")),
-                new DataType("boolean", true,
-                    new RawType("bool", "Boolean", "Boolean"),
-                    new RawType("string", "String", "String")),
-                new DataType("date", true,
-                    new RawType("System.DateTime", "Date", "Date"),
-                    new RawType("string", "String", "String")),
-                new DataType("time", true,
-                    new RawType("System.DateTime", "Time", "Time"),
-                    new RawType("string", "String", "String")),
-                new DataType("dateTime", true,
-                    new RawType("System.DateTime", "DateTime", "DateTime"),
-                    new RawType("string", "String", "String")),
-                new DataType("dayTimeDuration", true,
-                    new RawType("System.TimeSpan", "TimeSpan", "TimeSpan"),
-                    new RawType("string", "String", "String")),
-                new DataType("decimal", true,
-                    new RawType("decimal", "Decimal", "Decimal"),
-                    new RawType("string", "String", "String")),
-                new DataType("double", true,
-                    new RawType("double", "Double", "Double"),
-                    new RawType("string", "String", "String")),
-                new DataType("float", true,
-                    new RawType("float", "Float", "Float"),
-                    new RawType("string", "String", "String")),
-                new DataType("int", true,
-                    new RawType("int", "Integer", "Integer"),
-                    new RawType("string", "String", "String")),
-                new DataType("unsignedInt", true,
-                    new RawType("uint", "UnsignedInteger", "UnsignedInteger"),
-                    new RawType("string", "String", "String")),
-                new DataType("long", true,
-                    new RawType("long", "Long", "Long"),
-                    new RawType("string", "String", "String")),
-                new DataType("unsignedLong", true,
-                    new RawType("ulong", "UnsignedLong", "UnsignedLong"),
-                    new RawType("string", "String", "String")),
-                new DataType("array", false,
-                    new RawType("System.IO.Stream", "StreamAsJson", "Stream"),
-                    new RawType("Newtonsoft.Json.Linq.JArray", "JsonArray", "JsonArray"),
-                    new RawType("string", "String", "String")),
-                new DataType("object", false,
-                    new RawType("System.IO.Stream", "StreamAsJson", "Stream"),
-                    new RawType("Newtonsoft.Json.Linq.JObject", "JsonObject", "JsonObject"),
-                    new RawType("string", "String", "String")),
-                new DataType("binaryDocument", false,
-                    new RawType("System.IO.Stream", "StreamAsBinary", "Stream")),
-                new DataType("jsonDocument", false,
-                    new RawType("System.IO.Stream", "StreamAsJson", "Stream"),
-                    new RawType("Newtonsoft.Json.Linq.JObject", "JsonObject", "JsonObject"),
-                    new RawType("string", "String", "String")),
-                new DataType("textDocument", false,
-                    new RawType("System.IO.Stream", "StreamAsText", "Stream"),
-                    new RawType("string", "String", "String")),
-                new DataType("xmlDocument", false,
-                    new RawType("System.IO.Stream", "StreamAsXml", "Stream"),
-                    new RawType("System.Xml.XmlDocument", "XmlDocument", "XmlDocument"),
-                    new RawType("System.Xml.Linq.XDocument", "XDocument", "XDocument"),
-                    new RawType("string", "String", "String"))
+                new DataType("string",
+                    new RefTypeMapping("string", "String", "String"),
+                    new RefTypeMapping("System.IO.Stream", "StreamAsText", "Stream")),
+                new DataType("boolean",
+                    new ValueTypeMapping("bool", "Boolean", "Boolean"),
+                    new RefTypeMapping("string", "String", "String")),
+                new DataType("date",
+                    new ValueTypeMapping("System.DateTime", "Date", "Date"),
+                    new RefTypeMapping("string", "String", "String")),
+                new DataType("time",
+                    new ValueTypeMapping("System.DateTime", "Time", "Time"),
+                    new RefTypeMapping("string", "String", "String")),
+                new DataType("dateTime",
+                    new ValueTypeMapping("System.DateTime", "DateTime", "DateTime"),
+                    new RefTypeMapping("string", "String", "String")),
+                new DataType("dayTimeDuration",
+                    new ValueTypeMapping("System.TimeSpan", "TimeSpan", "TimeSpan"),
+                    new RefTypeMapping("string", "String", "String")),
+                new DataType("decimal",
+                    new ValueTypeMapping("decimal", "Decimal", "Decimal"),
+                    new RefTypeMapping("string", "String", "String")),
+                new DataType("double",
+                    new ValueTypeMapping("double", "Double", "Double"),
+                    new RefTypeMapping("string", "String", "String")),
+                new DataType("float",
+                    new ValueTypeMapping("float", "Float", "Float"),
+                    new RefTypeMapping("string", "String", "String")),
+                new DataType("int",
+                    new ValueTypeMapping("int", "Integer", "Integer"),
+                    new RefTypeMapping("string", "String", "String")),
+                new DataType("unsignedInt",
+                    new ValueTypeMapping("uint", "UnsignedInteger", "UnsignedInteger"),
+                    new RefTypeMapping("string", "String", "String")),
+                new DataType("long",
+                    new ValueTypeMapping("long", "Long", "Long"),
+                    new RefTypeMapping("string", "String", "String")),
+                new DataType("unsignedLong",
+                    new ValueTypeMapping("ulong", "UnsignedLong", "UnsignedLong"),
+                    new RefTypeMapping("string", "String", "String")),
+                new DataType("array",
+                    new RefTypeMapping("System.IO.Stream", "StreamAsJson", "Stream"),
+                    new RefTypeMapping("Newtonsoft.Json.Linq.JArray", "JsonArray", "JsonArray"),
+                    new RefTypeMapping("string", "String", "String")),
+                new DataType("object",
+                    new RefTypeMapping("System.IO.Stream", "StreamAsJson", "Stream"),
+                    new RefTypeMapping("Newtonsoft.Json.Linq.JObject", "JsonObject", "JsonObject"),
+                    new RefTypeMapping("string", "String", "String")),
+                new DataType("binaryDocument",
+                    new RefTypeMapping("System.IO.Stream", "StreamAsBinary", "Stream")),
+                new DataType("jsonDocument",
+                    new RefTypeMapping("System.IO.Stream", "StreamAsJson", "Stream"),
+                    new RefTypeMapping("Newtonsoft.Json.Linq.JObject", "JsonObject", "JsonObject"),
+                    new RefTypeMapping("string", "String", "String")),
+                new DataType("textDocument",
+                    new RefTypeMapping("System.IO.Stream", "StreamAsText", "Stream"),
+                    new RefTypeMapping("string", "String", "String")),
+                new DataType("xmlDocument",
+                    new RefTypeMapping("System.IO.Stream", "StreamAsXml", "Stream"),
+                    new RefTypeMapping("System.Xml.XmlDocument", "XmlDocument", "XmlDocument"),
+                    new RefTypeMapping("System.Xml.Linq.XDocument", "XDocument", "XDocument"),
+                    new RefTypeMapping("string", "String", "String"))
             };
 
             var map = new Dictionary<string, DataType>();
             foreach(var mapping in mappings)
             {
-                map.Add(mapping.DeclaredType, mapping);
+                map.Add(mapping.Name, mapping);
             }
             return map;
         }, true);
 
-        private static DataType MatchDataType(string declaredType)
+        private static TypeMapping GetMapping(ITypeDeclaration typeDecl)
         {
-            DataType mapping;
-            if (!_dataTypeMap.Value.TryGetValue(declaredType, out mapping))
+            DataType dt;
+            if (!DataTypeMap.TryGetValue(typeDecl.DataType, out dt))
             {
-                throw new InvalidOperationException($"Data type {declaredType} is incorrect or unsupported.");
+                throw new DataTypeException(typeDecl.DataType);
             }
-            return mapping;
-        }
-
-        private static string GetDataType(string declaredType, bool isMultiple, bool isNullable)
-        {
-            var dt = MatchDataType(declaredType);
-            return $"{(isMultiple ? "IEnumerable<" : "")}{dt.DefaultType.TypeName}{(isMultiple ? ">" : "")}";
+            return dt.GetMapping(typeDecl.NetClass);
         }
     }
 }

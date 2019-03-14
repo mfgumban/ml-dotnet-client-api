@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -6,9 +7,9 @@ namespace MarkLogic.Client.DataService.CodeGen
 {
     public sealed partial class CodeGeneratorCSharp : ICodeGenerator
     {
-        public CodeGeneratorCSharp()
-        {
-        }
+        private static Lazy<CodeGeneratorCSharp> _instance = new Lazy<CodeGeneratorCSharp>(() => new CodeGeneratorCSharp(), true);
+
+        public static CodeGeneratorCSharp Default => _instance.Value;
 
         public void GenerateService(Service serviceDecl, Endpoint[] endpointDecls, TextWriter output)
         {

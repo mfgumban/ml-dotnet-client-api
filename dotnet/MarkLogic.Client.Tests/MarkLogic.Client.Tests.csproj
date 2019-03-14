@@ -13,10 +13,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\CompilerDeps\netstandard.dll" />
+    <None Remove="Resources\CompilerDeps\Newtonsoft.Json.dll" />
     <None Remove="Resources\marklogic-logo-social.jpg" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Resources\CompilerDeps\netstandard.dll" />
+    <EmbeddedResource Include="Resources\CompilerDeps\Newtonsoft.Json.dll" />
     <EmbeddedResource Include="Resources\marklogic-logo-social.jpg" />
   </ItemGroup>
 

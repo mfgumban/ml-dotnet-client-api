@@ -8,6 +8,7 @@ using System.Reflection;
 using Xunit;
 using Xunit.Abstractions;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MarkLogic.Client.Tests.DataServices
 {
@@ -20,26 +21,43 @@ namespace MarkLogic.Client.Tests.DataServices
 
         private ITestOutputHelper Output { get; }
 
+        /// <summary>
+        /// Names of assemblies embedded as resources in the current assembly.  These are used for compiling generated source code.
+        /// </summary>
+        /// <remarks>
+        /// Assembly versions:
+        /// Net Standard: version 2.0.3
+        /// Newtonsoft.Json: 12.0.1
+        /// </remarks>
+        private static readonly string[] EmbeddedAssemblies = new[]
+        {
+            "netstandard.dll",
+            "Newtonsoft.Json.dll"
+        };
+
+        private static IEnumerable<MetadataReference> GetAssemblyReferences()
+        {
+            var metadataRefs = new List<MetadataReference>();
+            foreach(var assyName in EmbeddedAssemblies)
+            {
+                var assyStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"MarkLogic.Client.Tests.Resources.CompilerDeps.{assyName}");
+                metadataRefs.Add(MetadataReference.CreateFromStream(assyStream));
+            }
+            //  assumed present in output artifact directory (aka "bin") and is the current working directory (of the test runner)
+            metadataRefs.Add(MetadataReference.CreateFromFile(Path.Join(Directory.GetCurrentDirectory(), "MarkLogic.Client.dll")));
+
+            return metadataRefs;
+        }
+
         private static Assembly BuildAssembly(string sourceCode, ITestOutputHelper output)
         {
             var syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
             var assyName = Guid.NewGuid().ToString();
 
-            var nugetCache = Environment.GetEnvironmentVariable("UserProfile") + @"\.nuget\packages\";
-            var assyRefs = new List<MetadataReference>()
-            {
-                //  assumed present in output artifact directory (aka bin/Debug|Release/...)
-                MetadataReference.CreateFromFile(Path.Join(Directory.GetCurrentDirectory(), "MarkLogic.Client.dll"))
-            };
-
-            // TODO: this is NOT portable because of hardcoded version numbers
-            assyRefs.AddRange(Directory.GetFiles(Path.Join(nugetCache, @"netstandard.library\2.0.3\build\netstandard2.0\ref"), "*.dll").Select(fp => MetadataReference.CreateFromFile(fp)));
-            assyRefs.AddRange(Directory.GetFiles(Path.Join(nugetCache, @"newtonsoft.json\12.0.1\lib\netstandard2.0"), "*.dll").Select(fp => MetadataReference.CreateFromFile(fp)));
-
             var compileOptions = new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary)
                 .WithAssemblyIdentityComparer(DesktopAssemblyIdentityComparer.Default)
                 .WithOptimizationLevel(OptimizationLevel.Debug);
-            var compilation = CSharpCompilation.Create(assyName, new[] { syntaxTree }, assyRefs, compileOptions);
+            var compilation = CSharpCompilation.Create(assyName, new[] { syntaxTree }, GetAssemblyReferences(), compileOptions);
 
             using (var memStream = new MemoryStream())
             {
@@ -59,26 +77,7 @@ namespace MarkLogic.Client.Tests.DataServices
             }
         }
 
-        [Theory]
-        [InlineData("../../../../../src/main/ml-modules/root/test")]
-        [InlineData("../../../../../src/main/ml-modules/root/test/atomics")]
-        [InlineData("../../../../../src/main/ml-modules/root/test/complex")]
-        public async void CodeFromServiceJson(string pathToService)
-        {
-            using (var codeWriter = new StringWriter())
-            {
-                await Code.GenerateService(pathToService, codeWriter, new CodeGeneratorCSharp());
-                var sourceCode = codeWriter.ToString();
-                Output.WriteLine(sourceCode);
-
-                var assy = BuildAssembly(sourceCode, Output);
-
-                Assert.NotNull(assy);
-            }
-        }
-
-        [Fact]
-        public void CodeFromTypePermutations()
+        public static string CreateCodeFromPermutations()
         {
             var service = new Service()
             {
@@ -111,14 +110,8 @@ namespace MarkLogic.Client.Tests.DataServices
 
             using (var codeWriter = new StringWriter())
             {
-                var codeGen = new CodeGeneratorCSharp();
-                codeGen.GenerateService(service, endpoints.ToArray(), codeWriter);
-                var sourceCode = codeWriter.ToString();
-                Output.WriteLine(sourceCode);
-
-                var assy = BuildAssembly(sourceCode, Output);
-
-                Assert.NotNull(assy);
+                CodeGeneratorCSharp.Default.GenerateService(service, endpoints.ToArray(), codeWriter);
+                return codeWriter.ToString();
             }
         }
 
@@ -126,7 +119,7 @@ namespace MarkLogic.Client.Tests.DataServices
         {
             var endpoint = new Endpoint() { FunctionName = funcName };
 
-            var paramCount = isMultipleParams ? 2 : 1;
+            var paramCount = isMultipleParams ? 3 : 1;
             for (var i = 0; i < paramCount; i++)
             {
                 endpoint.Parameters.Add(new Parameter()
@@ -138,7 +131,7 @@ namespace MarkLogic.Client.Tests.DataServices
                     NetClass = netClass
                 });
             }
-            
+
             if (hasSession)
             {
                 endpoint.Parameters.Add(new Parameter()
@@ -158,6 +151,51 @@ namespace MarkLogic.Client.Tests.DataServices
             };
 
             return endpoint;
+        }
+
+        public static readonly string[] StaticServiceDescriptorPathData = new[]
+        {
+            "../../../../../src/main/ml-modules/root/test",
+            "../../../../../src/main/ml-modules/root/test/atomics",
+            "../../../../../src/main/ml-modules/root/test/complex"
+        };
+
+        public static IEnumerable<object[]> StaticServiceDescriptorPaths() => StaticServiceDescriptorPathData.Select(p => new object[] { p }); 
+
+        [Theory]
+        [MemberData(nameof(StaticServiceDescriptorPaths))]
+        public async void ServiceFromFile(string pathToService)
+        {
+            using (var codeWriter = new StringWriter())
+            {
+                await Code.GenerateService(pathToService, codeWriter, CodeGeneratorCSharp.Default);
+                var sourceCode = codeWriter.ToString();
+                Output.WriteLine(sourceCode);
+                Assert.False(string.IsNullOrWhiteSpace(sourceCode));
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(StaticServiceDescriptorPaths))]
+        public async void CompilableCodeFromDescriptor(string pathToService)
+        {
+            using (var codeWriter = new StringWriter())
+            {
+                await Code.GenerateService(pathToService, codeWriter, CodeGeneratorCSharp.Default);
+                var sourceCode = codeWriter.ToString();
+                Output.WriteLine(sourceCode);
+                var assy = BuildAssembly(sourceCode, Output);
+                Assert.NotNull(assy);
+            }
+        }
+
+        [Fact]
+        public void CompilableCodeFromPermutations()
+        {
+            var sourceCode = CreateCodeFromPermutations();
+            Output.WriteLine(sourceCode);
+            var assy = BuildAssembly(sourceCode, Output);
+            Assert.NotNull(assy);
         }
     }
 }

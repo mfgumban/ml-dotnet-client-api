@@ -1,13 +1,10 @@
 ﻿using Newtonsoft.Json;
 
-namespace MarkLogic.Client.DataService.CodeGen
+namespace MarkLogic.Client.Tools
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public class Parameter : ITypeDeclaration
+    public class ReturnDescriptor : ITypeDescriptor
     {
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
         [JsonProperty("desc")]
         public string Description { get; set; }
 
@@ -22,7 +19,5 @@ namespace MarkLogic.Client.DataService.CodeGen
 
         [JsonProperty("$netClass")]
         public string NetClass { get; set; }
-
-        public bool IsSession => DataType.EqualsIgnoreCase("session");
     }
 }

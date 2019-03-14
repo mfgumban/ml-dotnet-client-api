@@ -1,13 +1,13 @@
-﻿using MarkLogic.Client.DataService.CodeGen;
+﻿using MarkLogic.Client.Tools;
 using System.Collections.Generic;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace MarkLogic.Client.Tests.DataServices
+namespace MarkLogic.Client.Tests.Tools
 {
-    public partial class DescriptorTests
+    public class ServiceDescriptorTests
     {
-        public DescriptorTests(ITestOutputHelper output)
+        public ServiceDescriptorTests(ITestOutputHelper output)
         {
             Output = output;
         }
@@ -42,7 +42,7 @@ namespace MarkLogic.Client.Tests.DataServices
         [MemberData(nameof(ServiceDescriptorData))]
         public void ServiceFromString(string serviceJson, string expectedDir, string expectedClassName, string expectedNamespce, string[] expectedNsTokens)
         {
-            var service = Service.FromString(serviceJson);
+            var service = ServiceDescriptor.FromString(serviceJson);
             Assert.NotNull(service);
             Assert.Equal(expectedDir, service.EndpointDirectory);
             Assert.Equal(expectedClassName, service.ClassName);

@@ -1,5 +1,4 @@
-﻿using MarkLogic.Client.DataService.CodeGen;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System;
 using System.IO;
@@ -8,9 +7,11 @@ using System.Reflection;
 using Xunit;
 using Xunit.Abstractions;
 using System.Collections.Generic;
+using MarkLogic.Client.Tools;
+using MarkLogic.Client.Tools.CSharp;
 using System.Threading.Tasks;
 
-namespace MarkLogic.Client.Tests.DataServices
+namespace MarkLogic.Client.Tests.Tools
 {
     public class CodeGenerationTests
     {
@@ -77,17 +78,17 @@ namespace MarkLogic.Client.Tests.DataServices
             }
         }
 
-        public static string CreateCodeFromPermutations()
+        public static async Task<string> CreateCodeFromPermutations()
         {
-            var service = new Service()
+            var service = new ServiceDescriptor()
             {
                 EndpointDirectory = "/path/to/endpoints",
                 Description = "Service containing all data type permutations.",
                 NetClass = "Test.AllPermutations.DataService",
             };
 
-            var endpoints = new List<Endpoint>();
-            foreach (var dataType in CodeGeneratorCSharp.DataTypeMap.Values)
+            var endpoints = new List<EndpointDescriptor>();
+            foreach (var dataType in DataType.All.Values)
             {
                 var dataTypeName = dataType.Name;
                 foreach (var mapping in dataType.TypeMappings)
@@ -110,19 +111,19 @@ namespace MarkLogic.Client.Tests.DataServices
 
             using (var codeWriter = new StringWriter())
             {
-                CodeGeneratorCSharp.Default.GenerateService(service, endpoints.ToArray(), codeWriter);
+                await CodeGenerator.DataServiceClass(service, endpoints.ToArray(), codeWriter);
                 return codeWriter.ToString();
             }
         }
 
-        private static Endpoint CreateEndpoint(string funcName, string dataType, string netClass, bool isMultipleParams = false, bool isMultiple = false, bool isNullable = false, bool hasSession = false, bool nullableSession = false)
+        private static EndpointDescriptor CreateEndpoint(string funcName, string dataType, string netClass, bool isMultipleParams = false, bool isMultiple = false, bool isNullable = false, bool hasSession = false, bool nullableSession = false)
         {
-            var endpoint = new Endpoint() { FunctionName = funcName };
+            var endpoint = new EndpointDescriptor() { FunctionName = funcName };
 
             var paramCount = isMultipleParams ? 3 : 1;
             for (var i = 0; i < paramCount; i++)
             {
-                endpoint.Parameters.Add(new Parameter()
+                endpoint.Parameters.Add(new ParameterDescriptor()
                 {
                     DataType = dataType,
                     Name = $"param{i}",
@@ -134,7 +135,7 @@ namespace MarkLogic.Client.Tests.DataServices
 
             if (hasSession)
             {
-                endpoint.Parameters.Add(new Parameter()
+                endpoint.Parameters.Add(new ParameterDescriptor()
                 {
                     DataType = "session",
                     Name = "session",
@@ -142,7 +143,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 });
             }
 
-            endpoint.ReturnValue = new Return()
+            endpoint.ReturnValue = new ReturnDescriptor()
             {
                 DataType = dataType,
                 Multiple = isMultiple,
@@ -153,14 +154,15 @@ namespace MarkLogic.Client.Tests.DataServices
             return endpoint;
         }
 
-        public static readonly string[] StaticServiceDescriptorPathData = new[]
+        public static IEnumerable<object[]> StaticServiceDescriptorPaths()
         {
-            "../../../../../src/main/ml-modules/root/test",
-            "../../../../../src/main/ml-modules/root/test/atomics",
-            "../../../../../src/main/ml-modules/root/test/complex"
-        };
-
-        public static IEnumerable<object[]> StaticServiceDescriptorPaths() => StaticServiceDescriptorPathData.Select(p => new object[] { p }); 
+            return new[]
+            {
+                new object[] { "../../../../../src/main/ml-modules/root/test" },
+                new object[] { "../../../../../src/main/ml-modules/root/test/atomics" },
+                new object[] { "../../../../../src/main/ml-modules/root/test/complex" }
+            };
+        }
 
         [Theory]
         [MemberData(nameof(StaticServiceDescriptorPaths))]
@@ -168,7 +170,7 @@ namespace MarkLogic.Client.Tests.DataServices
         {
             using (var codeWriter = new StringWriter())
             {
-                await Code.GenerateService(pathToService, codeWriter, CodeGeneratorCSharp.Default);
+                await CodeGenerator.DataServiceClass(pathToService, codeWriter);
                 var sourceCode = codeWriter.ToString();
                 Output.WriteLine(sourceCode);
                 Assert.False(string.IsNullOrWhiteSpace(sourceCode));
@@ -181,7 +183,7 @@ namespace MarkLogic.Client.Tests.DataServices
         {
             using (var codeWriter = new StringWriter())
             {
-                await Code.GenerateService(pathToService, codeWriter, CodeGeneratorCSharp.Default);
+                await CodeGenerator.DataServiceClass(pathToService, codeWriter);
                 var sourceCode = codeWriter.ToString();
                 Output.WriteLine(sourceCode);
                 var assy = BuildAssembly(sourceCode, Output);
@@ -190,9 +192,9 @@ namespace MarkLogic.Client.Tests.DataServices
         }
 
         [Fact]
-        public void CompilableCodeFromPermutations()
+        public async void CompilableCodeFromPermutations()
         {
-            var sourceCode = CreateCodeFromPermutations();
+            var sourceCode = await CreateCodeFromPermutations();
             Output.WriteLine(sourceCode);
             var assy = BuildAssembly(sourceCode, Output);
             Assert.NotNull(assy);

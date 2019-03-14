@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MarkLogic.Client.DataService.CodeGen
+namespace MarkLogic.Client.Tools
 {
     public class DataTypeException : Exception
     {

@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkLogic.Client", "MarkLogic.Client\MarkLogic.Client.csproj", "{562D6758-147D-4249-9DF6-C3FC3B104A63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarkLogic.Client", "MarkLogic.Client\MarkLogic.Client.csproj", "{562D6758-147D-4249-9DF6-C3FC3B104A63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkLogic.Client.Tests", "MarkLogic.Client.Tests\MarkLogic.Client.Tests.csproj", "{413831F2-B0A7-4421-9B4A-3CB3576E1838}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarkLogic.Client.Tests", "MarkLogic.Client.Tests\MarkLogic.Client.Tests.csproj", "{413831F2-B0A7-4421-9B4A-3CB3576E1838}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkLogic.Client.Tools", "MarkLogic.Client.Tools\MarkLogic.Client.Tools\MarkLogic.Client.Tools.csproj", "{080F8BA8-4738-4292-A633-A984A92F9A6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{562D6758-147D-4249-9DF6-C3FC3B104A63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -44,5 +43,23 @@ Global
 		{413831F2-B0A7-4421-9B4A-3CB3576E1838}.Release|x64.Build.0 = Release|Any CPU
 		{413831F2-B0A7-4421-9B4A-3CB3576E1838}.Release|x86.ActiveCfg = Release|Any CPU
 		{413831F2-B0A7-4421-9B4A-3CB3576E1838}.Release|x86.Build.0 = Release|Any CPU
+		{080F8BA8-4738-4292-A633-A984A92F9A6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{080F8BA8-4738-4292-A633-A984A92F9A6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{080F8BA8-4738-4292-A633-A984A92F9A6A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{080F8BA8-4738-4292-A633-A984A92F9A6A}.Debug|x64.Build.0 = Debug|Any CPU
+		{080F8BA8-4738-4292-A633-A984A92F9A6A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{080F8BA8-4738-4292-A633-A984A92F9A6A}.Debug|x86.Build.0 = Debug|Any CPU
+		{080F8BA8-4738-4292-A633-A984A92F9A6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{080F8BA8-4738-4292-A633-A984A92F9A6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{080F8BA8-4738-4292-A633-A984A92F9A6A}.Release|x64.ActiveCfg = Release|Any CPU
+		{080F8BA8-4738-4292-A633-A984A92F9A6A}.Release|x64.Build.0 = Release|Any CPU
+		{080F8BA8-4738-4292-A633-A984A92F9A6A}.Release|x86.ActiveCfg = Release|Any CPU
+		{080F8BA8-4738-4292-A633-A984A92F9A6A}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {16D40963-24F6-4817-9E7A-7B91A2D2D7B4}
 	EndGlobalSection
 EndGlobal

@@ -1,12 +1,20 @@
-﻿using MarkLogic.Client.DataService.CodeGen;
+﻿using MarkLogic.Client.Tools;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
+using Xunit.Abstractions;
 
-namespace MarkLogic.Client.Tests.DataServices
+namespace MarkLogic.Client.Tests.Tools
 {
-    public partial class DescriptorTests
+    public class EndpointDescriptorTests
     {
+        public EndpointDescriptorTests(ITestOutputHelper output)
+        {
+            Output = output;
+        }
+
+        private ITestOutputHelper Output { get; }
+
         public const string ValidEndpointDescriptor = @"
         {
           ""functionName"": ""testEndpointName"",
@@ -79,7 +87,7 @@ namespace MarkLogic.Client.Tests.DataServices
         [MemberData(nameof(EndpointDescriptorData))]
         public void EndpointFromString(string endpointDesc, string expectedName, int expectedParamCount, bool hasReturnValue, bool hasSession, bool nullableSession)
         {
-            var endpoint = Endpoint.FromString(endpointDesc);
+            var endpoint = EndpointDescriptor.FromString(endpointDesc);
             Assert.NotNull(endpoint);
             Assert.Equal(expectedName, endpoint.FunctionName);
             Assert.Equal(expectedParamCount, endpoint.Parameters.Count);

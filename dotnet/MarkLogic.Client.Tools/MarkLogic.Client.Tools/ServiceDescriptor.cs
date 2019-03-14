@@ -3,10 +3,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MarkLogic.Client.DataService.CodeGen
+namespace MarkLogic.Client.Tools
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public class Service
+    public class ServiceDescriptor
     {
         [JsonProperty("endpointDirectory")]
         public string EndpointDirectory { get; set; }
@@ -30,7 +30,7 @@ namespace MarkLogic.Client.DataService.CodeGen
 
         public string Namespace => string.Join(".", NamespaceTokens);
 
-        public static async Task<Service> FromStreamAsync(Stream stream)
+        public static async Task<ServiceDescriptor> FromStreamAsync(Stream stream)
         {
             using (var reader = new StreamReader(stream))
             {
@@ -39,9 +39,9 @@ namespace MarkLogic.Client.DataService.CodeGen
             }
         }
 
-        public static Service FromString(string json)
+        public static ServiceDescriptor FromString(string json)
         {
-            return JsonConvert.DeserializeObject<Service>(json);
+            return JsonConvert.DeserializeObject<ServiceDescriptor>(json);
         }
     }
 }

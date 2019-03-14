@@ -4,14 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MarkLogic.Client.DataService.CodeGen
+namespace MarkLogic.Client.Tools
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public class Endpoint
+    public class EndpointDescriptor
     {
-        public Endpoint()
+        public EndpointDescriptor()
         {
-            Parameters = new List<Parameter>();
+            Parameters = new List<ParameterDescriptor>();
         }
 
         [JsonProperty("functionName")]
@@ -23,10 +23,10 @@ namespace MarkLogic.Client.DataService.CodeGen
         public string Description { get; set; }
 
         [JsonProperty("params")]
-        public IList<Parameter> Parameters { get; private set; }
+        public IList<ParameterDescriptor> Parameters { get; private set; }
 
         [JsonProperty("return")]
-        public Return ReturnValue { get; set; }
+        public ReturnDescriptor ReturnValue { get; set; }
 
         [JsonIgnore]
         public bool ReturnVoid => ReturnValue == null;
@@ -34,13 +34,13 @@ namespace MarkLogic.Client.DataService.CodeGen
         [JsonProperty("errorDetail")]
         public string ErrorDetail { get; set; }
 
-        public Parameter Session => Parameters.FirstOrDefault(p => p.IsSession);
+        public ParameterDescriptor Session => Parameters.FirstOrDefault(p => p.IsSession);
 
-        public IEnumerable<Parameter> ParametersNoSession => Session == null ? Parameters : Parameters.Except(new[] { Session });
+        public IEnumerable<ParameterDescriptor> ParametersNoSession => Session == null ? Parameters : Parameters.Except(new[] { Session });
 
         public bool HasSession => Session != null;
 
-        public static async Task<Endpoint> FromStreamAsync(Stream stream)
+        public static async Task<EndpointDescriptor> FromStreamAsync(Stream stream)
         {
             using (var reader = new StreamReader(stream))
             {
@@ -49,9 +49,9 @@ namespace MarkLogic.Client.DataService.CodeGen
             }
         }
 
-        public static Endpoint FromString(string json)
+        public static EndpointDescriptor FromString(string json)
         {
-            return JsonConvert.DeserializeObject<Endpoint>(json);
+            return JsonConvert.DeserializeObject<EndpointDescriptor>(json);
         }
     }
 }

@@ -2,78 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MarkLogic.Client.DataService.CodeGen
+namespace MarkLogic.Client.Tools.CSharp
 {
-    public sealed partial class CodeGeneratorCSharp
+    public class DataType
     {
-        public class TypeMapping
+        internal DataType(string name, params TypeMapping[] supportedTypes)
         {
-            internal TypeMapping(string typeFullName, bool isValueType, string marshalMethod, string unmarshalMethod)
-            {
-                TypeFullName = typeFullName;
-                var nameTokens = typeFullName.Split('.');
-                TypeName = nameTokens.Last();
-                IsValueType = isValueType;
-                Namespace = nameTokens.Length == 1 ? null : string.Join(".", nameTokens.Take(nameTokens.Length - 1));
-                MarshalMethod = marshalMethod;
-                UnmarshalMethod = unmarshalMethod;
-            }
-
-            public string TypeFullName { get; }
-
-            public string TypeName { get; }
-
-            public bool IsValueType { get; }
-
-            public string Namespace { get; }
-
-            public string MarshalMethod { get; }
-
-            public string UnmarshalMethod { get; }
+            Name = name;
+            TypeMappings = supportedTypes;
         }
 
-        public class ValueTypeMapping : TypeMapping
+        public string Name { get; }
+
+        public IEnumerable<TypeMapping> TypeMappings { get; }
+
+        public TypeMapping DefaultMapping => TypeMappings.First();
+
+        public TypeMapping GetMapping(string typeFullName)
         {
-            internal ValueTypeMapping(string typeFullName, string marshalMethod, string unmarshalMethod)
-                : base(typeFullName, true, marshalMethod, unmarshalMethod)
+            if (string.IsNullOrWhiteSpace(typeFullName))
             {
+                return DefaultMapping;
             }
+            var mapping = TypeMappings.FirstOrDefault(t => t.TypeFullName == typeFullName);
+            return mapping ?? throw new DataTypeException(Name, typeFullName);
         }
 
-        public class RefTypeMapping : TypeMapping
-        {
-            internal RefTypeMapping(string typeFullName, string marshalMethod, string unmarshalMethod)
-                : base(typeFullName, false, marshalMethod, unmarshalMethod)
-            {
-            }
-        }
-
-        public class DataType
-        {
-            internal DataType(string name, params TypeMapping[] supportedTypes)
-            {
-                Name = name;
-                TypeMappings = supportedTypes;
-            }
-
-            public string Name { get; }
-
-            public IEnumerable<TypeMapping> TypeMappings { get; }
-
-            public TypeMapping DefaultMapping => TypeMappings.First();
-
-            public TypeMapping GetMapping(string typeFullName)
-            {
-                if (string.IsNullOrWhiteSpace(typeFullName))
-                {
-                    return DefaultMapping;
-                }
-                var mapping = TypeMappings.FirstOrDefault(t => t.TypeFullName == typeFullName);
-                return mapping ?? throw new DataTypeException(Name, typeFullName);
-            }
-        }
-
-        public static IReadOnlyDictionary<string, DataType> DataTypeMap => _dataTypeMap.Value;
+        public static IReadOnlyDictionary<string, DataType> All => _dataTypeMap.Value;
 
         private static Lazy<IReadOnlyDictionary<string, DataType>> _dataTypeMap = new Lazy<IReadOnlyDictionary<string, DataType>>(() =>
         {
@@ -149,15 +104,5 @@ namespace MarkLogic.Client.DataService.CodeGen
             }
             return map;
         }, true);
-
-        private static TypeMapping GetMapping(ITypeDeclaration typeDecl)
-        {
-            DataType dt;
-            if (!DataTypeMap.TryGetValue(typeDecl.DataType, out dt))
-            {
-                throw new DataTypeException(typeDecl.DataType);
-            }
-            return dt.GetMapping(typeDecl.NetClass);
-        }
     }
 }

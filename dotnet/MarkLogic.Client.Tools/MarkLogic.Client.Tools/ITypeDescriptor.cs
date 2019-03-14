@@ -1,6 +1,6 @@
-﻿namespace MarkLogic.Client.DataService.CodeGen
+﻿namespace MarkLogic.Client.Tools
 {
-    public interface ITypeDeclaration
+    public interface ITypeDescriptor
     {
         string DataType { get; }
 

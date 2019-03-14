@@ -32,8 +32,7 @@ namespace MarkLogic.Client.Tests
 
         public int GetInt(string key)
         {
-            var value = 0;
-            if (!int.TryParse(_config[key], out value))
+            if (!int.TryParse(_config[key], out int value))
             {
                 throw new InvalidOperationException($"Missing configuration or non-int value for {key}.");
             }

@@ -1,5 +1,4 @@
-﻿using MarkLogic.Client.Http;
-using MarkLogic.Client.DataService.CodeGen;
+﻿using MarkLogic.Client.DataService.CodeGen;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System;
@@ -10,11 +9,11 @@ using Xunit;
 using Xunit.Abstractions;
 using System.Collections.Generic;
 
-namespace MarkLogic.Client.Tests.FunctionalTests.DataServices.CodeGen
+namespace MarkLogic.Client.Tests.DataServices
 {
-    public class GenerateCSharpTests
+    public class CodeGenerationTests
     {
-        public GenerateCSharpTests(ITestOutputHelper output)
+        public CodeGenerationTests(ITestOutputHelper output)
         {
             Output = output;
         }
@@ -64,7 +63,7 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices.CodeGen
         [InlineData("../../../../../src/main/ml-modules/root/test")]
         [InlineData("../../../../../src/main/ml-modules/root/test/atomics")]
         [InlineData("../../../../../src/main/ml-modules/root/test/complex")]
-        public async void TestGenerateService(string pathToService)
+        public async void CodeFromServiceJson(string pathToService)
         {
             using (var codeWriter = new StringWriter())
             {
@@ -79,7 +78,7 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices.CodeGen
         }
 
         [Fact]
-        public void TestGenerateServiceAllTypes()
+        public void CodeFromTypePermutations()
         {
             var service = new Service()
             {

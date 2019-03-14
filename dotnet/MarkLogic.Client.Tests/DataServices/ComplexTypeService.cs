@@ -1,6 +1,5 @@
 ﻿using MarkLogic.Client.DataService;
 using Newtonsoft.Json.Linq;
-using System;
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml;
@@ -8,18 +7,18 @@ using System.Xml.Linq;
 
 namespace MarkLogic.Client.Tests.DataServices
 {
-    public class ComplexTypeTestsService : DataServiceBase
+    public class ComplexTypeService : DataServiceBase
     {
-        protected ComplexTypeTestsService(IDatabaseClient dbClient) : base(dbClient, "/test/complex/")
+        protected ComplexTypeService(IDatabaseClient dbClient) : base(dbClient, "/test/complex/")
         {
         }
 
-        public static ComplexTypeTestsService Create(IDatabaseClient dbClient)
+        public static ComplexTypeService Create(IDatabaseClient dbClient)
         {
-            return new ComplexTypeTestsService(dbClient);
+            return new ComplexTypeService(dbClient);
         }
 
-        public Task<JArray> returnArray(JArray value)
+        public Task<JArray> ReturnArray(JArray value)
         {
             return CreateRequest("returnArray.xqy")
                 .WithParameters(
@@ -27,7 +26,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<JArray>(false, Unmarshal.JsonArray);
         }
 
-        public Task<JObject> returnObject(JObject value)
+        public Task<JObject> ReturnObject(JObject value)
         {
             return CreateRequest("returnObject.xqy")
                 .WithParameters(
@@ -35,7 +34,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<JObject>(false, Unmarshal.JsonObject);
         }
 
-        public Task<Stream> returnBinary(Stream value)
+        public Task<Stream> ReturnBinary(Stream value)
         {
             return CreateRequest("returnBinary.xqy")
                 .WithParameters(
@@ -43,7 +42,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<Stream>(false, Unmarshal.Stream);
         }
 
-        public Task<Stream> returnTextDoc(Stream value)
+        public Task<Stream> ReturnTextDoc(Stream value)
         {
             return CreateRequest("returnTextDoc.xqy")
                 .WithParameters(
@@ -51,7 +50,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<Stream>(false, Unmarshal.Stream);
         }
 
-        public Task<Stream> returnJsonDocFromStream(Stream value)
+        public Task<Stream> ReturnJsonDocFromStream(Stream value)
         {
             return CreateRequest("returnJsonDoc.xqy")
                 .WithParameters(
@@ -59,7 +58,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<Stream>(false, Unmarshal.Stream);
         }
 
-        public Task<JObject> returnJsonDoc(JObject value)
+        public Task<JObject> ReturnJsonDoc(JObject value)
         {
             return CreateRequest("returnJsonDoc.xqy")
                 .WithParameters(
@@ -67,7 +66,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<JObject>(false, Unmarshal.JsonObject);
         }
 
-        public Task<Stream> returnXmlDocFromStream(Stream value)
+        public Task<Stream> ReturnXmlDocFromStream(Stream value)
         {
             return CreateRequest("returnXmlDoc.xqy")
                 .WithParameters(
@@ -75,7 +74,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<Stream>(false, Unmarshal.Stream);
         }
 
-        public Task<XmlDocument> returnXmlDoc(XmlDocument value)
+        public Task<XmlDocument> ReturnXmlDoc(XmlDocument value)
         {
             return CreateRequest("returnXmlDoc.xqy")
                 .WithParameters(
@@ -83,7 +82,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<XmlDocument>(false, Unmarshal.XmlDocument);
         }
 
-        public Task<XDocument> returnXDoc(XDocument value)
+        public Task<XDocument> ReturnXDoc(XDocument value)
         {
             return CreateRequest("returnXmlDoc.xqy")
                 .WithParameters(

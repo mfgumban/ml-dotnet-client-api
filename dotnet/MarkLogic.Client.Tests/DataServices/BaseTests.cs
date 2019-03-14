@@ -1,27 +1,25 @@
-﻿using MarkLogic.Client.Tests.DataServices;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
+namespace MarkLogic.Client.Tests.DataServices
 {
-    public class BasicTests : DbTestBase, IClassFixture<DatabaseClientFixture>
+    public class BaseTests : DbTestBase, IClassFixture<DatabaseClientFixture>
     {
-        public BasicTests(DatabaseClientFixture dbClientFixture, ITestOutputHelper output)
+        public BaseTests(DatabaseClientFixture dbClientFixture, ITestOutputHelper output)
             : base(dbClientFixture, output)
         {
         }
 
         [Fact]
-        public async void TestReturnNone()
+        public async void ReturnNone()
         {
-            await BasicTestsService.Create(DbClient).returnNone();
+            await BaseService.Create(DbClient).ReturnNone();
         }
 
-        public static IEnumerable<object[]> TestReturnMultipleAtomicData()
+        public static IEnumerable<object[]> MultipleAtomicData()
         {
             return new[]
             {
@@ -31,10 +29,10 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
         }
 
         [Theory]
-        [MemberData(nameof(TestReturnMultipleAtomicData))]
-        public async void TestReturnMultipleAtomic(string value1, int value2, DateTime value3)
+        [MemberData(nameof(MultipleAtomicData))]
+        public async void MultipleAtomic(string value1, int value2, DateTime value3)
         {
-            var response = await BasicTestsService.Create(DbClient).returnMultipleAtomic(value1, value2, value3);
+            var response = await BaseService.Create(DbClient).ReturnMultipleAtomic(value1, value2, value3);
             Output.WriteLine(response);
             var results = response.Split("\n");
             Assert.Equal(3, results.Length);
@@ -43,7 +41,7 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
             Assert.Equal(value3.ToISODateTime(), results[2]);
         }
 
-        public static IEnumerable<object[]> TestReturnMultipleAtomicNullData()
+        public static IEnumerable<object[]> MultipleAtomicNullData()
         {
             return new[]
             {
@@ -52,19 +50,19 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
         }
 
         [Theory]
-        [MemberData(nameof(TestReturnMultipleAtomicNullData))]
-        public async void TestReturnMultipleAtomicNull(string value1, int value2, DateTime value3)
+        [MemberData(nameof(MultipleAtomicNullData))]
+        public async void MultiAtomicException(string value1, int value2, DateTime value3)
         {
-            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => BasicTestsService.Create(DbClient).returnMultipleAtomic(value1, value2, value3));
+            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => BaseService.Create(DbClient).ReturnMultipleAtomic(value1, value2, value3));
             Assert.Equal("value1", exception.ParamName);
         }
 
         [Theory]
         [InlineData(new[] { 1 })]
         [InlineData(new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 })]
-        public async void TestReturnMultiValue(int[] values)
+        public async void MultiValue(int[] values)
         {
-            var results = await BasicTestsService.Create(DbClient).returnMultiValue(values);
+            var results = await BaseService.Create(DbClient).ReturnMultiValue(values);
             OutputResults(string.Join(",", values), string.Join(",", results));
             Assert.Equal(values, results);
         }
@@ -72,30 +70,30 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
         [Theory]
         [InlineData(new int[0])]
         [InlineData(null)]
-        public async void TestReturnMultiValueNull(int[] values)
+        public async void MultiValueException(int[] values)
         {
-            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => BasicTestsService.Create(DbClient).returnMultiValue(values));
+            var exception = await Assert.ThrowsAsync<ArgumentNullException>(() => BaseService.Create(DbClient).ReturnMultiValue(values));
             Assert.Equal("values", exception.ParamName);
         }
 
         [Fact]
-        public async void TestErrorDetailLog()
+        public async void ErrorDetailLog()
         {
-            var exception = await Assert.ThrowsAsync<DataServiceRequestException>(() => BasicTestsService.Create(DbClient).errorDetailLog());
+            var exception = await Assert.ThrowsAsync<DataServiceRequestException>(() => BaseService.Create(DbClient).ErrorDetailLog());
             Assert.Equal(500, exception.StatusCode); // Internal Server Error
             Assert.Equal("Deliberate error", exception.MessageDetailTitle);
         }
 
         [Fact]
-        public async void TestSession()
+        public async void Session()
         {
-            var service = BasicTestsService.Create(DbClient);
+            var service = BaseService.Create(DbClient);
 
             var entityName = "Master Entity Name 1";
             var itemName = "Item Name 1";
             var session = service.NewSession();
-            var id = await service.insertMaster(entityName, session);
-            var result = await service.insertDetail(id, itemName, session);
+            var id = await service.InsertMaster(entityName, session);
+            var result = await service.InsertDetail(id, itemName, session);
 
             Assert.NotNull(result);
             Assert.Equal(id, result.Value<string>("id"));

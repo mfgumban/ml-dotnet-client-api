@@ -4,18 +4,18 @@ using System.Threading.Tasks;
 
 namespace MarkLogic.Client.Tests.DataServices
 {
-    public class AtomicTypeTestsService : DataServiceBase
+    public class AtomicTypeService : DataServiceBase
     {
-        protected AtomicTypeTestsService(IDatabaseClient dbClient) : base(dbClient, "/test/atomics/")
+        protected AtomicTypeService(IDatabaseClient dbClient) : base(dbClient, "/test/atomics/")
         {
         }
 
-        public static AtomicTypeTestsService Create(IDatabaseClient dbClient)
+        public static AtomicTypeService Create(IDatabaseClient dbClient)
         {
-            return new AtomicTypeTestsService(dbClient);
+            return new AtomicTypeService(dbClient);
         }
 
-        public Task<int?> returnNullableValueType(int? value)
+        public Task<int?> ReturnNullableValueType(int? value)
         {
             return CreateRequest("returnNullableValueType.xqy")
                 .WithParameters(
@@ -23,7 +23,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<int?>(true, Unmarshal.Nullable(Unmarshal.Integer));
         }
 
-        public Task<bool> returnBoolean(bool value)
+        public Task<bool> ReturnBoolean(bool value)
         {
             return CreateRequest("returnBoolean.xqy")
                 .WithParameters(
@@ -31,7 +31,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<bool>(false, Unmarshal.Boolean);
         }
 
-        public Task<string> returnString(string value)
+        public Task<string> ReturnString(string value)
         {
             return CreateRequest("returnString.xqy")
                 .WithParameters(
@@ -39,7 +39,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<string>(false, Unmarshal.String);
         }
 
-        public Task<int> returnInteger(int value)
+        public Task<int> ReturnInteger(int value)
         {
             return CreateRequest("returnInteger.xqy")
                 .WithParameters(
@@ -47,7 +47,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<int>(false, Unmarshal.Integer);
         }
 
-        public Task<uint> returnUnsignedInteger(uint value)
+        public Task<uint> ReturnUnsignedInteger(uint value)
         {
             return CreateRequest("returnUnsignedInteger.xqy")
                 .WithParameters(
@@ -55,7 +55,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<uint>(false, Unmarshal.UnsignedInteger);
         }
 
-        public Task<long> returnLong(long value)
+        public Task<long> ReturnLong(long value)
         {
             return CreateRequest("returnLong.xqy")
                 .WithParameters(
@@ -63,7 +63,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<long>(false, Unmarshal.Long);
         }
 
-        public Task<ulong> returnUnsignedLong(ulong value)
+        public Task<ulong> ReturnUnsignedLong(ulong value)
         {
             return CreateRequest("returnUnsignedLong.xqy")
                 .WithParameters(
@@ -71,7 +71,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<ulong>(false, Unmarshal.UnsignedLong);
         }
 
-        public Task<float> returnFloat(float value)
+        public Task<float> ReturnFloat(float value)
         {
             return CreateRequest("returnFloat.xqy")
                 .WithParameters(
@@ -79,7 +79,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<float>(false, Unmarshal.Float);
         }
 
-        public Task<double> returnDouble(double value)
+        public Task<double> ReturnDouble(double value)
         {
             return CreateRequest("returnDouble.xqy")
                 .WithParameters(
@@ -87,7 +87,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<double>(false, Unmarshal.Double);
         }
 
-        public Task<decimal> returnDecimal(decimal value)
+        public Task<decimal> ReturnDecimal(decimal value)
         {
             return CreateRequest("returnDecimal.xqy")
                 .WithParameters(
@@ -95,7 +95,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<decimal>(false, Unmarshal.Decimal);
         }
 
-        public Task<DateTime> returnDateTime(DateTime value)
+        public Task<DateTime> ReturnDateTime(DateTime value)
         {
             return CreateRequest("returnDateTime.xqy")
                 .WithParameters(
@@ -103,7 +103,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<DateTime>(false, Unmarshal.DateTime);
         }
 
-        public Task<DateTime> returnDate(DateTime value)
+        public Task<DateTime> ReturnDate(DateTime value)
         {
             return CreateRequest("returnDate.xqy")
                 .WithParameters(
@@ -111,7 +111,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<DateTime>(false, Unmarshal.Date);
         }
 
-        public Task<DateTime> returnTime(DateTime value)
+        public Task<DateTime> ReturnTime(DateTime value)
         {
             return CreateRequest("returnTime.xqy")
                 .WithParameters(
@@ -119,7 +119,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<DateTime>(false, Unmarshal.Time);
         }
 
-        public Task<TimeSpan> returnTimeSpan(TimeSpan value)
+        public Task<TimeSpan> ReturnTimeSpan(TimeSpan value)
         {
             return CreateRequest("returnTimeSpan.xqy")
                 .WithParameters(

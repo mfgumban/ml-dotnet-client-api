@@ -41,15 +41,14 @@ namespace MarkLogic.Client.Http
 
         internal void ProcessResponse(Uri requestUri, HttpResponseMessage response)
         {
-            IEnumerable<string> setCookieHeaders;
-            if (response.Headers.TryGetValues(HeaderNames.SetCookie, out setCookieHeaders))
+            if (response.Headers.TryGetValues(HeaderNames.SetCookie, out IEnumerable<string> setCookieHeaders))
             {
                 var cookies = new CookieContainer();
-                foreach(var setCookieHeader in setCookieHeaders)
+                foreach (var setCookieHeader in setCookieHeaders)
                 {
                     cookies.SetCookies(requestUri, setCookieHeader);
                 }
-                foreach(Cookie cookie in cookies.GetCookies(requestUri))
+                foreach (Cookie cookie in cookies.GetCookies(requestUri))
                 {
                     var existingCookie = _cookieJar.FirstOrDefault(c => c.Name.EqualsIgnoreCase(cookie.Name) && c.Domain.EqualsIgnoreCase(requestUri.Host));
                     if (existingCookie != null)

@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace MarkLogic.Client.Tests.DataServices
 {
-    public class BasicTestsService : DataServiceBase
+    public class BaseService : DataServiceBase
     {
-        protected BasicTestsService(IDatabaseClient dbClient) : base(dbClient, "/test/")
+        protected BaseService(IDatabaseClient dbClient) : base(dbClient, "/test/")
         {
         }
 
-        public static BasicTestsService Create(IDatabaseClient dbClient)
+        public static BaseService Create(IDatabaseClient dbClient)
         {
-            return new BasicTestsService(dbClient);
+            return new BaseService(dbClient);
         }
 
         public ISessionState NewSession()
@@ -22,7 +22,7 @@ namespace MarkLogic.Client.Tests.DataServices
             return DbClient.CreateSession();
         }
 
-        public Task<string> returnMultipleAtomic(string value1, int value2, DateTime value3)
+        public Task<string> ReturnMultipleAtomic(string value1, int value2, DateTime value3)
         {
             return CreateRequest("returnMultipleAtomic.xqy")
                 .WithParameters(
@@ -32,7 +32,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<string>(false, Unmarshal.String);
         }
 
-        public Task<IEnumerable<int>> returnMultiValue(IEnumerable<int> values)
+        public Task<IEnumerable<int>> ReturnMultiValue(IEnumerable<int> values)
         {
             return CreateRequest("returnMultiValue.xqy")
                 .WithParameters(
@@ -40,19 +40,19 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestMultiple<int>(false, Unmarshal.Integer);
         }
 
-        public Task returnNone()
+        public Task ReturnNone()
         {
             return CreateRequest("returnNone.xqy")
                 .RequestNone();
         }
 
-        public Task errorDetailLog()
+        public Task ErrorDetailLog()
         {
             return CreateRequest("errorDetailLog.xqy")
                 .RequestNone();
         }
 
-        public Task<string> insertMaster(string name, ISessionState session)
+        public Task<string> InsertMaster(string name, ISessionState session)
         {
             return CreateRequest("insertMaster.xqy")
                 .WithSession(session, false)
@@ -61,7 +61,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 .RequestSingle<string>(false, Unmarshal.String);
         }
 
-        public Task<JObject> insertDetail(string id, string itemName, ISessionState session)
+        public Task<JObject> InsertDetail(string id, string itemName, ISessionState session)
         {
             return CreateRequest("insertDetail.xqy")
                 .WithSession(session, false)

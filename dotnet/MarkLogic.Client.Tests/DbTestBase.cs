@@ -1,7 +1,6 @@
-﻿using System;
-using Xunit.Abstractions;
+﻿using Xunit.Abstractions;
 
-namespace MarkLogic.Client.Tests.FunctionalTests
+namespace MarkLogic.Client.Tests
 {
     public abstract class DbTestBase
     {

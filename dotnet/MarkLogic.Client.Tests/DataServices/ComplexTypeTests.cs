@@ -1,6 +1,4 @@
-﻿using MarkLogic.Client.Tests.DataServices;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using Newtonsoft.Json.Linq;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -8,7 +6,7 @@ using System.Xml.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
+namespace MarkLogic.Client.Tests.DataServices
 {
     public class ComplexTypeTests : DbTestBase, IClassFixture<DatabaseClientFixture>
     {
@@ -43,27 +41,27 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
             </shiporder>".Trim();
 
         [Fact]
-        public async void TestReturnArray()
+        public async void JsonArray()
         {
             var value = JArray.Parse("[\"the\", \"quick\", \"brown\", \"fox\", 1, 2, 3]");
-            var result = await ComplexTypeTestsService.Create(DbClient).returnArray(value);
+            var result = await ComplexTypeService.Create(DbClient).ReturnArray(value);
             Output.WriteLine(result.ToString());
 
             Assert.True(JToken.DeepEquals(value, result));
         }
 
         [Fact]
-        public async void TestReturnObject()
+        public async void JsonObject()
         {
             var value = JObject.Parse(ValidJson);
-            var result = await ComplexTypeTestsService.Create(DbClient).returnObject(value);
+            var result = await ComplexTypeService.Create(DbClient).ReturnObject(value);
             Output.WriteLine(result.ToString());
 
             Assert.True(JToken.DeepEquals(value, result));
         }
 
         [Fact]
-        public async void TestReturnBinary()
+        public async void Binary()
         {
             var binary = Assembly.GetExecutingAssembly().GetManifestResourceStream("MarkLogic.Client.Tests.Resources.marklogic-logo-social.jpg");
 
@@ -73,7 +71,7 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
             var inputBytes = input.ToArray();
             input.Position = 0;
 
-            var result = await ComplexTypeTestsService.Create(DbClient).returnBinary(input);
+            var result = await ComplexTypeService.Create(DbClient).ReturnBinary(input);
 
             Assert.NotNull(result);
 
@@ -92,7 +90,7 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
         }
 
         [Fact]
-        public async void TestReturnTextDoc()
+        public async void TextDoc()
         {
             var inputData = "The quick brown fox jumped over the lazy dog beside the riverbank.";
             var input = new MemoryStream();
@@ -101,7 +99,7 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
             inputWriter.Flush();
             input.Position = 0;
 
-            var result = await ComplexTypeTestsService.Create(DbClient).returnTextDoc(input);
+            var result = await ComplexTypeService.Create(DbClient).ReturnTextDoc(input);
 
             Assert.NotNull(result);
 
@@ -117,17 +115,17 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
         }
 
         [Fact]
-        public async void TestReturnJsonDoc()
+        public async void JsonDoc()
         {
             var value = JObject.Parse(ValidJson);
-            var result = await ComplexTypeTestsService.Create(DbClient).returnJsonDoc(value);
+            var result = await ComplexTypeService.Create(DbClient).ReturnJsonDoc(value);
             OutputResults(value.ToString(), result.ToString());
 
             Assert.True(JToken.DeepEquals(value, result));
         }
 
         [Fact]
-        public async void TestReturnJsonDocFromStream()
+        public async void JsonDocFromStream()
         {
             var valueString = ValidJson;
             var value = new MemoryStream();
@@ -136,7 +134,7 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
             writer.Flush();
             value.Position = 0;
 
-            var result = await ComplexTypeTestsService.Create(DbClient).returnJsonDocFromStream(value);
+            var result = await ComplexTypeService.Create(DbClient).ReturnJsonDocFromStream(value);
             var reader = new StreamReader(result);
             var resultString = await reader.ReadToEndAsync();
             OutputResults(valueString, resultString);
@@ -150,28 +148,28 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
         }
 
         [Fact]
-        public async void TestReturnXmlDoc()
+        public async void XmlDoc()
         {
             var value = new XmlDocument();
             value.LoadXml(ValidXmlDocument);
-            var result = await ComplexTypeTestsService.Create(DbClient).returnXmlDoc(value);
+            var result = await ComplexTypeService.Create(DbClient).ReturnXmlDoc(value);
             OutputResults(value.OuterXml, result.OuterXml);
 
             Assert.True(XNode.DeepEquals(value.ToXDocument(), result.ToXDocument()));
         }
 
         [Fact]
-        public async void TestReturnXDoc()
+        public async void XDoc()
         {
             var value = XDocument.Parse(ValidXmlDocument);
-            var result = await ComplexTypeTestsService.Create(DbClient).returnXDoc(value);
+            var result = await ComplexTypeService.Create(DbClient).ReturnXDoc(value);
             OutputResults(value.ToString(), result.ToString());
 
             Assert.True(XNode.DeepEquals(value, result));
         }
 
         [Fact]
-        public async void TestReturnXmlDocFromStream()
+        public async void XmlDocFromStream()
         {
             var valueString = ValidXmlDocument;
             var value = new MemoryStream();
@@ -180,7 +178,7 @@ namespace MarkLogic.Client.Tests.FunctionalTests.DataServices
             writer.Flush();
             value.Position = 0;
 
-            var result = await ComplexTypeTestsService.Create(DbClient).returnXmlDocFromStream(value);
+            var result = await ComplexTypeService.Create(DbClient).ReturnXmlDocFromStream(value);
             var reader = new StreamReader(result);
             var resultString = await reader.ReadToEndAsync();
             OutputResults(valueString, resultString);

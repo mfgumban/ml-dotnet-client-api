@@ -3,7 +3,6 @@ package com.ds.inventory;
 // IMPORTANT: Do not edit. This file is generated.
 
 import java.util.stream.Stream;
-import com.marklogic.client.io.Format;
 import java.io.Reader;
 
 

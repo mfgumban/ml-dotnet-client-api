@@ -1,10 +1,6 @@
 package com.ds.test;
 
 import java.io.*;
-import java.util.*;
-import java.util.stream.*;
-import java.time.*;
-
 import org.junit.jupiter.api.*;
 import com.marklogic.client.*;
 import com.ds.TestBase;
@@ -31,7 +27,7 @@ public class ComplexTypeTests extends TestBase {
     System.out.println("Working Directory = " + System.getProperty("user.dir"));
     File file = new File("src/test/resources/marklogic-logo-social.jpg");
     InputStream parameter = new FileInputStream(file);
-    InputStream response = testService.returnBinary(parameter);
+    testService.returnBinary(parameter);
   }
 
   @Test

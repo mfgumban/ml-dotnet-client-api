@@ -49,6 +49,6 @@ public class BasicTests extends TestBase {
   public void testSession() throws IOException {
     SessionState session = testService.newSessionState();
     String id = testService.insertMaster("Purchase Order 1", session);
-    Reader result = testService.insertDetail(id, "PO Item 1", session);
+    testService.insertDetail(id, "PO Item 1", session);
   }
 }

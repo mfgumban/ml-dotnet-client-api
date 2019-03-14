@@ -33,7 +33,7 @@ namespace MarkLogic.Client.Tests.DataServices
         public async void MultipleAtomic(string value1, int value2, DateTime value3)
         {
             var response = await BaseService.Create(DbClient).ReturnMultipleAtomic(value1, value2, value3);
-            Output.WriteLine(response);
+            OutputResults(string.Join("\n", value1, value2, value3.ToISODateTime()), response);
             var results = response.Split("\n");
             Assert.Equal(3, results.Length);
             Assert.Equal(value1, results[0]);

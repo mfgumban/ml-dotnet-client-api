@@ -182,7 +182,10 @@ namespace MarkLogic.Client.Tests.DataServices
                 System.DateTime.MinValue,
                 System.DateTime.MaxValue,
                 new DateTime(now.Year, now.Month, now.Day, 0, 0, 1),
-                new DateTime(now.Year, now.Month, now.Day, 23, 59, 59)
+                new DateTime(now.Year, now.Month, now.Day, 23, 59, 59),
+                new DateTime(now.Year, now.Month, now.Day, 1, 1, 1, 1), // min msec
+                new DateTime(now.Year, now.Month, now.Day, 1, 1, 1, 999), // max msec
+                new DateTime(now.Year, now.Month, now.Day, 1, 1, 1, 120), // msec with trailing zero
             };
             switch (testDataType)
             {

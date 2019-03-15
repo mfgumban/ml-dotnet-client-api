@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarkLogic.Client", "MarkLog
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarkLogic.Client.Tests", "MarkLogic.Client.Tests\MarkLogic.Client.Tests.csproj", "{413831F2-B0A7-4421-9B4A-3CB3576E1838}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkLogic.Client.Tools", "MarkLogic.Client.Tools\MarkLogic.Client.Tools\MarkLogic.Client.Tools.csproj", "{080F8BA8-4738-4292-A633-A984A92F9A6A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarkLogic.Client.Tools", "MarkLogic.Client.Tools\MarkLogic.Client.Tools.csproj", "{080F8BA8-4738-4292-A633-A984A92F9A6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

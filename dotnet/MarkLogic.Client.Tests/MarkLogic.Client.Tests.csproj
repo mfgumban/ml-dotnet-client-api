@@ -37,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MarkLogic.Client.Tools\MarkLogic.Client.Tools\MarkLogic.Client.Tools.csproj" />
+    <ProjectReference Include="..\MarkLogic.Client.Tools\MarkLogic.Client.Tools.csproj" />
     <ProjectReference Include="..\MarkLogic.Client\MarkLogic.Client.csproj" />
   </ItemGroup>
 

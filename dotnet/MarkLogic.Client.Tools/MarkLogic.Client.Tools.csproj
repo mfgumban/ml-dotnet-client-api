@@ -9,7 +9,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MarkLogic.Client\MarkLogic.Client.csproj" />
+    <ProjectReference Include="..\MarkLogic.Client\MarkLogic.Client.csproj" />
   </ItemGroup>
 
 </Project>

@@ -12,11 +12,12 @@ namespace MarkLogic.NetCoreCLI
                 .AddSingleton<IConsole>(new CLIConsole())
                 .BuildServiceProvider();
 
-            var actionRoot = new CompositeActionBuilder("ml")
+            var actionRoot = new CompositeActionBuilder()
                 .WithAction(ScaffoldAction.Default)
                 .Create();
 
-
+            var host = new ActionHost(actionRoot, serviceProvider);
+            host.Run(args);
         }
     }
 }

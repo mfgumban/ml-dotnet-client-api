@@ -14,6 +14,6 @@ namespace MarkLogic.NetCoreCLI
 
         bool HasOptions { get; }
 
-        Task<int> Execute(IServiceProvider serviceProvider);
+        Task<int> Execute(IServiceProvider serviceProvider, string[] options);
     }
 }

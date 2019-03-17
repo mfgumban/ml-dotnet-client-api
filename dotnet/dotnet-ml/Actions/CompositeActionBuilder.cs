@@ -20,7 +20,7 @@ namespace MarkLogic.NetCoreCLI.Actions
 
             public bool HasOptions => false;
 
-            public Task<int> Execute(IServiceProvider serviceProvider)
+            public Task<int> Execute(IServiceProvider serviceProvider, string[] options)
             {
                 return Task.FromResult(-1);
             }
@@ -28,10 +28,9 @@ namespace MarkLogic.NetCoreCLI.Actions
 
         private CompositeAction _action;
 
-        public CompositeActionBuilder(string verb)
+        public CompositeActionBuilder()
         {
-            Debug.Assert(!string.IsNullOrWhiteSpace(verb), "Action verb cannot be null, empty, or whitespace");
-            _action = new CompositeAction() { Verb = verb };
+            _action = new CompositeAction();
         }
 
         public IAction Create()
@@ -39,10 +38,17 @@ namespace MarkLogic.NetCoreCLI.Actions
             return _action;
         }
 
+        public CompositeActionBuilder WithVerb(string verb)
+        {
+            Debug.Assert(!string.IsNullOrWhiteSpace(verb), "Action verb cannot be null, empty, or whitespace");
+            _action.Verb = verb;
+            return this;
+        }
+
         public CompositeActionBuilder WithAction(IAction action)
         {
             Debug.Assert(action != null, "Action cannot be null");
-            Debug.Assert(_action.SubActionList.Any(a => a.Verb.EqualsIgnoreCase(action.Verb)), $"Composite action already has a sub action with the verb {action.Verb}");
+            Debug.Assert(!_action.SubActionList.Any(a => a.Verb.EqualsIgnoreCase(action.Verb)), $"Composite action already has a sub action with the verb {action.Verb}");
             _action.SubActionList.Add(action);
             return this;
         }

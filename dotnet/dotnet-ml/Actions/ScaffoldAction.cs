@@ -8,7 +8,8 @@ namespace MarkLogic.NetCoreCLI.Actions
     {
         private static IAction _action;
 
-        public static IAction Default => _action ?? (_action = new CompositeActionBuilder("scaffold")
+        public static IAction Default => _action ?? (_action = new CompositeActionBuilder()
+            .WithVerb("scaffold")
             .WithAction(DataServiceAction.Default)
             .Create());
     }

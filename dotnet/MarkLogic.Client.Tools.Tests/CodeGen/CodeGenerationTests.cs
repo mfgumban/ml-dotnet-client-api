@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using MarkLogic.Client.Tools.CodeGen.CSharp;
+using MarkLogic.Client.Tools.Services;
 
 namespace MarkLogic.Client.Tools.Tests.CodeGen
 {
@@ -157,19 +158,20 @@ namespace MarkLogic.Client.Tools.Tests.CodeGen
         {
             return new[]
             {
-                new object[] { "../../../../../src/main/ml-modules/root/test" },
-                new object[] { "../../../../../src/main/ml-modules/root/test/atomics" },
-                new object[] { "../../../../../src/main/ml-modules/root/test/complex" }
+                new object[] { "../../../../../src/main/ml-modules/root/test/service.json" },
+                new object[] { "../../../../../src/main/ml-modules/root/test/atomics/service.json" },
+                new object[] { "../../../../../src/main/ml-modules/root/test/complex/service.json" }
             };
         }
 
         [Theory]
         [MemberData(nameof(StaticServiceDescriptorPaths))]
-        public async void ServiceFromFile(string pathToService)
+        public async void ServiceFromFile(string serviceFilePath)
         {
             using (var codeWriter = new StringWriter())
             {
-                await CodeGenerator.DataServiceClass(pathToService, codeWriter);
+                var provider = await ServiceDescriptorProvider.Load(serviceFilePath, new Filesystem());
+                await CodeGenerator.DataServiceClass(provider, codeWriter);
                 var sourceCode = codeWriter.ToString();
                 Output.WriteLine(sourceCode);
                 Assert.False(string.IsNullOrWhiteSpace(sourceCode));
@@ -178,11 +180,12 @@ namespace MarkLogic.Client.Tools.Tests.CodeGen
 
         [Theory]
         [MemberData(nameof(StaticServiceDescriptorPaths))]
-        public async void CompilableCodeFromDescriptor(string pathToService)
+        public async void CompilableCodeFromDescriptor(string serviceFilePath)
         {
             using (var codeWriter = new StringWriter())
             {
-                await CodeGenerator.DataServiceClass(pathToService, codeWriter);
+                var provider = await ServiceDescriptorProvider.Load(serviceFilePath, new Filesystem());
+                await CodeGenerator.DataServiceClass(provider, codeWriter);
                 var sourceCode = codeWriter.ToString();
                 Output.WriteLine(sourceCode);
                 var assy = BuildAssembly(sourceCode, Output);

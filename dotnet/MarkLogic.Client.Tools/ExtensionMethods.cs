@@ -1,7 +1,14 @@
-﻿namespace MarkLogic.Client.Tools
+﻿using System;
+
+namespace MarkLogic.Client.Tools
 {
     public static class ExtensionMethods
     {
+        public static TService GetService<TService>(this IServiceProvider provider) where TService : class
+        {
+            return provider.GetService(typeof(TService)) as TService;
+        }
+
         public static string Capitalize(this string value)
         {
             if (string.IsNullOrEmpty(value))

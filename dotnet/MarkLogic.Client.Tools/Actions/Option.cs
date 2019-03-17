@@ -1,8 +1,8 @@
 ﻿using System.Diagnostics;
 
-namespace MarkLogic.NetCoreCLI
+namespace MarkLogic.Client.Tools.Actions
 {
-    public sealed class Option
+    public class Option : IOption
     {
         public Option(string name, string shorthand, int minArgs, int maxArgs)
         {

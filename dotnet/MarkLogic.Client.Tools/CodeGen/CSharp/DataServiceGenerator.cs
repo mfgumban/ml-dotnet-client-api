@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
-namespace MarkLogic.Client.Tools.CSharp
+namespace MarkLogic.Client.Tools.CodeGen.CSharp
 {
     internal sealed partial class DataServiceGenerator
     {

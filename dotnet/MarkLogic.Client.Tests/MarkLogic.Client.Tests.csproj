@@ -15,19 +15,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\CompilerDeps\netstandard.dll" />
-    <None Remove="Resources\CompilerDeps\Newtonsoft.Json.dll" />
     <None Remove="Resources\marklogic-logo-social.jpg" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Resources\CompilerDeps\netstandard.dll" />
-    <EmbeddedResource Include="Resources\CompilerDeps\Newtonsoft.Json.dll" />
     <EmbeddedResource Include="Resources\marklogic-logo-social.jpg" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.10.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.0" />
@@ -39,7 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MarkLogic.Client.Tools\MarkLogic.Client.Tools.csproj" />
     <ProjectReference Include="..\MarkLogic.Client\MarkLogic.Client.csproj" />
   </ItemGroup>
 

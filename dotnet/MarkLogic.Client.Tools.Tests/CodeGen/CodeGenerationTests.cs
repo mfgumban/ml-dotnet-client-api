@@ -1,17 +1,16 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using Xunit;
 using Xunit.Abstractions;
 using System.Collections.Generic;
-using MarkLogic.Client.Tools;
-using MarkLogic.Client.Tools.CSharp;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using MarkLogic.Client.Tools.CodeGen.CSharp;
 
-namespace MarkLogic.Client.Tests.Tools
+namespace MarkLogic.Client.Tools.Tests.CodeGen
 {
     public class CodeGenerationTests
     {
@@ -41,7 +40,7 @@ namespace MarkLogic.Client.Tests.Tools
             var metadataRefs = new List<MetadataReference>();
             foreach(var assyName in EmbeddedAssemblies)
             {
-                var assyStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"MarkLogic.Client.Tests.Resources.CompilerDeps.{assyName}");
+                var assyStream = Assembly.GetExecutingAssembly().GetManifestResourceStream($"MarkLogic.Client.Tools.Tests.CompilerDeps.{assyName}");
                 metadataRefs.Add(MetadataReference.CreateFromStream(assyStream));
             }
             //  assumed present in output artifact directory (aka "bin") and is the current working directory (of the test runner)

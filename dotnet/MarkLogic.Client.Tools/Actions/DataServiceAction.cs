@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 
-namespace MarkLogic.NetCoreCLI.Actions
+namespace MarkLogic.Client.Tools.Actions
 {
     public static class DataServiceAction
     {
@@ -16,7 +14,7 @@ namespace MarkLogic.NetCoreCLI.Actions
 
         public static IAction Default => _action ?? (_action = new ActionBuilder<OptionSet>()
             .WithVerb("dataservice")
-            .WithOption("service", shorthand: "s", minArgs: 1, maxArgs: 1, deserialize: (value, opts) => opts.PathToService = value)
+            .WithOption("service", shorthand: "s", minArgs: 1, maxArgs: 1, deserialize: (args, optSet) => optSet.PathToService = args.FirstOrDefault())
             .OnCreateOptionSet(() => new OptionSet())
             .OnExecute((serviceProvider, opts) =>
             {

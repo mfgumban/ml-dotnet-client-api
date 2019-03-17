@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace MarkLogic.NetCoreCLI.Actions
+namespace MarkLogic.Client.Tools.Actions
 {
     public sealed class CompositeActionBuilder
     {
@@ -16,13 +16,19 @@ namespace MarkLogic.NetCoreCLI.Actions
 
             public IEnumerable<IAction> SubActions => SubActionList;
 
-            public IEnumerable<Option> Options => new Option[0];
+            public IEnumerable<IOption> Options => new IOption[0];
 
             public bool HasOptions => false;
 
-            public Task<int> Execute(IServiceProvider serviceProvider, string[] options)
+            public Task<int> Execute(IServiceProvider serviceProvider, IEnumerable<string> args)
             {
-                return Task.FromResult(-1);
+                var subVerb = args.FirstOrDefault();
+                var subAction = SubActions.FirstOrDefault(a => a.Verb == subVerb);
+                if (subAction == null)
+                {
+                    throw new ActionException(Verb, $"Unknown action {subVerb}.");
+                }
+                return subAction.Execute(serviceProvider, args.Skip(1));
             }
         }
 

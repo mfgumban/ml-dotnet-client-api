@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace MarkLogic.Client.Tools.CSharp
+namespace MarkLogic.Client.Tools.CodeGen.CSharp
 {
     public class TypeMapping
     {

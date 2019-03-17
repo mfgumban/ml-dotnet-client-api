@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MarkLogic.NetCoreCLI
+namespace MarkLogic.Client.Tools.Actions
 {
     public interface IAction
     {
@@ -10,10 +10,10 @@ namespace MarkLogic.NetCoreCLI
 
         IEnumerable<IAction> SubActions { get; }
 
-        IEnumerable<Option> Options { get; }
+        IEnumerable<IOption> Options { get; }
 
         bool HasOptions { get; }
 
-        Task<int> Execute(IServiceProvider serviceProvider, string[] options);
+        Task<int> Execute(IServiceProvider serviceProvider, IEnumerable<string> args);
     }
 }

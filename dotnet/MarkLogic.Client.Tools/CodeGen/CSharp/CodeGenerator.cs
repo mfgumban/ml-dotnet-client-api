@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace MarkLogic.Client.Tools.CSharp
+namespace MarkLogic.Client.Tools.CodeGen.CSharp
 {
     public class CodeGenerator
     {

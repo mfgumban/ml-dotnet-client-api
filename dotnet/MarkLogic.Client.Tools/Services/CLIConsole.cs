@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace MarkLogic.NetCoreCLI.Services
+namespace MarkLogic.Client.Tools.Services
 {
     public sealed class CLIConsole : IConsole
     {

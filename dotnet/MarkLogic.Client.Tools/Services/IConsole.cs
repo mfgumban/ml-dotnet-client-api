@@ -1,4 +1,4 @@
-﻿namespace MarkLogic.NetCoreCLI.Services
+﻿namespace MarkLogic.Client.Tools.Services
 {
     public interface IConsole
     {

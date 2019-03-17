@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MarkLogic.NetCoreCLI.Actions
+﻿namespace MarkLogic.Client.Tools.Actions
 {
     public static class ScaffoldAction
     {

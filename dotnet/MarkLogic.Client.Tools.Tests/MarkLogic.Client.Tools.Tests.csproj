@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="CompilerDeps\netstandard.dll" />
+    <None Remove="CompilerDeps\Newtonsoft.Json.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="CompilerDeps\netstandard.dll" />
+    <EmbeddedResource Include="CompilerDeps\Newtonsoft.Json.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.10.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.2.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.9.0" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MarkLogic.Client.Tools\MarkLogic.Client.Tools.csproj" />
+    <ProjectReference Include="..\MarkLogic.Client\MarkLogic.Client.csproj" />
+  </ItemGroup>
+
+</Project>

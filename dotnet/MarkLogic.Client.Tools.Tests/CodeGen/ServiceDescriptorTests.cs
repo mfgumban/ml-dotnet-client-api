@@ -1,9 +1,8 @@
-﻿using MarkLogic.Client.Tools;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace MarkLogic.Client.Tests.Tools
+namespace MarkLogic.Client.Tools.Tests.CodeGen
 {
     public class ServiceDescriptorTests
     {

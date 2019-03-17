@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace MarkLogic.NetCoreCLI
+namespace MarkLogic.Client.Tools.Actions
 {
     public sealed class ActionHost
     {

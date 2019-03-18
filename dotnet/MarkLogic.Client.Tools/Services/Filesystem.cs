@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace MarkLogic.Client.Tools.Services
@@ -6,6 +7,11 @@ namespace MarkLogic.Client.Tools.Services
     public class Filesystem : IFilesystem
     {
         public string CurrentDirectory => Directory.GetCurrentDirectory();
+
+        public bool PathExists(string path)
+        {
+            throw new NotImplementedException();
+        }
 
         public Stream OpenRead(string path)
         {

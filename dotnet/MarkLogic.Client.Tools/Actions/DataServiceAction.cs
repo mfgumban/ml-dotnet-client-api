@@ -12,26 +12,39 @@ namespace MarkLogic.Client.Tools.Actions
         {
             public string ServiceFilePath { get; set; }
 
-            public string OutputFilePath { get; set; }
+            public string OutputPath { get; set; }
         }
 
         private static IAction _action;
 
+        public const string Verb = "dataservice";
+
         public static IAction Default => _action ?? (_action = new ActionBuilder<OptionSet>()
-            .WithVerb("dataservice")
-            .WithOption("service", shorthand: "s", minArgs: 1, maxArgs: 1, deserialize: (args, optSet) => optSet.ServiceFilePath = args.FirstOrDefault())
-            .WithOption("output", shorthand: "o", minArgs: 1, maxArgs: 1, deserialize: (args, optSet) => optSet.OutputFilePath = args.FirstOrDefault())
+            .WithVerb(Verb)
+            .WithOption("input", shorthand: "i", minArgs: 1, maxArgs: 1, deserialize: (args, optSet) => optSet.ServiceFilePath = args.FirstOrDefault())
+            .WithOption("output", shorthand: "o", minArgs: 1, maxArgs: 1, deserialize: (args, optSet) => optSet.OutputPath = args.FirstOrDefault())
             .OnCreateOptionSet(() => new OptionSet())
             .OnExecute(async (serviceProvider, opts) =>
             {
                 var fs = serviceProvider.GetService<IFilesystem>();
+
                 var sdp = await ServiceDescriptorProvider.Load(opts.ServiceFilePath, fs);
-                //var outputFilePath = Path.Combine(fs.CurrentDirectory, sdp.Service.ClassName + ".cs");
-                var outputFilePath = opts.OutputFilePath;
+                if (!fs.PathExists(opts.OutputPath))
+                {
+                    throw new ActionException(Verb, $"Output path not found: {opts.OutputPath}");
+                }
+
+                var outputFilePath = Path.Combine(opts.OutputPath, sdp.Service.ClassName + ".cs");
                 using (var writer = new StreamWriter(fs.OpenWrite(outputFilePath)))
                 {
                     await CodeGenerator.DataServiceClass(sdp, writer);
                 }
+
+                var toolConfigFilePath = Path.Combine(fs.CurrentDirectory, ProjectToolConfig.DefaultFilename);
+                var toolConfig = fs.PathExists(toolConfigFilePath) ? await ProjectToolConfig.Load(toolConfigFilePath, fs) : new ProjectToolConfig();
+                toolConfig.AddDataService(new ProjectToolConfig.DataServiceConfig());
+                await toolConfig.Save(toolConfigFilePath, fs);
+
                 return 0;
             })
             .Create());

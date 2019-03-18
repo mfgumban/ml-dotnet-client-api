@@ -7,6 +7,8 @@ namespace MarkLogic.Client.Tools.Services
     {
         string CurrentDirectory { get; }
 
+        bool PathExists(string path);
+
         Stream OpenRead(string path);
 
         Stream OpenWrite(string path);

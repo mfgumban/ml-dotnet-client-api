@@ -3,7 +3,6 @@ using MarkLogic.Client.Tools.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace MarkLogic.Client.Tools.Tests.Actions
@@ -21,23 +20,28 @@ namespace MarkLogic.Client.Tools.Tests.Actions
             ""functionName"": ""TestEndpoint""
         }";
 
-        //[Theory]
-        //[InlineData(new[] { "--input", "ml-modules/root/ds", "--output", "DataServices" }, true)]
-        public async void ActionOptions(string[] testArgs)
+        [Theory]
+        [InlineData(new[] { "--input", "ml-modules/root/ds/service.json", "--output", "DataServices" }, 0)]
+        [InlineData(new[] { "-i", "ml-modules/root/ds/service.json", "-o", "DataServices" }, 0)]
+        public async void NormalOptions(string[] testArgs, int expectedRetVal)
         {
             var fs = new MockFilesystem();
-            
-            // very forgiving mock; only focused in properly supplying data
+            var codeFilePath = Path.GetTempFileName();
+            var mlConfigFilePath = Path.GetTempFileName();
+
+            // very forgiving; only focused in properly supplying data
+            fs.CurrentDirectory = "/";
             fs.OnPathExists = (path) => true;
             fs.OnEnumerateFiles = (path, searchPattern) => new[] { "ml-modules/root/ds/TestEndpoint.api" };
             fs.OnOpenFile = (path, readOnly) =>
             {
-                switch(path)
+                switch(Path.GetFileName(path))
                 {
-                    case "ml-modules/root/ds/service.json":
-                    case "ml-modules/root/ds/TestEndpoint.api":
-                    default:
-                        throw new FileNotFoundException();
+                    case "service.json": return ServiceDescriptor.ToStream();
+                    case "TestEndpoint.api": return EndpointDescriptor.ToStream();
+                    case "TestService.cs": return File.Open(codeFilePath, FileMode.OpenOrCreate, readOnly ? FileAccess.Read : FileAccess.ReadWrite, FileShare.None);
+                    case "ml-config.json": return File.Open(mlConfigFilePath, FileMode.OpenOrCreate, readOnly ? FileAccess.Read : FileAccess.ReadWrite, FileShare.None);
+                    default: throw new FileNotFoundException($"File {path} not found.", path);
                 }
             };
 
@@ -49,7 +53,23 @@ namespace MarkLogic.Client.Tools.Tests.Actions
             var action = DataServiceAction.Default;
             var retVal = await action.Execute(serviceProvider, testArgs);
 
-            
+            Assert.Equal(expectedRetVal, retVal);
+
+            // validate generated code
+            using (var codeFileReader = new StreamReader(codeFilePath))
+            { 
+                var content = await codeFileReader.ReadToEndAsync();
+                Assert.True(content.Length > 0);
+            }
+
+            // validate ml-config.json
+            var mlConfig = await ProjectToolConfig.Load(mlConfigFilePath, new Filesystem());
+            Assert.Single(mlConfig.DataServices);
+            Assert.Equal("ml-modules/root/ds/service.json", mlConfig.DataServices.First().Input);
+            Assert.Equal("DataServices\\TestService.cs", mlConfig.DataServices.First().Output);
+
+            File.Delete(codeFilePath);
+            File.Delete(mlConfigFilePath);
         }
     }
 }

@@ -59,6 +59,10 @@ namespace MarkLogic.Client.Tools
             using (var reader = new StreamReader(fs.OpenRead(path)))
             {
                 var content = await reader.ReadToEndAsync();
+                if (string.IsNullOrWhiteSpace(content))
+                {
+                    content = "{}";
+                }
                 return JsonConvert.DeserializeObject<ProjectToolConfig>(content);
             }
         }

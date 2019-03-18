@@ -44,8 +44,7 @@ namespace MarkLogic.Client.Tools.Actions
             public Task<int> Execute(IServiceProvider serviceProvider, IEnumerable<string> args)
             {
                 var execContext = CreateExecContextFunc != null ? CreateExecContextFunc() : null;
-                Debug.Assert(HasOptions && execContext != null, $"Action {Verb} has options but did not instantiate an execution context.");
-                if (execContext != null)
+                if (HasOptions && execContext != null)
                 {
                     Option currentOpt = null;
                     List<string> currentOptArgs = new List<string>();

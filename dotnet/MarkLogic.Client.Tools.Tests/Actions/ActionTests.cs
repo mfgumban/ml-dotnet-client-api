@@ -17,6 +17,8 @@ namespace MarkLogic.Client.Tools.Tests.Actions
                 OptionMultiArgs = new string[0];
             }
 
+            public string CommandMessage { get; set; }
+
             public bool HasOptionSingle { get; set; }
 
             public bool HasOptionMulti { get; set; }
@@ -35,20 +37,19 @@ namespace MarkLogic.Client.Tools.Tests.Actions
         [InlineData(new[] { "-o1" }, true, false, false)]
         [InlineData(new[] { "-o1", "-o2", "value" }, true, true, false)]
         [InlineData(new[] { "-o1", "-o2", "value", "-o3", "value1", "value2" }, true, true, true)]
-        public async void ActionOptions(string[] testArgs, bool hasOptNone, bool hasOptSingle, bool hasOptMulti)
+        public async void ParseOptions(string[] testArgs, bool hasOptNone, bool hasOptSingle, bool hasOptMulti)
         {
             var serviceProvider = new ServiceCollection()
-                .AddSingleton<IConsole, MockConsole>()
                 .BuildServiceProvider();
 
             var execContext = new TestExecContext();
             var testAction = new ActionBuilder<TestExecContext>()
                 .WithVerb("test-action")
                 .OnCreateExecContext(() => execContext)
-                .WithOption("opt-none", "o1", deserialize: (args, optSet) => optSet.HasOptionNone = true)
-                .WithOption("opt-single", "o2", 1, 1, (args, optSet) => { optSet.HasOptionSingle = true; optSet.OptionSingleArgs = args.ToArray(); })
-                .WithOption("opt-multi", "o3", 1, 3, (args, optSet) => { optSet.HasOptionMulti = true; optSet.OptionMultiArgs = args.ToArray(); })
-                .OnExecute((sp, optSet) =>
+                .WithOption("opt-none", "o1", deserialize: (args, context) => context.HasOptionNone = true)
+                .WithOption("opt-single", "o2", 1, 1, (args, context) => { context.HasOptionSingle = true; context.OptionSingleArgs = args.ToArray(); })
+                .WithOption("opt-multi", "o3", 1, 3, (args, context) => { context.HasOptionMulti = true; context.OptionMultiArgs = args.ToArray(); })
+                .OnExecute((sp, context) =>
                 {
                     return Task.FromResult(0);
                 })
@@ -61,6 +62,35 @@ namespace MarkLogic.Client.Tools.Tests.Actions
             Assert.Equal(hasOptSingle ? 1 : 0, execContext.OptionSingleArgs.Length);
             Assert.Equal(hasOptMulti, execContext.HasOptionMulti);
             Assert.Equal(hasOptMulti ? 2 : 0, execContext.OptionMultiArgs.Length);
+        }
+
+        [Theory]
+        [InlineData(new[] { "command1" }, "command1")]
+        [InlineData(new[] { "command2" }, "command2")]
+        public async void CompositeExecution(string[] testArgs, string expectedCmdMsg)
+        {
+            var execContext = new TestExecContext();
+            var testAction = new CompositeActionBuilder()
+                .WithVerb("test")
+                .WithAction(new ActionBuilder<TestExecContext>()
+                    .WithVerb("command1")
+                    .OnCreateExecContext(() => execContext)
+                    .OnExecute((sp, context) => { context.CommandMessage = "command1"; return Task.FromResult(0); })
+                    .Create())
+                .WithAction(new ActionBuilder<TestExecContext>()
+                    .WithVerb("command2")
+                    .OnCreateExecContext(() => execContext)
+                    .OnExecute((sp, context) => { context.CommandMessage = "command2"; return Task.FromResult(0); })
+                    .Create())
+                .Create();
+
+            var serviceProvider = new ServiceCollection()
+                .BuildServiceProvider();
+
+            var retVal = await testAction.Execute(serviceProvider, testArgs);
+
+            Assert.Equal(0, retVal);
+            Assert.Equal(expectedCmdMsg, execContext.CommandMessage);
         }
     }
 }

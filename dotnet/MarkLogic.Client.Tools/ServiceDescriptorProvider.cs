@@ -1,9 +1,7 @@
 ﻿using MarkLogic.Client.Tools.Services;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MarkLogic.Client.Tools
@@ -29,7 +27,7 @@ namespace MarkLogic.Client.Tools
             var endpointDescs = new List<EndpointDescriptor>();
             foreach (var apiFilePath in fs.EnumerateFiles(Path.GetDirectoryName(serviceFilePath), "*.api"))
             {
-                var fsEndpoint = File.OpenRead(apiFilePath);
+                var fsEndpoint = fs.OpenRead(apiFilePath);
                 endpointDescs.Add(await EndpointDescriptor.FromStreamAsync(fsEndpoint));
                 fsEndpoint.Dispose();
             }

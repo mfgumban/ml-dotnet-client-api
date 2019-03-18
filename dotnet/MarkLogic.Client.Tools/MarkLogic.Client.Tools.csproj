@@ -3,6 +3,11 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>7.2</LangVersion>
+    <Authors>Mark Fredrik Gumban</Authors>
+    <Company>MarkLogic</Company>
+    <Product></Product>
+    <Description>Contains support functions for the MarkLogic .NET Client Library, such as code generation.</Description>
+    <PackageTags>MarkLogic,NoSQL</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

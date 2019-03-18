@@ -8,7 +8,7 @@ namespace MarkLogic.Client.Tools.Actions
 {
     public static class DataServiceAction
     {
-        public sealed class OptionSet
+        public sealed class ExecContext
         {
             public string ServiceFilePath { get; set; }
 
@@ -19,11 +19,11 @@ namespace MarkLogic.Client.Tools.Actions
 
         public const string Verb = "dataservice";
 
-        public static IAction Default => _action ?? (_action = new ActionBuilder<OptionSet>()
+        public static IAction Default => _action ?? (_action = new ActionBuilder<ExecContext>()
             .WithVerb(Verb)
             .WithOption("input", shorthand: "i", minArgs: 1, maxArgs: 1, deserialize: (args, optSet) => optSet.ServiceFilePath = args.FirstOrDefault())
             .WithOption("output", shorthand: "o", minArgs: 1, maxArgs: 1, deserialize: (args, optSet) => optSet.OutputPath = args.FirstOrDefault())
-            .OnCreateOptionSet(() => new OptionSet())
+            .OnCreateExecContext(() => new ExecContext())
             .OnExecute(async (serviceProvider, opts) =>
             {
                 var fs = serviceProvider.GetService<IFilesystem>();

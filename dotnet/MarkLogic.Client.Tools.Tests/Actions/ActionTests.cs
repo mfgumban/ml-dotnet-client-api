@@ -9,9 +9,9 @@ namespace MarkLogic.Client.Tools.Tests.Actions
 {
     public class ActionTests
     {
-        public class TestOptionSet
+        public class TestExecContext
         {
-            public TestOptionSet()
+            public TestExecContext()
             {
                 OptionSingleArgs = new string[0];
                 OptionMultiArgs = new string[0];
@@ -41,10 +41,10 @@ namespace MarkLogic.Client.Tools.Tests.Actions
                 .AddSingleton<IConsole, MockConsole>()
                 .BuildServiceProvider();
 
-            var testOptSet = new TestOptionSet();
-            var testAction = new ActionBuilder<TestOptionSet>()
+            var execContext = new TestExecContext();
+            var testAction = new ActionBuilder<TestExecContext>()
                 .WithVerb("test-action")
-                .OnCreateOptionSet(() => testOptSet)
+                .OnCreateExecContext(() => execContext)
                 .WithOption("opt-none", "o1", deserialize: (args, optSet) => optSet.HasOptionNone = true)
                 .WithOption("opt-single", "o2", 1, 1, (args, optSet) => { optSet.HasOptionSingle = true; optSet.OptionSingleArgs = args.ToArray(); })
                 .WithOption("opt-multi", "o3", 1, 3, (args, optSet) => { optSet.HasOptionMulti = true; optSet.OptionMultiArgs = args.ToArray(); })
@@ -56,11 +56,11 @@ namespace MarkLogic.Client.Tools.Tests.Actions
 
             var retVal = await testAction.Execute(serviceProvider, testArgs);
 
-            Assert.Equal(hasOptNone, testOptSet.HasOptionNone);
-            Assert.Equal(hasOptSingle, testOptSet.HasOptionSingle);
-            Assert.Equal(hasOptSingle ? 1 : 0, testOptSet.OptionSingleArgs.Length);
-            Assert.Equal(hasOptMulti, testOptSet.HasOptionMulti);
-            Assert.Equal(hasOptMulti ? 2 : 0, testOptSet.OptionMultiArgs.Length);
+            Assert.Equal(hasOptNone, execContext.HasOptionNone);
+            Assert.Equal(hasOptSingle, execContext.HasOptionSingle);
+            Assert.Equal(hasOptSingle ? 1 : 0, execContext.OptionSingleArgs.Length);
+            Assert.Equal(hasOptMulti, execContext.HasOptionMulti);
+            Assert.Equal(hasOptMulti ? 2 : 0, execContext.OptionMultiArgs.Length);
         }
     }
 }

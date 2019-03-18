@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace MarkLogic.Client.Tools.Actions
 {
-    public sealed class ActionBuilder<TOptionSet> where TOptionSet : class
+    public sealed class ActionBuilder<TExecContext> where TExecContext : class
     {
         private class Option : Actions.Option
         {
-            public Option(string name, string shorthand, int minArgs, int maxArgs, Action<IEnumerable<string>, TOptionSet> deserialize)
+            public Option(string name, string shorthand, int minArgs, int maxArgs, Action<IEnumerable<string>, TExecContext> deserialize)
                 :base(name, shorthand, minArgs, maxArgs)
             {
                 DeserializeFunc = deserialize;
@@ -22,7 +22,7 @@ namespace MarkLogic.Client.Tools.Actions
                 return arg.StartsWith("--") ? optName == Name : (arg.StartsWith("-") && HasShorthand ? optName == Shorthand : false);
             }
 
-            public Action<IEnumerable<string>, TOptionSet> DeserializeFunc { get; }
+            public Action<IEnumerable<string>, TExecContext> DeserializeFunc { get; }
         }
 
         private class Action : IAction
@@ -37,15 +37,15 @@ namespace MarkLogic.Client.Tools.Actions
 
             public bool HasOptions => OptionsList.Count > 0;
 
-            public Func<TOptionSet> CreateOptionSetFunc { get; set; }
+            public Func<TExecContext> CreateExecContextFunc { get; set; }
 
-            public Func<IServiceProvider, TOptionSet, Task<int>> ExecuteFunc { get; set; }
+            public Func<IServiceProvider, TExecContext, Task<int>> ExecuteFunc { get; set; }
 
             public Task<int> Execute(IServiceProvider serviceProvider, IEnumerable<string> args)
             {
-                var optSet = CreateOptionSetFunc != null ? CreateOptionSetFunc() : null;
-                Debug.Assert(HasOptions && optSet != null, $"Action {Verb} has options but did not instantiate an options set container.");
-                if (optSet != null)
+                var execContext = CreateExecContextFunc != null ? CreateExecContextFunc() : null;
+                Debug.Assert(HasOptions && execContext != null, $"Action {Verb} has options but did not instantiate an execution context.");
+                if (execContext != null)
                 {
                     Option currentOpt = null;
                     List<string> currentOptArgs = new List<string>();
@@ -55,7 +55,7 @@ namespace MarkLogic.Client.Tools.Actions
                         {
                             throw new ActionException(Verb, $"Invalid number of arguments for option {currentOpt.Name}; expected [{currentOpt.MinArgs},{currentOpt.MaxArgs}] but recieved {currentOptArgs.Count}.");
                         }
-                        currentOpt.DeserializeFunc(currentOptArgs, optSet);
+                        currentOpt.DeserializeFunc(currentOptArgs, execContext);
                         currentOptArgs.Clear();
                         currentOpt = newOpt;
                     });
@@ -82,7 +82,7 @@ namespace MarkLogic.Client.Tools.Actions
                         deserializeAction(null);
                     }
                 }
-                return ExecuteFunc(serviceProvider, optSet);
+                return ExecuteFunc(serviceProvider, execContext);
             }
         }
 
@@ -98,21 +98,21 @@ namespace MarkLogic.Client.Tools.Actions
             return _action;
         }
 
-        public ActionBuilder<TOptionSet> WithVerb(string verb)
+        public ActionBuilder<TExecContext> WithVerb(string verb)
         {
             Debug.Assert(!string.IsNullOrWhiteSpace(verb), "Action verb cannot be null, empty, or whitespace");
             _action.Verb = verb;
             return this;
         }
 
-        public ActionBuilder<TOptionSet> OnCreateOptionSet(Func<TOptionSet> createFunc)
+        public ActionBuilder<TExecContext> OnCreateExecContext(Func<TExecContext> createFunc)
         {
-            Debug.Assert(createFunc != null, "executeFunc cannot be null");
-            _action.CreateOptionSetFunc = createFunc;
+            Debug.Assert(createFunc != null, "createFunc cannot be null");
+            _action.CreateExecContextFunc = createFunc;
             return this;
         }
 
-        public ActionBuilder<TOptionSet> WithOption(string name, string shorthand = null, int minArgs = 0, int maxArgs = 0, Action<IEnumerable<string>, TOptionSet> deserialize = null)
+        public ActionBuilder<TExecContext> WithOption(string name, string shorthand = null, int minArgs = 0, int maxArgs = 0, Action<IEnumerable<string>, TExecContext> deserialize = null)
         {
             var option = new Option(name, shorthand, minArgs, maxArgs, deserialize);
             Debug.Assert(!_action.OptionsList.Any(o => o.Name.EqualsIgnoreCase(option.Name)), $"Action already has an existing option named {option.Name}");
@@ -124,7 +124,7 @@ namespace MarkLogic.Client.Tools.Actions
             return this;
         }
 
-        public ActionBuilder<TOptionSet> OnExecute(Func<IServiceProvider, TOptionSet, Task<int>> executeFunc)
+        public ActionBuilder<TExecContext> OnExecute(Func<IServiceProvider, TExecContext, Task<int>> executeFunc)
         {
             Debug.Assert(executeFunc != null, "executeFunc cannot be null");
             _action.ExecuteFunc = executeFunc;

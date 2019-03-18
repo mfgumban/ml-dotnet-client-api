@@ -71,7 +71,7 @@ namespace MarkLogic.Client.Tools
         {
             using (var writer = new StreamWriter(fs.OpenWrite(path)))
             {
-                var content = JsonConvert.SerializeObject(this);
+                var content = JsonConvert.SerializeObject(this, Formatting.Indented);
                 return writer.WriteAsync(content);
             }
         }

@@ -6,7 +6,8 @@
 
         public static IAction Default => _action ?? (_action = new CompositeActionBuilder()
             .WithVerb("scaffold")
-            .WithAction(DataServiceAction.Default)
+            .WithAction(ScaffoldDataServiceAction.Default)
+            .WithAction(ScaffoldUpdateAction.Default)
             .Create());
     }
 }

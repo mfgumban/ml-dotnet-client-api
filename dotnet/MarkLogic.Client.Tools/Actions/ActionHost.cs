@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace MarkLogic.Client.Tools.Actions
 {
@@ -14,16 +15,9 @@ namespace MarkLogic.Client.Tools.Actions
 
         public IServiceProvider ServiceProvider { get; }
 
-        public int Run(string[] args)
+        public Task<int> Run(string[] args)
         {
-            foreach(var arg in args)
-            {
-                Console.WriteLine($"arg: {arg}");
-            }
-
-
-            Console.ReadKey();
-            return 0;
+            return Root.Execute(ServiceProvider, args);
         }
     }
 }

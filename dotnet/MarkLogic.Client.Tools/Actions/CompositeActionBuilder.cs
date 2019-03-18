@@ -14,19 +14,17 @@ namespace MarkLogic.Client.Tools.Actions
 
             public List<IAction> SubActionList { get; } = new List<IAction>();
 
-            public IEnumerable<IAction> SubActions => SubActionList;
-
-            public IEnumerable<IOption> Options => new IOption[0];
-
-            public bool HasOptions => false;
-
             public Task<int> Execute(IServiceProvider serviceProvider, IEnumerable<string> args)
             {
                 var subVerb = args.FirstOrDefault();
-                var subAction = SubActions.FirstOrDefault(a => a.Verb == subVerb);
+                if (string.IsNullOrWhiteSpace(subVerb))
+                {
+                    throw new ActionNotFoundException();
+                }
+                var subAction = SubActionList.FirstOrDefault(a => a.Verb == subVerb);
                 if (subAction == null)
                 {
-                    throw new ActionException(Verb, $"Unknown action {subVerb}.");
+                    throw new ActionNotFoundException(subVerb);
                 }
                 return subAction.Execute(serviceProvider, args.Skip(1));
             }

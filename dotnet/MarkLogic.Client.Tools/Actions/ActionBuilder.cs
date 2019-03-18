@@ -8,11 +8,19 @@ namespace MarkLogic.Client.Tools.Actions
 {
     public sealed class ActionBuilder<TExecContext> where TExecContext : class
     {
-        private class Option : Actions.Option
+        private class Option
         {
-            public Option(string name, string shorthand, int minArgs, int maxArgs, Action<IEnumerable<string>, TExecContext> deserialize)
-                :base(name, shorthand, minArgs, maxArgs)
+            public Option(string name, string shorthand, bool required, int minArgs, int maxArgs, Action<IEnumerable<string>, TExecContext> deserialize)
             {
+                Debug.Assert(!string.IsNullOrWhiteSpace(name), "Option name cannot be null, empty, or whitespace");
+                Name = name;
+                Shorthand = shorthand;
+                Required = required;
+                Debug.Assert(minArgs <= maxArgs, "minArgs must be less than or equal to maxArgs");
+                Debug.Assert(minArgs >= 0, "minArgs cannot be negative");
+                Debug.Assert(maxArgs >= 0, "maxArgs cannot be negative");
+                MinArgs = minArgs;
+                MaxArgs = maxArgs;
                 DeserializeFunc = deserialize;
             }
 
@@ -22,6 +30,18 @@ namespace MarkLogic.Client.Tools.Actions
                 return arg.StartsWith("--") ? optName == Name : (arg.StartsWith("-") && HasShorthand ? optName == Shorthand : false);
             }
 
+            public string Name { get; set; }
+
+            public string Shorthand { get; set; }
+
+            public bool HasShorthand => !string.IsNullOrWhiteSpace(Shorthand);
+
+            public bool Required { get; set; }
+
+            public int MinArgs { get; set; }
+
+            public int MaxArgs { get; set; }
+
             public Action<IEnumerable<string>, TExecContext> DeserializeFunc { get; }
         }
 
@@ -29,11 +49,7 @@ namespace MarkLogic.Client.Tools.Actions
         {
             public string Verb { get; set; }
 
-            public IEnumerable<IAction> SubActions => new IAction[0];
-
-            public List<IOption> OptionsList { get; } = new List<IOption>();
-
-            public IEnumerable<IOption> Options => OptionsList;
+            public List<Option> OptionsList { get; } = new List<Option>();
 
             public bool HasOptions => OptionsList.Count > 0;
 
@@ -44,24 +60,26 @@ namespace MarkLogic.Client.Tools.Actions
             public Task<int> Execute(IServiceProvider serviceProvider, IEnumerable<string> args)
             {
                 var execContext = CreateExecContextFunc != null ? CreateExecContextFunc() : null;
+                var usedOpts = new List<Option>();
                 if (HasOptions && execContext != null)
                 {
                     Option currentOpt = null;
-                    List<string> currentOptArgs = new List<string>();
+                    var currentOptArgs = new List<string>();
                     var deserializeAction = new Action<Option>((newOpt) =>
                     {
                         if (currentOptArgs.Count < currentOpt.MinArgs || currentOptArgs.Count > currentOpt.MaxArgs)
                         {
-                            throw new ActionException(Verb, $"Invalid number of arguments for option {currentOpt.Name}; expected [{currentOpt.MinArgs},{currentOpt.MaxArgs}] but recieved {currentOptArgs.Count}.");
+                            throw new OptionValidationException(Verb, currentOpt.Name, $"Invalid number of arguments; expected [{currentOpt.MinArgs},{currentOpt.MaxArgs}] but found {currentOptArgs.Count}");
                         }
                         currentOpt.DeserializeFunc(currentOptArgs, execContext);
                         currentOptArgs.Clear();
+                        usedOpts.Add(currentOpt);
                         currentOpt = newOpt;
                     });
 
                     foreach(var arg in args)
                     {
-                        var opt = Options.Cast<Option>().FirstOrDefault(o => o.IsMatch(arg));
+                        var opt = OptionsList.FirstOrDefault(o => o.IsMatch(arg));
                         if (opt != null && currentOpt != null)
                         {
                             deserializeAction(opt);
@@ -81,6 +99,15 @@ namespace MarkLogic.Client.Tools.Actions
                         deserializeAction(null);
                     }
                 }
+
+                foreach(var requiredOpt in OptionsList.Where(o => o.Required))
+                {
+                    if (!usedOpts.Any(uo => uo == requiredOpt))
+                    {
+                        throw new OptionValidationException(Verb, requiredOpt.Name, $"Option is required");
+                    }
+                }
+
                 return ExecuteFunc(serviceProvider, execContext);
             }
         }
@@ -111,9 +138,9 @@ namespace MarkLogic.Client.Tools.Actions
             return this;
         }
 
-        public ActionBuilder<TExecContext> WithOption(string name, string shorthand = null, int minArgs = 0, int maxArgs = 0, Action<IEnumerable<string>, TExecContext> deserialize = null)
+        public ActionBuilder<TExecContext> WithOption(string name, string shorthand = null, bool required = false, int minArgs = 0, int maxArgs = 0, Action<IEnumerable<string>, TExecContext> deserialize = null)
         {
-            var option = new Option(name, shorthand, minArgs, maxArgs, deserialize);
+            var option = new Option(name, shorthand, required, minArgs, maxArgs, deserialize);
             Debug.Assert(!_action.OptionsList.Any(o => o.Name.EqualsIgnoreCase(option.Name)), $"Action already has an existing option named {option.Name}");
             if (option.HasShorthand)
             {

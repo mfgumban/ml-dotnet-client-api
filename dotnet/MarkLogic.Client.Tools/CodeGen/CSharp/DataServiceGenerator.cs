@@ -39,7 +39,7 @@ namespace MarkLogic.Client.Tools.CodeGen.CSharp
                 .Union(Endpoints.Where(e => !e.ReturnVoid).Select(e => e.ReturnValue));
 
             // add any namespaces required by type mappings
-            nsList.AddRange(allTypeDecls.Select(t => GetMapping(t).Namespace).Where(ns => !string.IsNullOrWhiteSpace(ns)));
+            nsList.AddRange(allTypeDecls.Select(t => GetMapping(t).Namespace).Where(ns => !string.IsNullOrWhiteSpace(ns)).Distinct());
 
             // add generic collections if needed
             if (allTypeDecls.Any(t => t.Multiple))
@@ -47,7 +47,7 @@ namespace MarkLogic.Client.Tools.CodeGen.CSharp
                 nsList.Add("System.Collections.Generic");
             }
 
-            output.WriteLines(nsList.Select(ns => $"using {ns};"));
+            output.WriteLines(nsList.Select(ns => $"using {ns};").Distinct());
         }
 
         private void WritePreamble(IndentedTextWriter output)

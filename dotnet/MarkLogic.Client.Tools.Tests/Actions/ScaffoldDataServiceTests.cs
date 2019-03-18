@@ -7,7 +7,7 @@ using Xunit;
 
 namespace MarkLogic.Client.Tools.Tests.Actions
 {
-    public class DataServiceActionTests
+    public class ScaffoldDataServiceTests
     {
         public const string ServiceDescriptor = @"
         {
@@ -50,7 +50,7 @@ namespace MarkLogic.Client.Tools.Tests.Actions
                 .AddSingleton<IFilesystem>(fs)
                 .BuildServiceProvider();
 
-            var action = DataServiceAction.Default;
+            var action = ScaffoldDataServiceAction.Default;
             var retVal = await action.Execute(serviceProvider, testArgs);
 
             Assert.Equal(expectedRetVal, retVal);
@@ -65,8 +65,8 @@ namespace MarkLogic.Client.Tools.Tests.Actions
             // validate ml-config.json
             var mlConfig = await ProjectToolConfig.Load(mlConfigFilePath, new Filesystem());
             Assert.Single(mlConfig.DataServices);
-            Assert.Equal("ml-modules/root/ds/service.json", mlConfig.DataServices.First().Input);
-            Assert.Equal("DataServices\\TestService.cs", mlConfig.DataServices.First().Output);
+            Assert.EndsWith("ml-modules/root/ds/service.json", mlConfig.DataServices.First().Input);
+            Assert.EndsWith("DataServices", mlConfig.DataServices.First().Output);
 
             File.Delete(codeFilePath);
             File.Delete(mlConfigFilePath);

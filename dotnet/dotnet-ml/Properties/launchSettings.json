@@ -2,7 +2,7 @@
   "profiles": {
     "dotnet-ml": {
       "commandName": "Project",
-      "commandLineArgs": "scaffold proxy-data_service -s ../src/ml-modules/root/ds/service.json --forceCap --exclude \"My Service at c:\\Project\\My Projects\""
+      "commandLineArgs": "scaffold dataservice"
     }
   }
 }

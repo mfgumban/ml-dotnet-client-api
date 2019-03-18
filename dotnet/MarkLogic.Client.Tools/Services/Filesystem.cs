@@ -10,7 +10,15 @@ namespace MarkLogic.Client.Tools.Services
 
         public bool PathExists(string path)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var attr = File.GetAttributes(path);
+                return true;
+            }
+            catch(Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
+            {
+                return false;
+            }
         }
 
         public Stream OpenRead(string path)

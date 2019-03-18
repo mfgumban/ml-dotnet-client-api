@@ -37,7 +37,7 @@ namespace MarkLogic.Client.Tools.Tests.Actions
         [InlineData(new[] { "-o1" }, true, false, false)]
         [InlineData(new[] { "-o1", "-o2", "value" }, true, true, false)]
         [InlineData(new[] { "-o1", "-o2", "value", "-o3", "value1", "value2" }, true, true, true)]
-        public async void ParseOptions(string[] testArgs, bool hasOptNone, bool hasOptSingle, bool hasOptMulti)
+        public async void ActionWithOptions(string[] testArgs, bool hasOptNone, bool hasOptSingle, bool hasOptMulti)
         {
             var serviceProvider = new ServiceCollection()
                 .BuildServiceProvider();
@@ -47,8 +47,8 @@ namespace MarkLogic.Client.Tools.Tests.Actions
                 .WithVerb("test-action")
                 .OnCreateExecContext(() => execContext)
                 .WithOption("opt-none", "o1", deserialize: (args, context) => context.HasOptionNone = true)
-                .WithOption("opt-single", "o2", 1, 1, (args, context) => { context.HasOptionSingle = true; context.OptionSingleArgs = args.ToArray(); })
-                .WithOption("opt-multi", "o3", 1, 3, (args, context) => { context.HasOptionMulti = true; context.OptionMultiArgs = args.ToArray(); })
+                .WithOption("opt-single", "o2", false, 1, 1, (args, context) => { context.HasOptionSingle = true; context.OptionSingleArgs = args.ToArray(); })
+                .WithOption("opt-multi", "o3", false, 1, 3, (args, context) => { context.HasOptionMulti = true; context.OptionMultiArgs = args.ToArray(); })
                 .OnExecute((sp, context) =>
                 {
                     return Task.FromResult(0);
@@ -67,7 +67,7 @@ namespace MarkLogic.Client.Tools.Tests.Actions
         [Theory]
         [InlineData(new[] { "command1" }, "command1")]
         [InlineData(new[] { "command2" }, "command2")]
-        public async void CompositeExecution(string[] testArgs, string expectedCmdMsg)
+        public async void CompositeAction(string[] testArgs, string expectedCmdMsg)
         {
             var execContext = new TestExecContext();
             var testAction = new CompositeActionBuilder()
@@ -91,6 +91,25 @@ namespace MarkLogic.Client.Tools.Tests.Actions
 
             Assert.Equal(0, retVal);
             Assert.Equal(expectedCmdMsg, execContext.CommandMessage);
+        }
+
+        [Fact]
+        public async void SimpleAction()
+        {
+            var value = "";
+
+            var testAction = new SimpleActionBuilder()
+                .WithVerb("test")
+                .OnExecute((sp) => { value = "Value changed"; return Task.FromResult(0); })
+                .Create();
+
+            var serviceProvider = new ServiceCollection()
+                .BuildServiceProvider();
+
+            var retVal = await testAction.Execute(serviceProvider, new string[0]);
+
+            Assert.Equal(0, retVal);
+            Assert.Equal("Value changed", value);
         }
     }
 }

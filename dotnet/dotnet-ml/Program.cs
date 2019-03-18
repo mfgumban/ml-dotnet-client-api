@@ -2,17 +2,19 @@
 using MarkLogic.Client.Tools.Services;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading.Tasks;
 
 namespace MarkLogic.NetCoreCLI
 {
     class Program
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             try
             {
                 var serviceProvider = new ServiceCollection()
                     .AddSingleton<IConsole>(new CLIConsole())
+                    .AddSingleton<IFilesystem>(new Filesystem())
                     .BuildServiceProvider();
 
                 var actionRoot = new CompositeActionBuilder()
@@ -20,11 +22,12 @@ namespace MarkLogic.NetCoreCLI
                     .Create();
 
                 var host = new ActionHost(actionRoot, serviceProvider);
-                host.Run(args);
+                return host.Run(args).GetAwaiter().GetResult();
             }
             catch(Exception e)
             {
                 Console.WriteLine($"Error ({e.GetType().Name}): {e.Message}");
+                return -1;
             }
         }
     }

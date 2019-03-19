@@ -9,6 +9,8 @@
     <Product>MarkLogic Client .NET CLI Tool</Product>
     <Description>A CLI tool for supporting projects using the MarkLogic .NET Client Library.</Description>
     <PackageTags>MarkLogic,NoSQL</PackageTags>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>dotnet-ml</ToolCommandName>
   </PropertyGroup>
 
   <ItemGroup>

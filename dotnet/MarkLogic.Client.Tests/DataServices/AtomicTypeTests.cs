@@ -17,9 +17,9 @@ namespace MarkLogic.Client.Tests.DataServices
         {
             return new[]
             {
-                new object[] { null, null },
+                //new object[] { null, null }, // removed temporarily
+                //new object[] { new int?(), null },
                 new object[] { 1234, 1234 },
-                new object[] { new int?(), null }
             };
         }
 
@@ -35,8 +35,8 @@ namespace MarkLogic.Client.Tests.DataServices
         [InlineData("")]
         [InlineData("The quick brown fox jumped over the lazy dog.")]
         [InlineData(" ")]
-        [InlineData("\0")]
         [InlineData("\n\t\r\f")]
+        [InlineData("&amp;")]
         public async void String(string value)
         {
             var result = await AtomicTypeService.Create(DbClient).ReturnString(value);

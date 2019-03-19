@@ -46,7 +46,7 @@ namespace MarkLogic.Client.Tools
 
         public static void WriteCommentReturns(this IndentedTextWriter writer, string summary)
         {
-            writer.WriteLine($"/// <returns>{summary}</param>");
+            writer.WriteLine($"/// <returns>{summary}</returns>");
         }
     }
 }

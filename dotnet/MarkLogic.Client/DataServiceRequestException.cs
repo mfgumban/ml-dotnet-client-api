@@ -13,6 +13,8 @@ namespace MarkLogic.Client
         {
         }
 
+        public string RequestUri { get; private set; }
+
         public string MessageCode { get; private set; }
 
         public string MessageDetailTitle { get; private set; }
@@ -21,7 +23,7 @@ namespace MarkLogic.Client
 
         public int StatusCode { get; private set; }
 
-        public static DataServiceRequestException CreateFromResponse(string responseText, Exception innerException = null)
+        public static DataServiceRequestException CreateFromResponse(Uri requestUri, string responseText, Exception innerException = null)
         {
             string message = "", messageCode = "", messageDetailTitle = "", status = "";
             int statusCode = 0;
@@ -49,6 +51,7 @@ namespace MarkLogic.Client
 
             return new DataServiceRequestException(message, innerException)
             {
+                RequestUri = requestUri.ToString(),
                 MessageCode = messageCode,
                 MessageDetailTitle = messageDetailTitle,
                 Status = status,

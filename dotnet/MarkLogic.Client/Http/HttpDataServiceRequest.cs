@@ -130,7 +130,7 @@ namespace MarkLogic.Client.Http
                 if (!response.IsSuccessStatusCode)
                 {
                     var responseText = await response.Content.ReadAsStringAsync();
-                    throw DataServiceRequestException.CreateFromResponse(responseText);
+                    throw DataServiceRequestException.CreateFromResponse(absRequestUri, responseText);
                 }
 
                 if (HasSession)

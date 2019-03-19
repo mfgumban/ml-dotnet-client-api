@@ -27,8 +27,10 @@ namespace MarkLogic.Client.Tools
             var endpointDescs = new List<EndpointDescriptor>();
             foreach (var apiFilePath in fs.EnumerateFiles(Path.GetDirectoryName(serviceFilePath), "*.api"))
             {
+                var modulePath = Path.ChangeExtension(apiFilePath, "sjs");
+                var moduleType = fs.PathExists(modulePath) ? ModuleType.SJS : ModuleType.XQuery;
                 var fsEndpoint = fs.OpenRead(apiFilePath);
-                endpointDescs.Add(await EndpointDescriptor.FromStreamAsync(fsEndpoint));
+                endpointDescs.Add(await EndpointDescriptor.FromStreamAsync(fsEndpoint, moduleType));
                 fsEndpoint.Dispose();
             }
 

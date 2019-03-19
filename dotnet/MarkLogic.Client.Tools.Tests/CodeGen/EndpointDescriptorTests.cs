@@ -77,18 +77,24 @@ namespace MarkLogic.Client.Tools.Tests.CodeGen
         {
             return new[]
             {
-                new object[] { ValidEndpointDescriptor, "testEndpointName", 3, true, false, false },
-                new object[] { EndpointDescriptorWithSession, "testEndpointWithSession", 3, true, true, true }
+                new object[] { ValidEndpointDescriptor, "testEndpointName", ModuleType.XQuery, 3, true, false, false },
+                new object[] { EndpointDescriptorWithSession, "testEndpointWithSession", ModuleType.XQuery, 3, true, true, true },
+                new object[] { ValidEndpointDescriptor, "testEndpointName", ModuleType.SJS, 3, true, false, false },
+                new object[] { EndpointDescriptorWithSession, "testEndpointWithSession", ModuleType.SJS, 3, true, true, true }
             };
         }
 
         [Theory]
         [MemberData(nameof(EndpointDescriptorData))]
-        public void EndpointFromString(string endpointDesc, string expectedName, int expectedParamCount, bool hasReturnValue, bool hasSession, bool nullableSession)
+        public void EndpointFromString(string endpointDesc, string expectedName, ModuleType moduleType, int expectedParamCount, bool hasReturnValue, bool hasSession, bool nullableSession)
         {
-            var endpoint = EndpointDescriptor.FromString(endpointDesc);
+            var endpoint = EndpointDescriptor.FromString(endpointDesc, moduleType);
             Assert.NotNull(endpoint);
             Assert.Equal(expectedName, endpoint.FunctionName);
+
+            string moduleName = expectedName + "." + (moduleType == ModuleType.SJS ? "sjs" : "xqy");
+            Assert.Equal(moduleName, endpoint.ModuleName);
+
             Assert.Equal(expectedParamCount, endpoint.Parameters.Count);
             if (hasReturnValue)
             {

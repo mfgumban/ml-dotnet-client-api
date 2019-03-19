@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace MarkLogic.Client.Tools
 {
+    public enum ModuleType
+    {
+        SJS,
+        XQuery
+    }
+
     [JsonObject(MemberSerialization.OptIn)]
     public class EndpointDescriptor
     {
@@ -17,7 +23,9 @@ namespace MarkLogic.Client.Tools
         [JsonProperty("functionName")]
         public string FunctionName { get; set; }
 
-        public string ModuleName => $"{FunctionName}.xqy";
+        public ModuleType ModuleType { get; set; }
+
+        public string ModuleName => $"{FunctionName}.{(ModuleType == ModuleType.SJS ? "sjs" : "xqy")}";
 
         [JsonProperty("desc")]
         public string Description { get; set; }
@@ -40,18 +48,20 @@ namespace MarkLogic.Client.Tools
 
         public bool HasSession => Session != null;
 
-        public static async Task<EndpointDescriptor> FromStreamAsync(Stream stream)
+        public static async Task<EndpointDescriptor> FromStreamAsync(Stream stream, ModuleType moduleType)
         {
             using (var reader = new StreamReader(stream))
             {
                 var content = await reader.ReadToEndAsync();
-                return FromString(content);
+                return FromString(content, moduleType);
             }
         }
 
-        public static EndpointDescriptor FromString(string json)
+        public static EndpointDescriptor FromString(string json, ModuleType moduleType)
         {
-            return JsonConvert.DeserializeObject<EndpointDescriptor>(json);
+            var desc = JsonConvert.DeserializeObject<EndpointDescriptor>(json);
+            desc.ModuleType = moduleType;
+            return desc;
         }
     }
 }

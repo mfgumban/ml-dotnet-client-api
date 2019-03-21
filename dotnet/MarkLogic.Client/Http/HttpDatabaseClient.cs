@@ -1,7 +1,5 @@
 using System;
-using System.Net;
 using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace MarkLogic.Client.Http
 {
@@ -9,8 +7,7 @@ namespace MarkLogic.Client.Http
     {
         internal HttpDatabaseClient(HttpClient httpClient)
         {
-            // Check.NotNull
-            Http = httpClient;
+            Http = httpClient ?? throw new ArgumentNullException("httpClient");
         }
 
         internal HttpClient Http { get; }

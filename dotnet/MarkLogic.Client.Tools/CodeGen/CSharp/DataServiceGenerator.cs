@@ -107,7 +107,7 @@ namespace MarkLogic.Client.Tools.CodeGen.CSharp
             foreach (var param in endpoint.Parameters)
             {
                 var paramDesc = param.Description ?? (param.IsSession ? "A session object." : "");
-                output.WriteCommentParam(param.Name, paramDesc);
+                output.WriteCommentParam(param.ArgumentName, paramDesc);
             }
             if (!endpoint.ReturnVoid)
             {
@@ -115,7 +115,7 @@ namespace MarkLogic.Client.Tools.CodeGen.CSharp
             }
 
             var returnType = endpoint.ReturnVoid ? "Task" : $"Task<{GetTypeDeclaration(endpoint.ReturnValue)}>";
-            var paramList = endpoint.Parameters.Select(p => $"{GetParameterType(p)} {p.Name}");
+            var paramList = endpoint.Parameters.Select(p => $"{GetParameterType(p)} {p.ArgumentName}");
 
             // begin method
             var funcName = endpoint.FunctionName.Capitalize(); // conform to standard code penmanship; TODO: make this an option
@@ -128,7 +128,7 @@ namespace MarkLogic.Client.Tools.CodeGen.CSharp
             if (endpoint.HasSession)
             {
                 var sessionParam = endpoint.Session;
-                output.WriteLine($".WithSession({sessionParam.Name}, {sessionParam.Nullable.ToString().ToLower()})");
+                output.WriteLine($".WithSession({sessionParam.ArgumentName}, {sessionParam.Nullable.ToString().ToLower()})");
             }
 
             // WithParameters
@@ -141,7 +141,7 @@ namespace MarkLogic.Client.Tools.CodeGen.CSharp
                 {
                     var param = endpoint.Parameters[i];
                     var paramClass = param.Multiple ? "MultipleParameter" : "SingleParameter";
-                    output.WriteLine($"new {paramClass}<{GetParameterType(param, false)}>(\"{param.Name}\", {param.Nullable.ToString().ToLower()}, {param.Name}, {GetMarshalMethod(param)}){(i == parameters.Count - 1 ? ")" : ", ")}");
+                    output.WriteLine($"new {paramClass}<{GetParameterType(param, false)}>(\"{param.Name}\", {param.Nullable.ToString().ToLower()}, {param.ArgumentName}, {GetMarshalMethod(param)}){(i == parameters.Count - 1 ? ")" : ", ")}");
                 }
                 output.RemoveIndent();
             }

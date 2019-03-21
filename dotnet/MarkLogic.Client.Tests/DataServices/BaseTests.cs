@@ -21,10 +21,11 @@ namespace MarkLogic.Client.Tests.DataServices
 
         public static IEnumerable<object[]> MultipleAtomicData()
         {
+            var date = new DateTime(2019, 3, 21, 10, 14, 44, 930);
             return new[]
             {
-                new object[] { "", 1234, DateTime.Now.AsISO8601() },
-                new object[] { "the quick brown fox", 1234, DateTime.Now.AsISO8601() }
+                new object[] { "", 1234, date },
+                new object[] { "the quick brown fox", 1234, date }
             };
         }
 
@@ -43,9 +44,10 @@ namespace MarkLogic.Client.Tests.DataServices
 
         public static IEnumerable<object[]> MultipleAtomicNullData()
         {
+            var date = new DateTime(2019, 3, 21, 10, 14, 44, 930);
             return new[]
             {
-                new object[] { null, 1234, DateTime.Now.AsISO8601() }
+                new object[] { null, 1234, date }
             };
         }
 
@@ -82,23 +84,6 @@ namespace MarkLogic.Client.Tests.DataServices
             var exception = await Assert.ThrowsAsync<DataServiceRequestException>(() => BaseService.Create(DbClient).ErrorDetailLog());
             Assert.Equal(500, exception.StatusCode); // Internal Server Error
             Assert.Equal("Deliberate error", exception.MessageDetailTitle);
-        }
-
-        [Fact]
-        public async void Session()
-        {
-            var service = BaseService.Create(DbClient);
-
-            var entityName = "Master Entity Name 1";
-            var itemName = "Item Name 1";
-            var session = service.NewSession();
-            var id = await service.InsertMaster(entityName, session);
-            var result = await service.InsertDetail(id, itemName, session);
-
-            Assert.NotNull(result);
-            Assert.Equal(id, result.Value<string>("id"));
-            Assert.Equal(entityName, result.Value<string>("name"));
-            Assert.Equal(itemName, result.SelectToken("items[0].itemName").Value<string>());
         }
     }
 }

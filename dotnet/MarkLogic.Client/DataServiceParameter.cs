@@ -8,6 +8,10 @@ namespace MarkLogic.Client
     {
         protected DataServiceParameter(string name, bool allowNull)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentNullException("name");
+            }
             Name = name;
             AllowNull = allowNull;
         }

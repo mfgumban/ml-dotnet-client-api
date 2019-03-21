@@ -38,5 +38,21 @@ namespace MarkLogic.Client.Tests
             }
             return value;
         }
+
+        private static class ConfigKey
+        {
+            public const string Host = "marklogic:host";
+            public const string Port = "marklogic:port";
+            public const string Username = "marklogic:username";
+            public const string Password = "marklogic:password";
+        }
+
+        public string MLHost => Get(ConfigKey.Host);
+
+        public int MLPort => GetInt(ConfigKey.Port);
+
+        public string MLUsername => Get(ConfigKey.Username);
+
+        public string MLPassword => Get(ConfigKey.Password);
     }
 }

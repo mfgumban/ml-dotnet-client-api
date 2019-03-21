@@ -1,10 +1,9 @@
+using MarkLogic.Client.Tests.DataServices;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace MarkLogic.Client.Tests.DataServices
+namespace MarkLogic.Client.Tests.Http
 {
     public class SessionStateTests : DbTestBase, IClassFixture<DatabaseClientFixture>
     {

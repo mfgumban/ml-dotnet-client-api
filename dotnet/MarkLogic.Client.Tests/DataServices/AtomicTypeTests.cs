@@ -177,6 +177,7 @@ namespace MarkLogic.Client.Tests.DataServices
         public static IEnumerable<object[]> DateTimeData(DateTimeTestDataType testDataType)
         {
             var dt = new DateTime(1980, 9, 10);
+            var dtLeap = new DateTime(2020, 2, 29);
             var dtMin = System.DateTime.MinValue;
             var dtMax = System.DateTime.MaxValue;
             // NOTE:
@@ -190,6 +191,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 dt,
                 dtMin,
                 dtMax,
+                dtLeap,
                 new DateTime(dt.Year, dt.Month, dt.Day, 0, 0, 1),
                 new DateTime(dt.Year, dt.Month, dt.Day, 23, 59, 59),
                 new DateTime(dt.Year, dt.Month, dt.Day, 1, 1, 1, 1), // min msec
@@ -202,7 +204,7 @@ namespace MarkLogic.Client.Tests.DataServices
                 case DateTimeTestDataType.DateTime:
                     return data.Select(v => new object[] { v });
                 case DateTimeTestDataType.Date:
-                    return data.Select(v => new object[] { v.Date });
+                    return data.Select(v => v.Date).Distinct().Select(v => new object[] { v });
                 case DateTimeTestDataType.Time:
                     return data.Select(v => new object[] { new DateTime(dtMin.Year, dtMin.Month, dtMin.Day, v.Hour, v.Minute, v.Second, v.Millisecond) });
                 default:

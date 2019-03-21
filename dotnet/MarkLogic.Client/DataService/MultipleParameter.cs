@@ -17,7 +17,7 @@ namespace MarkLogic.Client.DataService
                 throw new ArgumentNullException(name, "Parameter does not allow null values.");
             }
 
-            foreach (var value in values)
+            foreach (var value in vs)
             {
                 _marshalledValues.Add(marshalValue(value));
             }

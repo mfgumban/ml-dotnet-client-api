@@ -34,12 +34,12 @@ namespace MarkLogic.Client.Tests.DataServices
         public async void MultipleAtomic(string value1, int value2, DateTime value3)
         {
             var response = await BaseService.Create(DbClient).ReturnMultipleAtomic(value1, value2, value3);
-            OutputResults(string.Join("\n", value1, value2, value3.ToISODateTime()), response);
+            OutputResults(string.Join("\n", value1, value2, value3), response);
             var results = response.Split("\n");
             Assert.Equal(3, results.Length);
             Assert.Equal(value1, results[0]);
-            Assert.Equal(value2.ToString(), results[1]);
-            Assert.Equal(value3.ToISODateTime(), results[2]);
+            Assert.Equal(value2, Convert.ToInt32(results[1]));
+            Assert.Equal(value3, Convert.ToDateTime(results[2]));
         }
 
         public static IEnumerable<object[]> MultipleAtomicNullData()

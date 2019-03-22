@@ -9,7 +9,7 @@ namespace MarkLogic.Client
     public class DatabaseClientFactory
     {
         private static CredentialCache _credentialCache = new CredentialCache();
-        private static object _credentialCacheLock = new object();
+        private static readonly object _credentialCacheLock = new object();
 
         private static HttpClient CreateHttpClient(UriScheme scheme, string host, int port, NetworkCredential credentials, AuthenticationType authType)
         {

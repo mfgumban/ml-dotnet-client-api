@@ -206,7 +206,10 @@ namespace MarkLogic.Client.Tests.DataServices
                 case DateTimeTestDataType.Date:
                     return data.Select(v => v.Date).Distinct().Select(v => new object[] { v });
                 case DateTimeTestDataType.Time:
-                    return data.Select(v => new object[] { new DateTime(dtMin.Year, dtMin.Month, dtMin.Day, v.Hour, v.Minute, v.Second, v.Millisecond) });
+                    return data.Select(v => 
+                        new DateTime(dtMin.Year, dtMin.Month, dtMin.Day, v.Hour, v.Minute, v.Second, v.Millisecond))
+                        .Distinct()
+                        .Select(v => new object[] { v });
                 default:
                     throw new InvalidOperationException("Invalid dataType.");
             }

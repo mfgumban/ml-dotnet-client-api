@@ -6,8 +6,6 @@ namespace MarkLogic.Client.Tools
     [JsonObject(MemberSerialization.OptIn)]
     public class ParameterDescriptor : ITypeDescriptor
     {
-        private string _argName = null;
-
         [JsonProperty("name")]
         public string Name { get; set; }
 

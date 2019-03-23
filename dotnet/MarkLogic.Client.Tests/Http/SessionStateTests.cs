@@ -20,9 +20,11 @@ namespace MarkLogic.Client.Tests.Http
             var session1 = service.NewSession();
             var session2 = service.NewSession();
 
-            Assert.Equal(session1, session1);
-            Assert.Equal(session2, session2);
-            Assert.NotEqual(session1, session2);
+            Assert.True(session1.Equals(session1));
+            Assert.True(session2.Equals(session2));
+            Assert.False(session1.Equals(session2));
+            Assert.False(session1.Equals(null));
+            Assert.False(session2.Equals(null));
         }
 
         [Fact]

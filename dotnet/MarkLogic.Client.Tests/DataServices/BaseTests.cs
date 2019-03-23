@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using MarkLogic.Client.Http;
 using System;
 using System.Collections.Generic;
 using Xunit;
@@ -81,7 +81,7 @@ namespace MarkLogic.Client.Tests.DataServices
         [Fact]
         public async void ErrorDetailLog()
         {
-            var exception = await Assert.ThrowsAsync<DataServiceRequestException>(() => BaseService.Create(DbClient).ErrorDetailLog());
+            var exception = await Assert.ThrowsAsync<HttpDataServiceRequestException>(() => BaseService.Create(DbClient).ErrorDetailLog());
             Assert.Equal(500, exception.StatusCode); // Internal Server Error
             Assert.Equal("Deliberate error", exception.MessageDetailTitle);
         }

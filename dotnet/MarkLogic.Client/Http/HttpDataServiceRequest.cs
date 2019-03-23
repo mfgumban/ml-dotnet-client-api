@@ -48,7 +48,7 @@ namespace MarkLogic.Client.Http
             }
             else if (!(session is HttpSessionState))
             {
-                throw new InvalidOperationException("sessionState must be HttpSessionState."); // TODO: replace exception 
+                throw new ArgumentException("Must be of type HttpSessionState.", "session");
             }
             else
             {
@@ -77,7 +77,7 @@ namespace MarkLogic.Client.Http
                 case Marshal.MediaTypes.Binary:
                     return "application/octet-stream";
                 default:
-                    throw new InvalidOperationException("Unsupported marshal media type.");
+                    throw new ArgumentException("Unsupported marshal media type", "mediaType");
             }
         }
 
@@ -129,8 +129,7 @@ namespace MarkLogic.Client.Http
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    var responseText = await response.Content.ReadAsStringAsync();
-                    throw DataServiceRequestException.CreateFromResponse(absRequestUri, responseText);
+                    throw await HttpDataServiceRequestException.CreateFromResponse(absRequestUri, response);
                 }
 
                 if (HasSession)
@@ -152,13 +151,13 @@ namespace MarkLogic.Client.Http
             var response = await RequestAsync();
             if (response.Content.IsMimeMultipartContent())
             {
-                throw new InvalidOperationException("Expected content not multipart"); // TODO: replace exception
+                throw new HttpDataServiceRequestException("Expected content not multipart");
             }
 
             var value = await unmarshalValue(await response.Content.ReadAsStreamAsync());
             if (!allowNull && value == null)
             {
-                throw new InvalidOperationException("Null return value not allowed"); // TODO: replace exception
+                throw new HttpDataServiceRequestException("Null return value not allowed");
             }
             response.Dispose();
 
@@ -170,7 +169,7 @@ namespace MarkLogic.Client.Http
             var response = await RequestAsync();
             if (!response.Content.IsMimeMultipartContent())
             {
-                throw new InvalidOperationException("Expected content to be multipart"); // TODO: replace exception
+                throw new HttpDataServiceRequestException("Expected content to be multipart");
             }
 
             var contentStream = await response.Content.ReadAsMultipartAsync();

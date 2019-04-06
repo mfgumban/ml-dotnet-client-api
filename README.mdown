@@ -1,25 +1,73 @@
-# MarkLogic Client Library .NET
+# MarkLogic .NET Client Library
 
-## Planned Data Type Support
+The MarkLogic .NET Client Library makes it easier to develop .NET applications for MarkLogic.  It currently provides tooling for working with MarkLogic Data Services.
 
-| Data Type       | Server Type        | Default .NET Type | Other .NET Type(s)           |
-|-----------------|--------------------|-------------------|------------------------------|
-| boolean         | xs:boolean         | bool              | string                       |
-| string          | xs:string          | string            |                              |
-| date            | xs:date            | DateTime          | string                       |
-| time            | xs:time            | DateTime          | string                       |
-| dateTime        | xs:dateTime        | DateTime          | string                       |
-| dayTimeDuration | xs:dayTimeDuration | TimeSpan          | string                       |
-| decimal         | xs:decimal         | decimal           | string                       |
-| double          | xs:double          | double            | string                       |
-| float           | xs:float           | float             | string                       |
-| int             | xs:int             | int               | string                       |
-| unsignedInt     | xs:unsignedInt     | uint              | string                       |
-| long            | xs:long            | long              | string                       |
-| unsignedLong    | xs:unsignedLong    | ulong             | string                       |
-| array (JSON)    | array-node()       | string            | System.IO.Stream, System.IO.TextReader, Newtonsoft.Json.Linq.JArray  |
-| object (JSON)   | object-node()      | string            | System.IO.Stream, System.IO.TextReader, Newtonsoft.Json.Linq.JObject |
-| binaryDocument  | binary-node()      | System.IO.Stream  | string, System.IO.TextReader                     |
-| jsonDocument    | document-node()    | System.IO.Stream  | string, System.IO.TextReader                     |
-| textDocument    | text-node()?       | System.IO.Stream  | string, System.IO.TextReader                     |
-| xmlDocument     | document-node()    | System.IO.Stream  | string, System.IO.TextReader                     |
+## Working With Data Services
+
+The approach in developing MarkLogic data services on the .NET is similar to its Java counterpart.  Read about working with data services in detail [here](https://github.com/marklogic/java-client-api/wiki/Data-Services).
+
+### Differences
+
+#### Proxy Service
+
+Use the `$netClass` property in a service declaration file to explicitly specify the full name of the generated service class for .NET.  If not specified, the class generator will fall back to using `$javaClass`.
+
+For example:
+
+```json
+{
+  "endpointDirectory" : "/inventory/priceDynamically/",
+  "$javaClass"        : "com.some.business.inventory.DynamicPricer",
+  "$netClass"         : "SomeBusiness.Inventory.DynamicPricer"
+}
+```
+
+#### Mapping Values to .NET Types
+
+Use the `$netClass` property in endpoint declaration (`.api`) files to explicitly specify the type for parameters and return values.  For example:
+
+```json
+{
+  "functionName": "produceReport",
+  "params": [{
+    "name": "id",
+    "datatype": "int"
+  }, {
+    "name": "occurred",
+    "datatype": "date",
+    "$netClass": "string"
+  }],
+  "return": {
+    "datatype": "jsonDocument",
+    "$netClass": "Newtonsoft.Json.Linq.JObject"
+  }
+}
+```
+
+The following table lists server data types, their available representations, and the default type used if `$netClass` is not specified:
+
+| Data Type | Server Type | Default .NET Type | Other .NET Type(s) |
+|-----------|-------------|-------------------|--------------------|
+| boolean | xs:boolean | bool | string |
+| string | xs:string | string | System.IO.Stream |
+| date | xs:date | System.DateTime | string |
+| time | xs:time | System.DateTime | string |
+| dateTime | xs:dateTime | System.DateTime | string |
+| dayTimeDuration | xs:dayTimeDuration | System.TimeSpan | string |
+| decimal | xs:decimal | decimal | string |
+| double | xs:double | double | string |
+| float | xs:float | float | string |
+| int | xs:int | int | string |
+| unsignedInt | xs:unsignedInt | uint | string |
+| long | xs:long | long | string |
+| unsignedLong | xs:unsignedLong | ulong | string |
+| array (JSON) | array-node() | System.IO.Stream | string, Newtonsoft.Json.Linq.JArray |
+| object (JSON) | object-node() | System.IO.Stream | string, Newtonsoft.Json.Linq.JObject |
+| binaryDocument | binary-node() | System.IO.Stream | |
+| jsonDocument | document-node() | System.IO.Stream | string, Newtonsoft.Json.Linq.JObject |
+| textDocument | text-node() | System.IO.Stream  | string |
+| xmlDocument | document-node() | System.IO.Stream  | string, System.Xml.XmlDocument, System.Xml.Linq.XDocument |
+
+#### Generating the Proxy Service Class
+
+#### Using a Proxy Service Class

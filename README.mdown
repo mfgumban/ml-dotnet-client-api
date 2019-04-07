@@ -2,7 +2,7 @@
 
 The MarkLogic .NET Client Library makes it easier to develop .NET applications for MarkLogic.  It currently provides tooling for working with MarkLogic Data Services.
 
-## Working With Data Services
+## Working with Data Services
 
 The approach in developing MarkLogic data services on the .NET is similar to its Java counterpart.  Read about working with data services in detail [here](https://github.com/marklogic/java-client-api/wiki/Data-Services).
 
@@ -10,7 +10,7 @@ The approach in developing MarkLogic data services on the .NET is similar to its
 
 #### Proxy Service
 
-Use the `$netClass` property in a service declaration file to explicitly specify the full name of the generated service class for .NET.  If not specified, the class generator will fall back to using `$javaClass`.
+Use the `$netClass` property in a service declaration file to explicitly specify the *full name* of the generated service class for .NET.  If not specified, the class generator will fall back to using `$javaClass`.
 
 For example:
 
@@ -24,11 +24,11 @@ For example:
 
 #### Mapping Values to .NET Types
 
-Use the `$netClass` property in endpoint declaration (`.api`) files to explicitly specify the type for parameters and return values.  For example:
+Use the `$netClass` property in endpoint declaration (`.api`) files to explicitly specify the type used (using its *fully qualified name*) for parameters and return values.  For example:
 
 ```json
 {
-  "functionName": "produceReport",
+  "functionName": "ProduceReport",
   "params": [{
     "name": "id",
     "datatype": "int"
@@ -70,4 +70,61 @@ The following table lists server data types, their available representations, an
 
 #### Generating the Proxy Service Class
 
+A *proxy service class* provides an interface for calling the data service endpoints deployed on a MarkLogic server.  The class is generated from one or more service declaration (`service.json`) files.
+
+Code generation requires the .NET Core global tool `dotnet-ml`.
+
+To install the `dotnet-ml` tool, open a terminal and run:
+
+```
+dotnet tool install -g dotnet-ml
+```
+
+To install from a custom location:
+
+```
+dotnet tool install --add-source <path to repo or package file> -g dotnet-ml
+```
+
+Installing from a custom location would be the case for instances where one doesn't wish to use the published versions, such as building the tool and assemblies locally.
+
+To generate a `.cs` file from a `service.json` file, run the following command:
+
+```
+dotnet ml scaffold dataservice -i <path to service.json>
+```
+
+To emit the generated `.cs` file in a different location besides the current directory, use the `-o` option:
+
+```
+dotnet ml scaffold dataservice -i <path to service.json> -o <output path>
+```
+
+The filename for the generated `.cs` file will be the *class name* set in the `$netClass` property within the `service.json` file.
+
+Another file will be generated if it doesn't yet exist: an `ml-config.json` file.  This file will keep track of all subsequent scaffold commands, which will be useful when a project needs to scaffold or update multiple codefiles.
+
+The following command will update all generated codefiles when changes are made to the service or endpoint declaration files:
+
+```
+dotnet ml scaffold update
+```
+
 #### Using a Proxy Service Class
+
+Provide a valid `IDatabaseClient` instance to the proxy service class' `Create` static function to create an instance of a proxy service.  Each data service endpoint will have a corresponding method that can be invoked.
+
+```csharp
+var credentials = new NetworkCredential("admin", "admin", "public");
+using (var dbClient = DatabaseClientFactory.Create(UriScheme.Http, "localhost", 9000, credentials, AuthenticationType.Digest))
+{
+  var service = SomeBusiness.Inventory.DynamicPricer.Create(dbClient);
+  var jsonReport = await service.ProduceReport(100, DateTime.Now);
+}
+```
+
+All endpoint methods are generated as *asynchronous* and return a `Task<T>`, where `T` is the corresponding .NET type of the method's return value.  If the return value is declared as `multiple`, the return type is `Task<IEnumerable<T>>`.  If there is no return value, the return type is `Task`.
+
+#### Calling Endpoints in a Session
+
+The generated proxy service class provides the `NewSession` method to create an instance of `ISessionState` used for endpoints that require to participate in a session.

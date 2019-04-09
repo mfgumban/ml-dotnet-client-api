@@ -2,13 +2,44 @@
 
 The MarkLogic .NET Client Library makes it easier to develop .NET applications for MarkLogic.  It currently provides tooling for working with MarkLogic Data Services.
 
+## Building
+
+Run the following commands in the project directory:
+
+```
+dotnet restore
+dotnet build
+```
+
+## Testing
+
+Some tests require a local MarkLogic server to deploy test data services.  Run the following commands from the project directory to deploy:
+
+```
+cd test
+gradle mlDeploy
+```
+
+Execute the following in the project directory to run all tests:
+
+```
+dotnet test
+```
+
+Run the `code-coverage.ps1` script located in each test project to generate its code coverage report, e.g.:
+
+```
+cd MarkLogic.Client.Tests
+./code-coverage.ps1
+```
+
+An HTML code coverage report will be generated in the test project's `coverage` directory.
+
 ## Working with Data Services
 
 The approach in developing MarkLogic data services on the .NET is similar to its Java counterpart.  Read about working with data services in detail [here](https://github.com/marklogic/java-client-api/wiki/Data-Services).
 
-### Differences
-
-#### Proxy Service
+### Proxy Service
 
 Use the `$netClass` property in a service declaration file to explicitly specify the *full name* of the generated service class for .NET.  If not specified, the class generator will fall back to using `$javaClass`.
 
@@ -22,7 +53,7 @@ For example:
 }
 ```
 
-#### Mapping Values to .NET Types
+### Mapping Values to .NET Types
 
 Use the `$netClass` property in endpoint declaration (`.api`) files to explicitly specify the type used (using its *fully qualified name*) for parameters and return values.  For example:
 
@@ -68,7 +99,7 @@ The following table lists server data types, their available representations, an
 | textDocument | text-node() | System.IO.Stream  | string |
 | xmlDocument | document-node() | System.IO.Stream  | string, System.Xml.XmlDocument, System.Xml.Linq.XDocument |
 
-#### Generating the Proxy Service Class
+### Generating the Proxy Service Class
 
 A *proxy service class* provides an interface for calling the data service endpoints deployed on a MarkLogic server.  The class is generated from one or more service declaration (`service.json`) files.
 
@@ -110,7 +141,7 @@ The following command will update all generated codefiles when changes are made 
 dotnet ml scaffold update
 ```
 
-#### Using a Proxy Service Class
+### Using a Proxy Service Class
 
 Provide a valid `IDatabaseClient` instance to the proxy service class' `Create` static function to create an instance of a proxy service.  Each data service endpoint will have a corresponding method that can be invoked.
 
@@ -125,6 +156,6 @@ using (var dbClient = DatabaseClientFactory.Create(UriScheme.Http, "localhost", 
 
 All endpoint methods are generated as *asynchronous* and return a `Task<T>`, where `T` is the corresponding .NET type of the method's return value.  If the return value is declared as `multiple`, the return type is `Task<IEnumerable<T>>`.  If there is no return value, the return type is `Task`.
 
-#### Calling Endpoints in a Session
+### Calling Endpoints in a Session
 
 The generated proxy service class provides the `NewSession` method to create an instance of `ISessionState` used for endpoints that require to participate in a session.

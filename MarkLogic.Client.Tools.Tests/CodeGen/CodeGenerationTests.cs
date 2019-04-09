@@ -158,9 +158,9 @@ namespace MarkLogic.Client.Tools.Tests.CodeGen
         {
             return new[]
             {
-                new object[] { "../../../../../src/main/ml-modules/root/test/service.json" },
-                new object[] { "../../../../../src/main/ml-modules/root/test/atomics/service.json" },
-                new object[] { "../../../../../src/main/ml-modules/root/test/complex/service.json" }
+                new object[] { "../../../../test/src/main/ml-modules/root/test/service.json" },
+                new object[] { "../../../../test/src/main/ml-modules/root/test/atomics/service.json" },
+                new object[] { "../../../../test/src/main/ml-modules/root/test/complex/service.json" }
             };
         }
 

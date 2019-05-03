@@ -3,11 +3,12 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <LangVersion>7.2</LangVersion>
+    <Version>0.1</Version>
     <Authors>Mark Fredrik Gumban</Authors>
     <Company>MarkLogic</Company>
     <Product>MarkLogic .NET Client Library</Product>
     <Description>Provides an API for working with MarkLogic Data Services.</Description>
-    <PackageTags>MarkLogic,NoSQL</PackageTags>
+    <PackageTags>MarkLogic;NoSQL;Data Services</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

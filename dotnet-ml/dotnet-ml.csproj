@@ -4,11 +4,12 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <RootNamespace>MarkLogic.NetCoreCLI</RootNamespace>
+    <Version>0.1</Version>
     <Authors>Mark Fredrik Gumban</Authors>
     <Company>MarkLogic</Company>
-    <Product>MarkLogic Client .NET CLI Tool</Product>
+    <Product>MarkLogic .NET Client CLI</Product>
     <Description>A CLI tool for supporting projects using the MarkLogic .NET Client Library.</Description>
-    <PackageTags>MarkLogic,NoSQL</PackageTags>
+    <PackageTags>MarkLogic;NoSQL</PackageTags>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dotnet-ml</ToolCommandName>
   </PropertyGroup>

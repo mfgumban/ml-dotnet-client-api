@@ -2,38 +2,14 @@
 
 The MarkLogic .NET Client Library makes it easier to develop .NET applications for MarkLogic.  It currently provides tooling for working with MarkLogic Data Services.
 
-## Building
+## Using The Library
 
-Run the following commands in the project directory:
-
-```
-dotnet restore
-dotnet build
-```
-
-## Testing
-
-Some tests require a local MarkLogic server to deploy test data services.  Run the following commands from the project directory to deploy:
+Add the client library and the CLI tool to your .NET project:
 
 ```
-cd test
-gradle mlDeploy
+dotnet add package MarkLogic.Client 
+dotnet tool install --global dotnet-ml
 ```
-
-Execute the following in the project directory to run all tests:
-
-```
-dotnet test
-```
-
-Run the `code-coverage.ps1` script located in each test project to generate its code coverage report, e.g.:
-
-```
-cd MarkLogic.Client.Tests
-./code-coverage.ps1
-```
-
-An HTML code coverage report will be generated in the test project's `coverage` directory.
 
 ## Working with Data Services
 
@@ -159,3 +135,34 @@ All endpoint methods are generated as *asynchronous* and return a `Task<T>`, whe
 ### Calling Endpoints in a Session
 
 The generated proxy service class provides the `NewSession` method to create an instance of `ISessionState` used for endpoints that require to participate in a session.
+
+## Building and Running Tests
+
+The library and CLI tool can be built by running the following commands in the project directory:
+
+```
+dotnet restore
+dotnet build
+```
+
+Some tests require a local MarkLogic server to deploy test data services.  Run the following commands from the project directory to deploy:
+
+```
+cd test
+gradle mlDeploy
+```
+
+Execute the following in the project directory to run all tests:
+
+```
+dotnet test
+```
+
+Run the `code-coverage.ps1` script located in each test project to generate its code coverage report, e.g.:
+
+```
+cd MarkLogic.Client.Tests
+./code-coverage.ps1
+```
+
+An HTML code coverage report will be generated in the test project's `coverage` directory.

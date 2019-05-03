@@ -12,6 +12,7 @@
     <PackageTags>MarkLogic;NoSQL</PackageTags>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dotnet-ml</ToolCommandName>
+    <RepositoryUrl>https://github.com/mfgumban/ml-dotnet-client-api</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

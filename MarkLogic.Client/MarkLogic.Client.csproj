@@ -9,6 +9,7 @@
     <Product>MarkLogic .NET Client Library</Product>
     <Description>Provides an API for working with MarkLogic Data Services.</Description>
     <PackageTags>MarkLogic;NoSQL;Data Services</PackageTags>
+    <RepositoryUrl>https://github.com/mfgumban/ml-dotnet-client-api</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

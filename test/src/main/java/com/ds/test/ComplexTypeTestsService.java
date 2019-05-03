@@ -33,13 +33,13 @@ public interface ComplexTypeTestsService {
             }
 
             @Override
-            public Reader returnArray(Reader value) {
-              return BaseProxy.ArrayType.toReader(
+            public Reader returnJsonDoc(Reader value) {
+              return BaseProxy.JsonDocumentType.toReader(
                 baseProxy
-                .request("returnArray.xqy", BaseProxy.ParameterValuesKind.SINGLE_NODE)
+                .request("returnJsonDoc.xqy", BaseProxy.ParameterValuesKind.SINGLE_NODE)
                 .withSession()
                 .withParams(
-                    BaseProxy.documentParam("value", false, BaseProxy.ArrayType.fromReader(value)))
+                    BaseProxy.documentParam("value", false, BaseProxy.JsonDocumentType.fromReader(value)))
                 .withMethod("POST")
                 .responseSingle(false, Format.JSON)
                 );
@@ -61,13 +61,27 @@ public interface ComplexTypeTestsService {
 
 
             @Override
-            public Reader returnJsonDoc(Reader value) {
-              return BaseProxy.JsonDocumentType.toReader(
+            public Reader returnXmlDoc(Reader value) {
+              return BaseProxy.XmlDocumentType.toReader(
                 baseProxy
-                .request("returnJsonDoc.xqy", BaseProxy.ParameterValuesKind.SINGLE_NODE)
+                .request("returnXmlDoc.xqy", BaseProxy.ParameterValuesKind.SINGLE_NODE)
                 .withSession()
                 .withParams(
-                    BaseProxy.documentParam("value", false, BaseProxy.JsonDocumentType.fromReader(value)))
+                    BaseProxy.documentParam("value", false, BaseProxy.XmlDocumentType.fromReader(value)))
+                .withMethod("POST")
+                .responseSingle(false, Format.XML)
+                );
+            }
+
+
+            @Override
+            public Reader returnArray(Reader value) {
+              return BaseProxy.ArrayType.toReader(
+                baseProxy
+                .request("returnArray.xqy", BaseProxy.ParameterValuesKind.SINGLE_NODE)
+                .withSession()
+                .withParams(
+                    BaseProxy.documentParam("value", false, BaseProxy.ArrayType.fromReader(value)))
                 .withMethod("POST")
                 .responseSingle(false, Format.JSON)
                 );
@@ -101,32 +115,18 @@ public interface ComplexTypeTestsService {
                 );
             }
 
-
-            @Override
-            public Reader returnXmlDoc(Reader value) {
-              return BaseProxy.XmlDocumentType.toReader(
-                baseProxy
-                .request("returnXmlDoc.xqy", BaseProxy.ParameterValuesKind.SINGLE_NODE)
-                .withSession()
-                .withParams(
-                    BaseProxy.documentParam("value", false, BaseProxy.XmlDocumentType.fromReader(value)))
-                .withMethod("POST")
-                .responseSingle(false, Format.XML)
-                );
-            }
-
         }
 
         return new ComplexTypeTestsServiceImpl(db);
     }
 
   /**
-   * Accepts and returns a (JSON) array.
+   * Accepts and returns a JSON document.
    *
    * @param value	provides input
    * @return	as output
    */
-    Reader returnArray(Reader value);
+    Reader returnJsonDoc(Reader value);
 
   /**
    * Accepts and returns a binary.
@@ -137,12 +137,20 @@ public interface ComplexTypeTestsService {
     InputStream returnBinary(InputStream value);
 
   /**
-   * Accepts and returns a JSON document.
+   * Accepts and returns an XML document.
    *
    * @param value	provides input
    * @return	as output
    */
-    Reader returnJsonDoc(Reader value);
+    Reader returnXmlDoc(Reader value);
+
+  /**
+   * Accepts and returns a (JSON) array.
+   *
+   * @param value	provides input
+   * @return	as output
+   */
+    Reader returnArray(Reader value);
 
   /**
    * Accepts and returns a (JSON) object.
@@ -159,13 +167,5 @@ public interface ComplexTypeTestsService {
    * @return	as output
    */
     Reader returnTextDoc(Reader value);
-
-  /**
-   * Accepts and returns an XML document.
-   *
-   * @param value	provides input
-   * @return	as output
-   */
-    Reader returnXmlDoc(Reader value);
 
 }

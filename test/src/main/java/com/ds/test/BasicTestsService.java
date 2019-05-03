@@ -38,6 +38,21 @@ public interface BasicTestsService {
             }
 
             @Override
+            public Reader insertDetail(String id, String itemName, SessionState session) {
+              return BaseProxy.JsonDocumentType.toReader(
+                baseProxy
+                .request("insertDetail.xqy", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS)
+                .withSession("session", session, false)
+                .withParams(
+                    BaseProxy.atomicParam("id", false, BaseProxy.StringType.fromString(id)),
+                    BaseProxy.atomicParam("itemName", false, BaseProxy.StringType.fromString(itemName)))
+                .withMethod("POST")
+                .responseSingle(false, Format.JSON)
+                );
+            }
+
+
+            @Override
             public void errorDetailLog() {
               baseProxy
                 .request("errorDetailLog.xqy", BaseProxy.ParameterValuesKind.NONE)
@@ -50,16 +65,15 @@ public interface BasicTestsService {
 
 
             @Override
-            public Reader insertDetail(String id, String itemName, SessionState session) {
-              return BaseProxy.JsonDocumentType.toReader(
+            public Stream<Integer> returnMultiValue(Stream<Integer> values) {
+              return BaseProxy.IntegerType.toInteger(
                 baseProxy
-                .request("insertDetail.xqy", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS)
-                .withSession("session", session, false)
+                .request("returnMultiValue.xqy", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS)
+                .withSession()
                 .withParams(
-                    BaseProxy.atomicParam("id", false, BaseProxy.StringType.fromString(id)),
-                    BaseProxy.atomicParam("itemName", false, BaseProxy.StringType.fromString(itemName)))
+                    BaseProxy.atomicParam("values", false, BaseProxy.IntegerType.fromInteger(values)))
                 .withMethod("POST")
-                .responseSingle(false, Format.JSON)
+                .responseMultiple(false, null)
                 );
             }
 
@@ -95,20 +109,6 @@ public interface BasicTestsService {
 
 
             @Override
-            public Stream<Integer> returnMultiValue(Stream<Integer> values) {
-              return BaseProxy.IntegerType.toInteger(
-                baseProxy
-                .request("returnMultiValue.xqy", BaseProxy.ParameterValuesKind.MULTIPLE_ATOMICS)
-                .withSession()
-                .withParams(
-                    BaseProxy.atomicParam("values", false, BaseProxy.IntegerType.fromInteger(values)))
-                .withMethod("POST")
-                .responseMultiple(false, null)
-                );
-            }
-
-
-            @Override
             public void returnNone() {
               baseProxy
                 .request("returnNone.xqy", BaseProxy.ParameterValuesKind.NONE)
@@ -132,14 +132,6 @@ public interface BasicTestsService {
     SessionState newSessionState();
 
   /**
-   * Explicitly causes an error response.
-   *
-   * 
-   * 
-   */
-    void errorDetailLog();
-
-  /**
    * Inserts a document representing a child entity and commits the transaction.
    *
    * @param id	provides input
@@ -148,6 +140,22 @@ public interface BasicTestsService {
    * @return	as output
    */
     Reader insertDetail(String id, String itemName, SessionState session);
+
+  /**
+   * Explicitly causes an error response.
+   *
+   * 
+   * 
+   */
+    void errorDetailLog();
+
+  /**
+   * Accepts and returns a single parameter with multiple values.
+   *
+   * @param values	provides input
+   * @return	as output
+   */
+    Stream<Integer> returnMultiValue(Stream<Integer> values);
 
   /**
    * Inserts a document representing a top-level entity.
@@ -167,14 +175,6 @@ public interface BasicTestsService {
    * @return	as output
    */
     String returnMultipleAtomic(String value1, Integer value2, java.time.LocalDateTime value3);
-
-  /**
-   * Accepts and returns a single parameter with multiple values.
-   *
-   * @param values	provides input
-   * @return	as output
-   */
-    Stream<Integer> returnMultiValue(Stream<Integer> values);
 
   /**
    * No parameters and empty response.

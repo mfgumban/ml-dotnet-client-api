@@ -1,0 +1,5 @@
+{
+  "role-name" : "ml-dotnet-client-api-examples-internal",
+  "description" : "Internal role used for amping",
+  "role" : [ "ml-dotnet-client-api-examples-writer" ]
+}

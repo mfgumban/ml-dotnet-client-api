@@ -1,0 +1,5 @@
+{
+  "role-name" : "ml-dotnet-client-api-examples-reader",
+  "description" : "Can view documents, but not edit",
+  "role" : [ "rest-reader", "ml-dotnet-client-api-examples-nobody" ]
+}

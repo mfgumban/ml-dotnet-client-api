@@ -1,0 +1,5 @@
+{
+  "endpointDirectory": "/games/",
+  "$netClass": "MarkLogic.Client.Examples",
+  "desc": "Example data services."
+}

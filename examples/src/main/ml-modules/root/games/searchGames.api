@@ -1,0 +1,15 @@
+{
+  "functionName": "searchGames",
+  "params": [{
+    "name": "qstr",
+    "datatype": "string",
+    "nullable": false
+  }, {
+    "name": "limit",
+    "datatype": "int",
+    "nullable": true
+  }],
+  "return": {
+    "datatype": "object"
+  }
+}

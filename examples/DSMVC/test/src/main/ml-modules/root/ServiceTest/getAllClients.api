@@ -1,0 +1,11 @@
+{
+  "functionName": "getAllClients",
+  "desc": "Get all clients",
+  "params": [],
+  "return": {
+    "datatype": "array",
+	"$netClass": "Newtonsoft.Json.Linq.JArray",
+    "desc": "Get all clients"
+  },
+  "errorDetail": "return"
+}

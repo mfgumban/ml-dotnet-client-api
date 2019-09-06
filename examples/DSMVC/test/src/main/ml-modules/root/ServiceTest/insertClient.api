@@ -1,0 +1,30 @@
+{
+  "functionName": "insertClient",
+  "desc": "Inserts a document representing a top-level entity.",
+  "params": [{
+    "name": "fname",
+    "datatype": "string",
+    "nullable": false
+  },
+  {
+    "name": "lname",
+    "datatype": "string",
+    "nullable": false
+  },
+  {
+    "name": "adresse",
+    "datatype": "string",
+    "nullable": false
+  },
+  {
+    "name": "gender",
+    "datatype": "string",
+    "nullable": false
+  } 
+  ],
+  "return": {
+    "datatype": "string",
+    "desc": "The entity's unique ID."
+  },
+  "errorDetail": "return"
+}

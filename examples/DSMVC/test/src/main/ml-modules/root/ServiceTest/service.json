@@ -1,0 +1,6 @@
+{
+  "endpointDirectory": "/ServiceTest/",
+  "$javaClass": "com.ds.test.BasicNetTestsService",
+  "$netClass": "DataServices.Test.BasicTestsClientService",
+  "desc": "API endpoints to test basic data service operations."
+}

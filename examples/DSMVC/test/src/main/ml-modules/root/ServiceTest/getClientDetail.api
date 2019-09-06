@@ -1,0 +1,17 @@
+{
+"functionName": "getClientDetail", 
+"desc": "Get a client detail", 
+"params": [
+{
+"name": "fid", 
+"datatype": "string", 
+"nullable": false
+}
+], 
+"return": {
+"datatype": "jsonDocument", 
+"$netClass": "Newtonsoft.Json.Linq.JObject",
+"desc": "Get a client detail"
+}, 
+"errorDetail": "return"
+}

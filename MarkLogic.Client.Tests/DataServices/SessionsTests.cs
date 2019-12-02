@@ -107,7 +107,7 @@ namespace MarkLogic.Client.Tests.DataServices
         [Fact]
         public async void SessionFieldNegative()
         {
-            await Assert.ThrowsAsync<Exception>(async () => 
+            await Assert.ThrowsAsync<ArgumentNullException>(async () => 
             { 
                 await SessionsService.Create(DbClient).SetSessionField(null, "unused"); 
             });
@@ -116,7 +116,7 @@ namespace MarkLogic.Client.Tests.DataServices
         [Fact]
         public async void TransactionNoSessionNegative() 
         {
-            await Assert.ThrowsAsync<Exception>(async () => 
+            await Assert.ThrowsAsync<HttpDataServiceRequestException>(async () => 
             { 
                 await SessionsService.Create(DbClient).BeginTransactionNoSession("/test/session/transaction/negative1.txt", "Should never succeed");
             });
@@ -125,7 +125,7 @@ namespace MarkLogic.Client.Tests.DataServices
         [Fact]
         public async void SessionFieldNoSessionNegative()
         {
-            await Assert.ThrowsAsync<Exception>(async () => 
+            await Assert.ThrowsAsync<HttpDataServiceRequestException>(async () => 
             {
                 await SessionsService.Create(DbClient).SetSessionFieldNoSession("Should never succeed");
             });

@@ -1,0 +1,4 @@
+{
+  "endpointDirectory" : "/test/generated/moduleInitMjs/",
+  "$netClass": "MarkLogic.Client.Tests.DataServices.Generated.ModuleInitMJS"
+}

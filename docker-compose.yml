@@ -1,0 +1,14 @@
+version: '2'
+services:
+  mlhttp:
+    image: "mlregistry.marklogic.com/marklogic/ml-10.0-2.1"
+    ports:
+      - "18000-18003:8000-8003"
+    hostname: "mlhttp.local"
+    container_name: "mlhttp.local"
+  mlhttps:
+    image: "mlregistry.marklogic.com/marklogic/ml-10.0-2.1"
+    ports:
+      - "28000-28003:8000-8003"
+    hostname: "mlhttps.local"
+    container_name: "mlhttps.local"

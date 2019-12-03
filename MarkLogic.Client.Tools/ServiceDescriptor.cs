@@ -22,6 +22,8 @@ namespace MarkLogic.Client.Tools
 
         public string ClassFullName => string.IsNullOrWhiteSpace(NetClass) ? JavaClass : NetClass;
 
+        public bool HasClassFullName => !string.IsNullOrWhiteSpace(ClassFullName);
+
         public string[] ClassFullNameTokens => ClassFullName.Split('.');
 
         public string ClassName => ClassFullNameTokens.LastOrDefault();
@@ -29,6 +31,8 @@ namespace MarkLogic.Client.Tools
         public string[] NamespaceTokens => ClassFullNameTokens.Length == 1 ? new string[0] : ClassFullNameTokens.Take(ClassFullNameTokens.Length - 1).ToArray();
 
         public string Namespace => string.Join(".", NamespaceTokens);
+
+        public bool HasNamespace => NamespaceTokens != null && NamespaceTokens.Length > 1;
 
         public static async Task<ServiceDescriptor> FromStreamAsync(Stream stream)
         {

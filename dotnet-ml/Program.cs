@@ -26,7 +26,7 @@ namespace MarkLogic.NetCoreCLI
             }
             catch(Exception e)
             {
-                Console.WriteLine($"Error ({e.GetType().Name}): {e.Message}");
+                Console.WriteLine($"Error ({e.GetType().Name}): {e.Message}\nStack Trace: {e.StackTrace}");
                 return -1;
             }
         }

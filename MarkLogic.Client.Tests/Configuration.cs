@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
-using System.IO;
 
 namespace MarkLogic.Client.Tests
 {
@@ -12,9 +11,7 @@ namespace MarkLogic.Client.Tests
         private Configuration()
         {
             _config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("settings.json", false) // base settings
-                .AddJsonFile("settings.local.json", true) // optional local override
+                .AddEnvironmentVariables()
                 .Build();
         }
 
@@ -41,10 +38,10 @@ namespace MarkLogic.Client.Tests
 
         private static class ConfigKey
         {
-            public const string Host = "marklogic:host";
-            public const string Port = "marklogic:port";
-            public const string Username = "marklogic:username";
-            public const string Password = "marklogic:password";
+            public const string Host = "MARKLOGIC_HOST";
+            public const string Port = "MARKLOGIC_PORT";
+            public const string Username = "MARKLOGIC_USERNAME";
+            public const string Password = "MARKLOGIC_PASSWORD";
         }
 
         public string MLHost => Get(ConfigKey.Host);

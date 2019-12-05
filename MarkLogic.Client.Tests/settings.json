@@ -1,8 +1,0 @@
-﻿{
-    "marklogic": {
-        "host": "localhost",
-        "port": 8019,
-        "username": "admin",
-        "password": "admin"
-    }
-}

@@ -81,27 +81,28 @@ namespace MarkLogic.Client.Tests.DataServices
         {
             const int numThreads = 3;
             const int sleepTime = 750;
-            var threads = new Task[numThreads];
+            var tasks = new Task<Exception>[numThreads];
             var service = SessionsService.Create(DbClient);
             
-            for (var i = 0; i < numThreads; i++)
+            for (var i = 0; i < tasks.Length; i++)
             {
                 var id = i;
                 var session = service.NewSession();
-                var task = new Task(async () =>
+                var task = Record.ExceptionAsync(async () =>
                 {
                     var sleep = await service.Sleepify(session, sleepTime);
                     Assert.True(sleep, $"Failed to sleep for thread {id}.");
                 });
-                threads[i] = task;
+                tasks[i] = task;
             }
+            Task.WaitAll(tasks);
 
-            foreach(var task in threads)
+            for(var i = 0; i < tasks.Length; i++)
             {
-                task.Start();
+                var ex = tasks[i].Result;
+                var msg = ex == null ? null : $"Thread {i} threw {ex.GetType().Name}: {ex.Message}\nStack Trace: {ex.StackTrace}";
+                Assert.True(ex == null, msg);
             }
-
-            Task.WaitAll(threads);
         }
 
         [Fact]

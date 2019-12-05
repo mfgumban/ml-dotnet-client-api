@@ -8,5 +8,6 @@
   "content-database": "%%DATABASE%%",
   "authentication": "digest",
   "default-error-format": "json",
-  "rewrite-resolves-globally": true
+  "rewrite-resolves-globally": true,
+  "ssl-certificate-template": "ml-dotnet-client-api-tests-template"
 }

@@ -8,32 +8,25 @@ repositories {
   jcenter()
 }
 
-dependencies {
-  compile group: 'com.marklogic', name: 'marklogic-client-api', version : '4.1.1'
-  testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.1'
-  testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.1'
-}
+task installCertificate(type: com.marklogic.gradle.task.ServerEvalTask) {
+  client = newClient('Security')
+  xquery = '''
+    xquery version "1.0-ml";
+    import module namespace pki = "http://marklogic.com/xdmp/pki" at "/MarkLogic/pki.xqy";
+    import module namespace admin = "http://marklogic.com/xdmp/admin" at "/MarkLogic/admin.xqy";
 
-task generateBasicTestsService(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask) {
-  serviceDeclarationFile = 'src/main/ml-modules/root/test/service.json'
-}
+    let $templateid := pki:template-get-id(pki:get-template-by-name("ml-dotnet-client-api-tests-template"))
 
-task generateAtomicTypeTestsService(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask) {
-  serviceDeclarationFile = 'src/main/ml-modules/root/test/atomics/service.json'
-}
+    (: Path on the MarkLogic host that is readable by the MarkLogic server process (default daemon) :)
+    let $path-to-cert := "/tmp/cert/marklogic.pem"
+    let $path-to-key := "/tmp/cert/marklogic.key"
 
-task generateComplexTypeTestsService(type: com.marklogic.client.tools.gradle.EndpointProxiesGenTask) {
-  serviceDeclarationFile = 'src/main/ml-modules/root/test/complex/service.json'
-}
-
-compileJava.dependsOn generateBasicTestsService
-compileJava.dependsOn generateAtomicTypeTestsService
-compileJava.dependsOn generateComplexTypeTestsService
-
-test {
-  useJUnitPlatform()
-
-  testLogging {
-    showStandardStreams = true
-  }
+    return
+    pki:insert-host-certificate($templateid,
+      xdmp:document-get($path-to-cert,
+        <options xmlns="xdmp:document-get"><format>text</format></options>),
+      xdmp:document-get($path-to-key,
+        <options xmlns="xdmp:document-get"><format>text</format></options>)
+    )
+    '''
 }

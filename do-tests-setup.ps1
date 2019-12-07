@@ -2,4 +2,10 @@
 # Powershell script for setting up test servers in Docker
 
 &('docker-compose') ('up', '-d')
-&('docker') ('exec', '-it', 'mltestdotnet.local', 'init-marklogic')
+Start-Sleep -s 5
+&('docker') ('exec', '-it', 'mltestdotnet', 'init-marklogic')
+Start-Sleep -s 5
+
+Push-Location -Path './test'
+try { &('gradle') ('mlDeploy') }
+finally { Pop-Location }

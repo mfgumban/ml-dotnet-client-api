@@ -8,7 +8,7 @@ namespace MarkLogic.Client.Tests
         public DatabaseClientFixture()
         {
             DbClient = DatabaseClientFactory.Create(
-                UriScheme.Http,
+                Configuration.Instance.UseSSL ? UriScheme.Https : UriScheme.Http,
                 Configuration.Instance.MLHost,
                 Configuration.Instance.MLPort,
                 new NetworkCredential(

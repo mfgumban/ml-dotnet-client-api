@@ -42,6 +42,7 @@ namespace MarkLogic.Client.Tests
             public const string Port = "MARKLOGIC_PORT";
             public const string Username = "MARKLOGIC_USERNAME";
             public const string Password = "MARKLOGIC_PASSWORD";
+            public const string AuthType = "MARKLOGIC_AUTH";
         }
 
         public string MLHost => Get(ConfigKey.Host);
@@ -51,5 +52,9 @@ namespace MarkLogic.Client.Tests
         public string MLUsername => Get(ConfigKey.Username);
 
         public string MLPassword => Get(ConfigKey.Password);
+
+        public string MLAuthType => Get(ConfigKey.AuthType);
+
+        public bool UseSSL => MLAuthType == "SSL";
     }
 }

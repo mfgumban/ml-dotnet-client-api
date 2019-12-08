@@ -1,11 +1,5 @@
 plugins {
-  id 'java'
-  id 'com.marklogic.ml-gradle' version '3.14.0'
-  id 'com.marklogic.ml-development-tools' version '4.1.1'
-}
-
-repositories {
-  jcenter()
+  id 'com.marklogic.ml-gradle' version '3.16.3'
 }
 
 task installCertificate(type: com.marklogic.gradle.task.ServerEvalTask) {

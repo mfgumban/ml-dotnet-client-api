@@ -1,7 +1,12 @@
 version: '2'
 services:
   ml:
-    image: "mlregistry.marklogic.com/marklogic/ml-10.0-2.1"
+    image: "store/marklogicdb/marklogic-server:10.0-2-dev-centos"
+    environment: 
+      - MARKLOGIC_INIT=true
+      - MARKLOGIC_ADMIN_USERNAME=admin
+      - MARKLOGIC_ADMIN_PASSWORD=admin
+      - MARKLOGIC_JOIN_CLUSTER=false
     ports:
       - "16000-16003:8000-8003"
       - "17000-17001:17000-17001"

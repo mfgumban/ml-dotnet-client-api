@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using System;
+using System.IO;
 
 namespace MarkLogic.Client.Tests
 {
@@ -11,7 +12,9 @@ namespace MarkLogic.Client.Tests
         private Configuration()
         {
             _config = new ConfigurationBuilder()
-                .AddEnvironmentVariables()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("settings.default.json", false) // base settings; used for local testing (i.e. "dotnet test")
+                .AddJsonFile("settings.json", true) // setting overrides 
                 .Build();
         }
 
@@ -36,13 +39,23 @@ namespace MarkLogic.Client.Tests
             return value;
         }
 
+        public bool GetBool(string key)
+        {
+            var value = _config[key];
+            if (value == null)
+            {
+                throw new InvalidOperationException($"Missing configuration value for {key}.");
+            }
+            return value.ToLower() == "true";
+        }
+
         private static class ConfigKey
         {
-            public const string Host = "MARKLOGIC_HOST";
-            public const string Port = "MARKLOGIC_PORT";
-            public const string Username = "MARKLOGIC_USERNAME";
-            public const string Password = "MARKLOGIC_PASSWORD";
-            public const string AuthType = "MARKLOGIC_AUTH";
+            public const string Host = "marklogic:host";
+            public const string Port = "marklogic:port";
+            public const string Username = "marklogic:username";
+            public const string Password = "marklogic:password";
+            public const string UseSSL = "marklogic:ssl";
         }
 
         public string MLHost => Get(ConfigKey.Host);
@@ -53,8 +66,6 @@ namespace MarkLogic.Client.Tests
 
         public string MLPassword => Get(ConfigKey.Password);
 
-        public string MLAuthType => Get(ConfigKey.AuthType);
-
-        public bool UseSSL => MLAuthType == "SSL";
+        public bool UseSSL => GetBool(ConfigKey.UseSSL);
     }
 }

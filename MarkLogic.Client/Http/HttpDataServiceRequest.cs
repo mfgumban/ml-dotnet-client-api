@@ -123,21 +123,29 @@ namespace MarkLogic.Client.Http
                     }
                 }
 
-                request.Content = content ?? request.Content;
-                var response = await _dbClient.Http.SendAsync(request);
-                content?.Dispose();
-
-                if (!response.IsSuccessStatusCode)
+                try
                 {
-                    throw await HttpDataServiceRequestException.CreateFromResponse(absRequestUri, response);
-                }
+                    request.Content = content ?? request.Content;
+                    var response = await _dbClient.Http.SendAsync(request);
+                    content?.Dispose();
 
-                if (HasSession)
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        throw await HttpDataServiceRequestException.CreateFromResponse(absRequestUri, response);
+                    }
+
+                    if (HasSession)
+                    {
+                        HttpSession.ProcessResponse(absRequestUri, response);
+                    }
+
+                    return response;
+                }
+                catch(HttpRequestException e)
                 {
-                    HttpSession.ProcessResponse(absRequestUri, response);
+                    throw HttpDatabaseClientException.CreateFromClient(_dbClient, e);
                 }
-
-                return response;
             }
         }
 

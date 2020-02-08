@@ -23,7 +23,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.4.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0-preview-20200116-01" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
@@ -34,10 +34,6 @@
   <ItemGroup>
     <ProjectReference Include="..\MarkLogic.Client.Tools\MarkLogic.Client.Tools.csproj" />
     <ProjectReference Include="..\MarkLogic.Client\MarkLogic.Client.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <DotNetCliToolReference Include="dotnet-reportgenerator-cli" Version="4.0.15" />
   </ItemGroup>
 
 </Project>

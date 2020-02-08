@@ -13,8 +13,7 @@ namespace MarkLogic.Client.Tests
         {
             _config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("settings.default.json", false) // base settings; used for local testing (i.e. "dotnet test")
-                .AddJsonFile("settings.json", true) // setting overrides 
+                .AddJsonFile("settings.json", false)
                 .Build();
         }
 

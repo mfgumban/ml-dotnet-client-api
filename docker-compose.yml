@@ -6,24 +6,31 @@ services:
       - MARKLOGIC_INIT=true
       - MARKLOGIC_ADMIN_USERNAME=admin
       - MARKLOGIC_ADMIN_PASSWORD=admin
-      - MARKLOGIC_JOIN_CLUSTER=false
     ports:
       - "16000-16003:8000-8003"
-      - "17000-17001:17000-17001"
+      - "16100-16110:10000-10010"
     hostname: "ml"
-    container_name: "ml"
     volumes:
       - "./test/cert:/tmp/cert"
   deployer:
     build:
-      context: .
-      dockerfile: deployer.Dockerfile
+      context: test/docker/deployer
+      dockerfile: Dockerfile
     environment:
-      - MLHOST=ml
-      - MLUSER=admin
-      - MLPWD=admin
+      - ML_HOST=ml
+      - ML_USER=admin
+      - ML_PWD=admin
+    volumes:
+      - .:/tmp/project:ro
+    depends_on:
+      - ml
   testrunner:
     build:
-      context: .
-      dockerfile: testrunner.Dockerfile
+      context: test/docker/testrunner
+      dockerfile: Dockerfile
+    volumes:
+      - .:/tmp/solution:ro
+      - ./test-results:/tmp/test-results
+    depends_on: 
+      - ml
       

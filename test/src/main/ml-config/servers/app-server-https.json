@@ -1,0 +1,13 @@
+{
+  "server-name": "%%NAME%%-https",
+  "server-type": "http",
+  "root": "/",
+  "group-name": "%%GROUP%%",
+  "port": "%%mlRestHttpsPort%%",
+  "modules-database": "%%MODULES_DATABASE%%",
+  "content-database": "%%DATABASE%%",
+  "authentication": "digest",
+  "default-error-format": "json",
+  "rewrite-resolves-globally": true,
+  "ssl-certificate-template": "ml-dotnet-client-api-tests-template"
+}

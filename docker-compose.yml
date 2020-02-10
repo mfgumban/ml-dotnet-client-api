@@ -1,0 +1,38 @@
+version: '3.4'
+services:
+  ml:
+    image: "store/marklogicdb/marklogic-server:10.0-2-dev-centos"
+    environment: 
+      - MARKLOGIC_INIT=true
+      - MARKLOGIC_ADMIN_USERNAME=admin
+      - MARKLOGIC_ADMIN_PASSWORD=admin
+    ports:
+      - "16000-16003:8000-8003"
+      - "16100-16110:10000-10010"
+    hostname: "ml"
+    volumes:
+      - ./test/cert:/tmp/cert:ro
+  deployer:
+    build:
+      context: test/docker/deployer
+      dockerfile: Dockerfile
+    environment:
+      - ML_HOST=ml
+      - ML_USER=admin
+      - ML_PWD=admin
+    volumes:
+      - .:/tmp/project:ro
+      - ./test/cert:/tmp/cert:ro
+    depends_on:
+      - ml
+  testrunner:
+    build:
+      context: test/docker/testrunner
+      dockerfile: Dockerfile
+    volumes:
+      - .:/tmp/solution:ro
+      - ./test-results:/tmp/test-results
+      - ./test/cert:/tmp/cert:ro
+    depends_on: 
+      - ml
+      

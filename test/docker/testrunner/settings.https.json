@@ -1,9 +1,9 @@
 {
   "marklogic": {
-    "host": "localhost",
-    "port": 10000,
+    "host": "ml",
+    "port": 10001,
     "username": "admin",
     "password": "admin",
-    "ssl": false
+    "ssl": true
   }
 }

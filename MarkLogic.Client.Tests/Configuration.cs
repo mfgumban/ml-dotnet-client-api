@@ -13,8 +13,7 @@ namespace MarkLogic.Client.Tests
         {
             _config = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("settings.json", false) // base settings
-                .AddJsonFile("settings.local.json", true) // optional local override
+                .AddJsonFile("settings.json", false)
                 .Build();
         }
 
@@ -39,12 +38,23 @@ namespace MarkLogic.Client.Tests
             return value;
         }
 
+        public bool GetBool(string key)
+        {
+            var value = _config[key];
+            if (value == null)
+            {
+                throw new InvalidOperationException($"Missing configuration value for {key}.");
+            }
+            return value.ToLower() == "true";
+        }
+
         private static class ConfigKey
         {
             public const string Host = "marklogic:host";
             public const string Port = "marklogic:port";
             public const string Username = "marklogic:username";
             public const string Password = "marklogic:password";
+            public const string UseSSL = "marklogic:ssl";
         }
 
         public string MLHost => Get(ConfigKey.Host);
@@ -54,5 +64,7 @@ namespace MarkLogic.Client.Tests
         public string MLUsername => Get(ConfigKey.Username);
 
         public string MLPassword => Get(ConfigKey.Password);
+
+        public bool UseSSL => GetBool(ConfigKey.UseSSL);
     }
 }

@@ -1,3 +1,3 @@
 # Security Certificates
 
-Security certificates used for testing are placed here.  The MarkLogic server expects both `marklogic.key` and `marklogic.pem` files to be present.
+Files for the root CA and certificates are located here.  Use the `create-certs.sh` script to generate the files for the root CA.

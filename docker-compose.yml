@@ -11,7 +11,7 @@ services:
       - "16100-16110:10000-10010"
     hostname: "ml"
     volumes:
-      - "./test/cert:/tmp/cert"
+      - ./test/cert:/tmp/cert:ro
   deployer:
     build:
       context: test/docker/deployer
@@ -22,6 +22,7 @@ services:
       - ML_PWD=admin
     volumes:
       - .:/tmp/project:ro
+      - ./test/cert:/tmp/cert:ro
     depends_on:
       - ml
   testrunner:
@@ -31,6 +32,7 @@ services:
     volumes:
       - .:/tmp/solution:ro
       - ./test-results:/tmp/test-results
+      - ./test/cert:/tmp/cert:ro
     depends_on: 
       - ml
       

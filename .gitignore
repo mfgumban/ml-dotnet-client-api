@@ -12,3 +12,7 @@ obj/
 bin/
 coverage/
 test-results/*/
+test/cert/*
+!test/cert/*.md
+!test/cert/*.sh
+!test/cert/*.ext

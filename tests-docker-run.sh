@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# up environment 
-docker-compose up -d -V
-
 # (re)deploy test database
 docker-compose exec deployer /workspace/deploy.sh
 

@@ -1,0 +1,4 @@
+{
+  "endpointDirectory" : "/test/generated/postOfUrlencodedForMultipart/",
+  "$netClass": "MarkLogic.Client.Tests.DataServices.Generated.PostOfUrlencodedForMultipart"
+}

@@ -1,0 +1,64 @@
+{
+  "dataservices": [
+    {
+      "input": "../test/src/main/ml-modules/root/test/generated/moduleInitMjs/service.json",
+      "output": "DataServices/Generated"
+    },
+    {
+      "input": "../test/src/main/ml-modules/root/test/generated/moduleInitSjs/service.json",
+      "output": "DataServices/Generated"
+    },
+    {
+      "input": "../test/src/main/ml-modules/root/test/generated/moduleInitXqy/service.json",
+      "output": "DataServices/Generated"
+    },
+    {
+      "input": "../test/src/main/ml-modules/root/test/generated/postOfMultipartForDocument/service.json",
+      "output": "DataServices/Generated"
+    },
+    {
+      "input": "../test/src/main/ml-modules/root/test/generated/postOfMultipartForMultipart/service.json",
+      "output": "DataServices/Generated"
+    },
+    {
+      "input": "../test/src/main/ml-modules/root/test/generated/postOfMultipartForNone/service.json",
+      "output": "DataServices/Generated"
+    },
+    {
+      "input": "../test/src/main/ml-modules/root/test/generated/postOfMultipartForText/service.json",
+      "output": "DataServices/Generated"
+    },
+    {
+      "input": "../test/src/main/ml-modules/root/test/generated/postOfNoneForDocument/service.json",
+      "output": "DataServices/Generated"
+    },
+    {
+      "input": "../test/src/main/ml-modules/root/test/generated/postOfNoneForMultipart/service.json",
+      "output": "DataServices/Generated"
+    },
+    {
+      "input": "../test/src/main/ml-modules/root/test/generated/postOfNoneForNone/service.json",
+      "output": "DataServices/Generated"
+    },
+    {
+      "input": "../test/src/main/ml-modules/root/test/generated/postOfNoneForText/service.json",
+      "output": "DataServices/Generated"
+    },
+    {
+      "input": "../test/src/main/ml-modules/root/test/generated/postOfUrlencodedForDocument/service.json",
+      "output": "DataServices/Generated"
+    },
+    {
+      "input": "../test/src/main/ml-modules/root/test/generated/postOfUrlencodedForMultipart/service.json",
+      "output": "DataServices/Generated"
+    },
+    {
+      "input": "../test/src/main/ml-modules/root/test/generated/postOfUrlencodedForNone/service.json",
+      "output": "DataServices/Generated"
+    },
+    {
+      "input": "../test/src/main/ml-modules/root/test/generated/postOfUrlencodedForText/service.json",
+      "output": "DataServices/Generated"
+    }
+  ]
+}

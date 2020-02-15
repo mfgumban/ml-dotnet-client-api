@@ -56,24 +56,33 @@ namespace MarkLogic.Client.Tools
 
         public static async Task<ProjectToolConfig> Load(string path, IFilesystem fs)
         {
-            using (var reader = new StreamReader(fs.OpenRead(path)))
+            using (var stream = fs.OpenRead(path))
             {
-                var content = await reader.ReadToEndAsync();
-                if (string.IsNullOrWhiteSpace(content))
+                using (var reader = new StreamReader(stream))
                 {
-                    content = "{}";
+                    var content = await reader.ReadToEndAsync();
+                    if (string.IsNullOrWhiteSpace(content))
+                    {
+                        content = "{}";
+                    }
+                    stream.Close();
+                    return JsonConvert.DeserializeObject<ProjectToolConfig>(content);
                 }
-                return JsonConvert.DeserializeObject<ProjectToolConfig>(content);
             }
         }
 
-        public Task Save(string path, IFilesystem fs)
+        public async Task<bool> Save(string path, IFilesystem fs)
         {
-            using (var writer = new StreamWriter(fs.OpenWrite(path)))
+            using (var stream = fs.OpenWrite(path))
             {
-                var content = JsonConvert.SerializeObject(this, Formatting.Indented);
-                return writer.WriteAsync(content);
+                using (var writer = new StreamWriter(stream))
+                {
+                    var content = JsonConvert.SerializeObject(this, Formatting.Indented);
+                    await writer.WriteAsync(content);
+                }
+                stream.Close();
             }
+            return true;
         }
     }
 }

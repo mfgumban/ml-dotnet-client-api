@@ -36,6 +36,16 @@ namespace MarkLogic.Client.Tools.Actions
                 console.WriteLine($"Read {serviceFilePath}.");
                 console.WriteLine($"Found {sdp.Endpoints.Count()} endpoints.");
 
+                // validate
+                if (!sdp.Service.HasClassFullName)
+                {
+                    throw new ActionException(Verb, $"Unable to determine full class name.  The service.json file may not have a $netClass or $javaClass property.");
+                }
+                if (!sdp.Service.HasNamespace)
+                {
+                    throw new ActionException(Verb, $"Unable to determine namespace.  $netClass should contain a fully qualified class name, which includes the namespace");
+                }
+
                 // generate output code file
                 if (!fs.PathExists(outputPath))
                 {

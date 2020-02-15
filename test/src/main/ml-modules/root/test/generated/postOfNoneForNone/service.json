@@ -1,0 +1,4 @@
+{
+  "endpointDirectory" : "/test/generated/postOfNoneForNone/",
+  "$netClass": "MarkLogic.Client.Tests.DataServices.Generated.PostOfNoneForNone"
+}

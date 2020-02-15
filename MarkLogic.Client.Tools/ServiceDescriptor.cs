@@ -32,7 +32,7 @@ namespace MarkLogic.Client.Tools
 
         public string Namespace => string.Join(".", NamespaceTokens);
 
-        public bool HasNamespace => NamespaceTokens != null && NamespaceTokens.Length > 1;
+        public bool HasNamespace => NamespaceTokens != null && NamespaceTokens.Length >= 1;
 
         public static async Task<ServiceDescriptor> FromStreamAsync(Stream stream)
         {

@@ -44,7 +44,6 @@ dotnet test $PROJECT \
   /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=coverage.opencover.xml \
   /p:Exclude=\"[xunit*]*,[MarkLogic.Client]*\"
 cp $PROJECT/coverage.opencover.xml /tmp/test-results/docker/$PROJECT
-reportgenerator -reports:/tmp/test-results/docker/$PROJECT/coverage.opencover.xml -targetdir:/tmp/test-results/docker/$PROJECT/coverage-report -reporttypes:HTMLInline
 
 # HTTP tests
 PROJECT=MarkLogic.Client.Tests
@@ -55,7 +54,6 @@ dotnet test $PROJECT \
   /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=coverage.opencover.xml \
   /p:Exclude=\"[xunit*]*\"
 cp $PROJECT/coverage.opencover.xml /tmp/test-results/docker/$PROJECT_TESTOUT
-reportgenerator -reports:/tmp/test-results/docker/$PROJECT_TESTOUT/coverage.opencover.xml -targetdir:/tmp/test-results/docker/$PROJECT_TESTOUT/coverage-report -reporttypes:HTMLInline
 
 # SSL / HTTPS tests
 PROJECT=MarkLogic.Client.Tests
@@ -66,7 +64,10 @@ dotnet test $PROJECT \
   /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=coverage.opencover.xml \
   /p:Exclude=\"[xunit*]*\"
 cp $PROJECT/coverage.opencover.xml /tmp/test-results/docker/$PROJECT_TESTOUT
-reportgenerator -reports:/tmp/test-results/docker/$PROJECT_TESTOUT/coverage.opencover.xml -targetdir:/tmp/test-results/docker/$PROJECT_TESTOUT/coverage-report -reporttypes:HTMLInline
+
+# create coverage report
+reportgenerator -reports:/tmp/test-results/docker/MarkLogic.*/coverage.opencover.xml \
+  -targetdir:/tmp/test-results/docker/coverage-report -reporttypes:HTMLInline
 
 
 echo "End test run"

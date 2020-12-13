@@ -151,45 +151,78 @@ namespace MarkLogic.Client.Http
 
         public async Task RequestNone()
         {
-            var response = await RequestAsync();
+            try
+            {
+                await RequestAsync();
+            }
+            catch(HttpDataServiceRequestException e)
+            {
+                throw e;
+            }
+            catch(Exception e)
+            {
+                throw HttpDatabaseClientException.CreateFromClient(_dbClient, e);
+            }
         }
 
         public async Task<TResult> RequestSingle<TResult>(bool allowNull, Func<Stream, Task<TResult>> unmarshalValue)
         {
-            var response = await RequestAsync();
-            if (response.Content.IsMimeMultipartContent())
+            try
             {
-                throw new HttpDataServiceRequestException("Expected content not multipart");
-            }
+                var response = await RequestAsync();
+                if (response.Content.IsMimeMultipartContent())
+                {
+                    throw new HttpDataServiceRequestException("Expected content not multipart");
+                }
 
-            var value = await unmarshalValue(await response.Content.ReadAsStreamAsync());
-            if (!allowNull && value == null)
+                var value = await unmarshalValue(await response.Content.ReadAsStreamAsync());
+                if (!allowNull && value == null)
+                {
+                    throw new HttpDataServiceRequestException("Null return value not allowed");
+                }
+                response.Dispose();
+
+                return value;
+            }
+            catch (HttpDataServiceRequestException e)
             {
-                throw new HttpDataServiceRequestException("Null return value not allowed");
+                throw e;
             }
-            response.Dispose();
-
-            return value;
+            catch (Exception e)
+            {
+                throw HttpDatabaseClientException.CreateFromClient(_dbClient, e);
+            }
         }
 
         public async Task<IEnumerable<TResult>> RequestMultiple<TResult>(bool allowNull, Func<Stream, Task<TResult>> unmarshalValue)
         {
-            var response = await RequestAsync();
-            if (!response.Content.IsMimeMultipartContent())
+            try
             {
-                throw new HttpDataServiceRequestException("Expected content to be multipart");
-            }
+                var response = await RequestAsync();
+                if (!response.Content.IsMimeMultipartContent())
+                {
+                    throw new HttpDataServiceRequestException("Expected content to be multipart");
+                }
 
-            var contentStream = await response.Content.ReadAsMultipartAsync();
-            var values = new List<TResult>();
-            foreach (var content in contentStream.Contents)
+                var contentStream = await response.Content.ReadAsMultipartAsync();
+                var values = new List<TResult>();
+                foreach (var content in contentStream.Contents)
+                {
+                    var value = await unmarshalValue(await content.ReadAsStreamAsync());
+                    values.Add(value);
+                }
+                response.Dispose();
+
+                return values;
+            }
+            catch (HttpDataServiceRequestException e)
             {
-                var value = await unmarshalValue(await content.ReadAsStreamAsync());
-                values.Add(value);
+                throw e;
             }
-            response.Dispose();
-
-            return values;
+            catch (Exception e)
+            {
+                throw HttpDatabaseClientException.CreateFromClient(_dbClient, e);
+            }
         }
     }
 }

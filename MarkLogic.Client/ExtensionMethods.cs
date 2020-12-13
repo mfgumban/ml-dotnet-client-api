@@ -31,6 +31,14 @@ namespace MarkLogic.Client
             return XmlConvert.ToString(AsISO8601(value), "HH:mm:ss.fff");
         }
 
+        public static string Truncate(this string value, int maxChars, string suffix = "...")
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return "";
+            else
+                return value.Length <= maxChars ? value : value.Substring(0, maxChars) + suffix;
+        }
+
         public static XDocument ToXDocument(this XmlDocument document)
         {
             return document.ToXDocument(LoadOptions.None);

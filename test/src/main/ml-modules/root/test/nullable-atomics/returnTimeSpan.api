@@ -1,0 +1,14 @@
+{
+  "functionName": "returnTimeSpan",
+  "desc": "Accepts and returns a time span (dayTimeDuration).",
+  "params": [{
+    "name": "value",
+    "datatype": "dayTimeDuration",
+    "nullable": true
+  }],
+  "return": {
+    "datatype": "dayTimeDuration",
+    "nullable": true
+  },
+  "errorDetail": "return"
+}

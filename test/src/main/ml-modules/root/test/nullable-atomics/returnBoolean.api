@@ -1,0 +1,14 @@
+{
+  "functionName": "returnBoolean",
+  "desc": "Accepts and returns a boolean.",
+  "params": [{
+    "name": "value",
+    "datatype": "boolean",
+    "nullable": true
+  }],
+  "return": {
+    "datatype": "boolean",
+    "nullable": true
+  },
+  "errorDetail": "return"
+}

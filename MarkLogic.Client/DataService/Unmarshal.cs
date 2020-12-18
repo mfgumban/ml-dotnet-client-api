@@ -19,119 +19,155 @@ namespace MarkLogic.Client.DataService
             return value;
         }
 
-        public static Func<Stream, Task<T?>> Nullable<T>(Func<Stream, Task<T>> unmarshalValue) where T : struct, IComparable
+        private static async Task<T> UnmarshalValueTypeFromString<T>(Stream stream, Func<string, T> unmarshalValue)
+        {
+            var value = await ReadStreamAsString(stream);
+            try
+            {
+                return unmarshalValue(value);
+            }
+            catch (Exception e)
+            {
+                throw UnmarshalException.Create(value, typeof(T), e);
+            }
+        }
+
+        public static Func<Stream, Task<T?>> Nullable<T>(Func<string, T> unmarshalValue) where T : struct, IComparable
         {
             return new Func<Stream, Task<T?>>(async stream =>
             {
-                var value = await unmarshalValue(stream);
-                // NOTE: which is better semantically, new T?() or null?
-                return string.IsNullOrWhiteSpace(value.ToString()) ? null : new T?(value);
+                var value = await ReadStreamAsString(stream);
+                if (string.IsNullOrWhiteSpace(value))
+                    return null;
+                try
+                {
+                    return unmarshalValue(value);
+                }
+                catch (Exception e)
+                {
+                    throw UnmarshalException.Create(value, typeof(T?), e);
+                }
             });
         }
 
-        public static async Task<bool> Boolean(Stream stream)
-        {
-            var value = await ReadStreamAsString(stream);
-            return XmlConvert.ToBoolean(value);
-        }
+        public static async Task<bool> Boolean(Stream stream) => await UnmarshalValueTypeFromString(stream, value => Boolean(value));
 
-        public static async Task<string> String(Stream stream)
-        {
-            var value = await ReadStreamAsString(stream);
-            return value;
-        }
+        public static bool Boolean(string value) => XmlConvert.ToBoolean(value);
 
-        public static async Task<int> Integer(Stream stream)
-        {
-            var value = await ReadStreamAsString(stream);
-            return XmlConvert.ToInt32(value);
-        }
+        public static async Task<string> String(Stream stream) => await ReadStreamAsString(stream);
 
-        public static async Task<uint> UnsignedInteger(Stream stream)
-        {
-            var value = await ReadStreamAsString(stream);
-            return XmlConvert.ToUInt32(value);
-        }
+        public static async Task<int> Integer(Stream stream) => await UnmarshalValueTypeFromString(stream, value => Integer(value));
 
-        public static async Task<long> Long(Stream stream)
-        {
-            var value = await ReadStreamAsString(stream);
-            return XmlConvert.ToInt64(value);
-        }
+        public static int Integer(string value) => XmlConvert.ToInt32(value);
 
-        public static async Task<ulong> UnsignedLong(Stream stream)
-        {
-            var value = await ReadStreamAsString(stream);
-            return XmlConvert.ToUInt64(value);
-        }
+        public static async Task<uint> UnsignedInteger(Stream stream) => await UnmarshalValueTypeFromString(stream, value => UnsignedInteger(value));
+        
+        public static uint UnsignedInteger(string value) => XmlConvert.ToUInt32(value);
 
-        public static async Task<float> Float(Stream stream)
-        {
-            var value = await ReadStreamAsString(stream);
-            return XmlConvert.ToSingle(value);
-        }
+        public static async Task<long> Long(Stream stream) => await UnmarshalValueTypeFromString(stream, value => Long(value));
 
-        public static async Task<double> Double(Stream stream)
-        {
-            var value = await ReadStreamAsString(stream);
-            return XmlConvert.ToDouble(value);
-        }
+        public static long Long(string value) => XmlConvert.ToInt64(value);
 
-        public static async Task<decimal> Decimal(Stream stream)
-        {
-            var value = await ReadStreamAsString(stream);
-            return XmlConvert.ToDecimal(value);
-        }
+        public static async Task<ulong> UnsignedLong(Stream stream) => await UnmarshalValueTypeFromString(stream, value => UnsignedLong(value));
 
-        public static async Task<DateTime> DateTime(Stream stream)
-        {
-            var value = await ReadStreamAsString(stream);
-            return XmlConvert.ToDateTime(value, XmlDateTimeSerializationMode.RoundtripKind);
-        }
+        public static ulong UnsignedLong(string value) => XmlConvert.ToUInt64(value);
 
-        public static async Task<DateTime> Date(Stream stream)
-        {
-            var value = await ReadStreamAsString(stream);
-            return System.DateTime.ParseExact(value, "yyyy-MM-dd", null);
-        }
+        public static async Task<float> Float(Stream stream) => await UnmarshalValueTypeFromString(stream, value => Float(value));
 
-        public static async Task<DateTime> Time(Stream stream)
-        {
-            var value = await ReadStreamAsString(stream);
-            return System.DateTime.Parse(value, CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault);
-        }
+        public static float Float(string value) => XmlConvert.ToSingle(value);
 
-        public static async Task<TimeSpan> TimeSpan(Stream stream)
-        {
-            var value = await ReadStreamAsString(stream);
-            return XmlConvert.ToTimeSpan(value);
-        }
+        public static async Task<double> Double(Stream stream) => await UnmarshalValueTypeFromString(stream, value => Double(value));
+
+        public static double Double(string value) => XmlConvert.ToDouble(value);
+
+        public static async Task<decimal> Decimal(Stream stream) => await UnmarshalValueTypeFromString(stream, value => Decimal(value));
+
+        public static decimal Decimal(string value) => XmlConvert.ToDecimal(value);
+
+        public static async Task<DateTime> DateTime(Stream stream) => await UnmarshalValueTypeFromString(stream, value => DateTime(value));
+
+        public static DateTime DateTime(string value) => XmlConvert.ToDateTime(value, XmlDateTimeSerializationMode.RoundtripKind);
+
+        public static async Task<DateTime> Date(Stream stream) => await UnmarshalValueTypeFromString(stream, value => Date(value));
+        
+        public static DateTime Date(string value) => System.DateTime.ParseExact(value, "yyyy-MM-dd", null);
+    
+        public static async Task<DateTime> Time(Stream stream) => await UnmarshalValueTypeFromString(stream, value => Time(value));
+
+        public static DateTime Time(string value) => System.DateTime.Parse(value, CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault);
+
+        public static async Task<TimeSpan> TimeSpan(Stream stream) => await UnmarshalValueTypeFromString(stream, value => TimeSpan(value));
+        
+        public static TimeSpan TimeSpan(string value) => XmlConvert.ToTimeSpan(value);
 
         public static async Task<JObject> JsonObject(Stream stream)
         {
             var value = await ReadStreamAsString(stream);
-            return JObject.Parse(value);
+            if (string.IsNullOrWhiteSpace(value))
+                return null;
+            try
+            {
+                return JObject.Parse(value);
+            }
+            catch(Exception e)
+            {
+                throw UnmarshalException.Create(value, typeof(JObject), e);
+            }
         }
 
         public static async Task<JArray> JsonArray(Stream stream)
         {
             var value = await ReadStreamAsString(stream);
-            return JArray.Parse(value);
+            if (string.IsNullOrWhiteSpace(value))
+                return null;
+            try
+            {
+                return JArray.Parse(value);
+            }
+            catch (Exception e)
+            {
+                throw UnmarshalException.Create(value, typeof(JArray), e);
+            }
         }
 
         public static async Task<XmlDocument> XmlDocument(Stream stream)
         {
             return await Task.Run(() =>
             {
-                var xmlDoc = new XmlDocument();
-                xmlDoc.Load(stream);
-                return xmlDoc;
+                var reader = new StreamReader(stream);
+                try
+                {
+                    if (reader.Peek() < 0)
+                        return null; // possible EOF
+                    var xmlDoc = new XmlDocument();
+                    xmlDoc.Load(reader);
+                    return xmlDoc;
+                }
+                catch(Exception e)
+                {
+                    stream.Position = 0;
+                    throw UnmarshalException.Create(reader.ReadToEnd(), typeof(XmlDocument), e);
+                }
             });
         }
 
         public static async Task<XDocument> XDocument(Stream stream)
         {
-            return await Task.Run(() => System.Xml.Linq.XDocument.Load(stream));
+            return await Task.Run(() =>
+            {
+                var reader = new StreamReader(stream);
+                try
+                {
+                    if (reader.Peek() < 0)
+                        return null; // possible EOF
+                    return System.Xml.Linq.XDocument.Load(reader);
+                }
+                catch (Exception e)
+                {
+                    stream.Position = 0;
+                    throw UnmarshalException.Create(reader.ReadToEnd(), typeof(XmlDocument), e);
+                }
+            });
         }
 
         public static async Task<Stream> Stream(Stream stream)
@@ -139,7 +175,7 @@ namespace MarkLogic.Client.DataService
             // copy stream contents as the input stream may get disposed by the caller
             var newStream = new MemoryStream();
             await stream.CopyToAsync(newStream);
-            newStream.Position = 0; // remember to reset position
+            newStream.Position = 0;
             return newStream;
         }
     }

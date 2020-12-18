@@ -4,10 +4,11 @@
   "params": [{
     "name": "value",
     "datatype": "xmlDocument",
-    "nullable": false
+    "nullable": true
   }],
   "return": {
-    "datatype": "xmlDocument"
+    "datatype": "xmlDocument",
+    "nullable": true
   },
   "errorDetail": "return"
 }

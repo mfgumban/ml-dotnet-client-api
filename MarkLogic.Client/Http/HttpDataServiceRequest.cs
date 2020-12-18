@@ -84,7 +84,7 @@ namespace MarkLogic.Client.Http
         private static List<HttpContent> BuildParameterHttpContent(DataServiceParameter parameter)
         {
             var contents = new List<HttpContent>();
-            foreach(var marshal in parameter.GetMarshals())
+            foreach(var marshal in parameter.GetMarshals().Where(m => m.HasValue))
             {
                 var content = marshal.IsStream ? new StreamContent(marshal.Stream) as HttpContent : new StringContent(marshal.Value);
                 content.Headers.ContentType = new MediaTypeHeaderValue(GetContentType(marshal.MediaType));
@@ -111,13 +111,15 @@ namespace MarkLogic.Client.Http
                     if (requireMultipart)
                     {
                         var multiPartContent = new MultipartFormDataContent(); 
-                        _parameters.ForEach(p => BuildParameterHttpContent(p).ForEach(paramContent => multiPartContent.Add(paramContent, p.Name)));
+                        _parameters
+                            .ForEach(p => BuildParameterHttpContent(p)
+                            .ForEach(paramContent => multiPartContent.Add(paramContent, p.Name)));
                         content = multiPartContent;
                     }
                     else
                     {
                         var formContent = new FormUrlEncodedContent(_parameters
-                            .SelectMany(p => p.GetMarshals(), (p, m) => new { param = p, marshal = m })
+                            .SelectMany(p => p.GetMarshals().Where(m => m.HasValue), (p, m) => new { param = p, marshal = m })
                             .Select(pm => new KeyValuePair<string, string>(pm.param.Name, pm.marshal.Value)));
                         content = formContent;
                     }
@@ -151,45 +153,82 @@ namespace MarkLogic.Client.Http
 
         public async Task RequestNone()
         {
-            var response = await RequestAsync();
+            try
+            {
+                await RequestAsync();
+            }
+            catch(HttpDataServiceRequestException e)
+            {
+                throw e;
+            }
+            catch(Exception e)
+            {
+                throw HttpDatabaseClientException.CreateFromClient(_dbClient, e);
+            }
         }
 
         public async Task<TResult> RequestSingle<TResult>(bool allowNull, Func<Stream, Task<TResult>> unmarshalValue)
         {
-            var response = await RequestAsync();
-            if (response.Content.IsMimeMultipartContent())
+            try
             {
-                throw new HttpDataServiceRequestException("Expected content not multipart");
-            }
+                var response = await RequestAsync();
+                if (response.Content.IsMimeMultipartContent())
+                {
+                    throw new HttpDataServiceRequestException("Expected content not multipart");
+                }
 
-            var value = await unmarshalValue(await response.Content.ReadAsStreamAsync());
-            if (!allowNull && value == null)
+                var value = await unmarshalValue(await response.Content.ReadAsStreamAsync());
+                if (!allowNull && value == null)
+                {
+                    throw new HttpDataServiceRequestException("Request configured not to allow null return values.  Verify the .api configuration and value passed to function argument 'allowNull'");
+                }
+                response.Dispose();
+
+                return value;
+            }
+            catch (HttpDataServiceRequestException e)
             {
-                throw new HttpDataServiceRequestException("Null return value not allowed");
+                throw e;
             }
-            response.Dispose();
-
-            return value;
+            catch (Exception e)
+            {
+                throw HttpDatabaseClientException.CreateFromClient(_dbClient, e);
+            }
         }
 
         public async Task<IEnumerable<TResult>> RequestMultiple<TResult>(bool allowNull, Func<Stream, Task<TResult>> unmarshalValue)
         {
-            var response = await RequestAsync();
-            if (!response.Content.IsMimeMultipartContent())
+            try
             {
-                throw new HttpDataServiceRequestException("Expected content to be multipart");
-            }
+                var response = await RequestAsync();
+                if (!response.Content.IsMimeMultipartContent())
+                {
+                    throw new HttpDataServiceRequestException("Expected content to be multipart");
+                }
 
-            var contentStream = await response.Content.ReadAsMultipartAsync();
-            var values = new List<TResult>();
-            foreach (var content in contentStream.Contents)
+                var contentStream = await response.Content.ReadAsMultipartAsync();
+                var values = new List<TResult>();
+                foreach (var content in contentStream.Contents)
+                {
+                    var value = await unmarshalValue(await content.ReadAsStreamAsync());
+                    if (!allowNull && value == null)
+                    {
+                        throw new HttpDataServiceRequestException("Request configured not to allow null return values.  Verify the .api configuration and value passed to function argument 'allowNull'");
+                    }
+                    values.Add(value);
+                }
+                response.Dispose();
+
+                return values;
+            }
+            catch(HttpDataServiceRequestException e)
             {
-                var value = await unmarshalValue(await content.ReadAsStreamAsync());
-                values.Add(value);
+                throw e;
             }
-            response.Dispose();
-
-            return values;
+            catch(Exception e)
+            {
+                throw HttpDatabaseClientException.CreateFromClient(_dbClient, e);
+            }
         }
     }
 }

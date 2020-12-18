@@ -1,13 +1,13 @@
 {
-  "functionName": "returnArray",
-  "desc": "Accepts and returns a (JSON) array.",
+  "functionName": "returnDouble",
+  "desc": "Accepts and returns a double.",
   "params": [{
     "name": "value",
-    "datatype": "array",
+    "datatype": "double",
     "nullable": true
   }],
   "return": {
-    "datatype": "array",
+    "datatype": "double",
     "nullable": true
   },
   "errorDetail": "return"

@@ -1,13 +1,13 @@
 {
-  "functionName": "returnArray",
-  "desc": "Accepts and returns a (JSON) array.",
+  "functionName": "returnFloat",
+  "desc": "Accepts and returns a float.",
   "params": [{
     "name": "value",
-    "datatype": "array",
+    "datatype": "float",
     "nullable": true
   }],
   "return": {
-    "datatype": "array",
+    "datatype": "float",
     "nullable": true
   },
   "errorDetail": "return"

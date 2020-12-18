@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace MarkLogic.Client.Tests.DataServices
@@ -69,6 +70,17 @@ namespace MarkLogic.Client.Tests.DataServices
                     new SingleParameter<string>("id", false, id, Marshal.String),
                     new SingleParameter<string>("itemName", false, itemName, Marshal.String))
                 .RequestSingle<JObject>(false, Unmarshal.JsonObject);
+        }
+
+        public Task<int> OptionalParams(string a, IEnumerable<int> b, JObject c, Stream d)
+        {
+            return CreateRequest("optionalParams.sjs")
+                .WithParameters(
+                    new SingleParameter<string>("a", true, a, Marshal.String),
+                    new MultipleParameter<int>("b", true, b, Marshal.Integer),
+                    new SingleParameter<JObject>("c", true, c, Marshal.JsonObject),
+                    new SingleParameter<Stream>("d", true, d, Marshal.StreamAsJson))
+                .RequestSingle<int>(false, Unmarshal.Integer);
         }
     }
 }

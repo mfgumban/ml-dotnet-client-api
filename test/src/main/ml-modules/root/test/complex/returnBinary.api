@@ -4,10 +4,11 @@
   "params": [{
     "name": "value",
     "datatype": "binaryDocument",
-    "nullable": false
+    "nullable": true
   }],
   "return": {
-    "datatype": "binaryDocument"
+    "datatype": "binaryDocument",
+    "nullable": true
   },
   "errorDetail": "return"
 }

@@ -15,14 +15,6 @@ namespace MarkLogic.Client.Tests.DataServices
             return new AtomicTypeService(dbClient);
         }
 
-        public Task<int?> ReturnNullableValueType(int? value)
-        {
-            return CreateRequest("returnNullableValueType.xqy")
-                .WithParameters(
-                    new SingleParameter<int?>("value", true, value, Marshal.Nullable<int>(Marshal.Integer)))
-                .RequestSingle<int?>(true, Unmarshal.Nullable(Unmarshal.Integer));
-        }
-
         public Task<bool> ReturnBoolean(bool value)
         {
             return CreateRequest("returnBoolean.xqy")

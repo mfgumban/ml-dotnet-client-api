@@ -1,6 +1,10 @@
 ﻿using MarkLogic.Client.Http;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -84,6 +88,35 @@ namespace MarkLogic.Client.Tests.DataServices
             var exception = await Assert.ThrowsAsync<HttpDataServiceRequestException>(() => BaseService.Create(DbClient).ErrorDetailLog());
             Assert.Equal(500, exception.StatusCode); // Internal Server Error
             Assert.Equal("Deliberate error", exception.MessageDetailTitle);
+        }
+
+        public static IEnumerable<object[]> OptionalParamsTestData()
+        {
+            var values = new object[] 
+            {
+                "some string value.",
+                new[] { 0, 1, -1 },
+                "{\"enterprise\": \"defiant\"}",
+                "{\"voyager\": \"excelsior\"}"
+            };
+
+            var pidx = Enumerable.Range(0, values.Length).ToArray();
+            return Enumerable
+                .Range(0, 1 << (pidx.Length))
+                .Select(idx => pidx.Where((v, i) => (idx & (1 << i)) != 0))
+                .Select(mask => values.Select((v, i) => mask.Contains(i) ? v : null))
+                .Select(r => new object[] { r.Count(v => v == null) }.Concat(r).ToArray());
+        }
+
+        [Theory]
+        [MemberData(nameof(OptionalParamsTestData))]
+        public async void OptionalParams(int totalNulls, string a, IEnumerable<int> b, string c, string d)
+        {
+            var obj = c != null ? JObject.Parse(c) : null;
+            var stream = d != null ? new MemoryStream(Encoding.Default.GetBytes(d)) : null;
+            var results = await BaseService.Create(DbClient).OptionalParams(a, b, obj, stream);
+            Assert.Equal(totalNulls, results);
+            stream?.Dispose();
         }
     }
 }

@@ -4,10 +4,11 @@
   "params": [{
     "name": "value",
     "datatype": "object",
-    "nullable": false
+    "nullable": true
   }],
   "return": {
-    "datatype": "object"
+    "datatype": "object",
+    "nullable": true
   },
   "errorDetail": "return"
 }

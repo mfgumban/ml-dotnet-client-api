@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -29,6 +31,14 @@ namespace MarkLogic.Client
         public static string ToISOTime(this DateTime value)
         {
             return XmlConvert.ToString(AsISO8601(value), "HH:mm:ss.fff");
+        }
+
+        public static string Truncate(this string value, int maxChars, string suffix = "...")
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return "";
+            else
+                return value.Length <= maxChars ? value : value.Substring(0, maxChars) + suffix;
         }
 
         public static XDocument ToXDocument(this XmlDocument document)

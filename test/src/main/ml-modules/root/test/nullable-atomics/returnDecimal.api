@@ -1,0 +1,14 @@
+{
+  "functionName": "returnDecimal",
+  "desc": "Accepts and returns a decimal.",
+  "params": [{
+    "name": "value",
+    "datatype": "decimal",
+    "nullable": true
+  }],
+  "return": {
+    "datatype": "decimal",
+    "nullable": true
+  },
+  "errorDetail": "return"
+}

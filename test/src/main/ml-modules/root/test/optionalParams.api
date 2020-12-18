@@ -1,0 +1,26 @@
+{
+  "functionName": "optionalParams",
+  "desc": "Returns the number of non-null parameters",
+  "params": [{
+    "name": "a",
+    "datatype": "string",
+    "nullable": true
+  }, {
+    "name": "b",
+    "datatype": "int",
+    "nullable": true,
+    "multiple": true
+  }, {
+    "name": "c",
+    "datatype": "object",
+    "nullable": true
+  }, {
+    "name": "d",
+    "datatype": "object",
+    "nullable": true
+  }],
+  "return": {
+    "datatype": "int"
+  },
+  "errorDetail": "return"
+}

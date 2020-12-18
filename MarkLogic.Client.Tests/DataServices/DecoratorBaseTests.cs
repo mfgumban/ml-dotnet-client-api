@@ -18,8 +18,7 @@ namespace MarkLogic.Client.Tests.DataServices
             var dbNode = await DecoratorBaseService.Create(DbClient).Docify(input);
             Assert.NotNull(dbNode);
 
-            JToken dbValue = null;
-            var success = dbNode.TryGetValue("value", out dbValue);
+            var success = dbNode.TryGetValue("value", out JToken dbValue);
             Assert.True(success);
             Assert.NotNull(dbValue);
             Assert.Equal(JTokenType.String, dbValue.Type);

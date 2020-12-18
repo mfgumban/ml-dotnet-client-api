@@ -24,9 +24,9 @@ namespace MarkLogic.Client.DataService
             var value = await ReadStreamAsString(stream);
             try
             {
-                return unmarshalValue(value); 
+                return unmarshalValue(value);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw UnmarshalException.Create(value, typeof(T), e);
             }
@@ -45,7 +45,7 @@ namespace MarkLogic.Client.DataService
                 }
                 catch (Exception e)
                 {
-                    throw UnmarshalException.Create(value, typeof(T), e);
+                    throw UnmarshalException.Create(value, typeof(T?), e);
                 }
             });
         }
@@ -54,9 +54,7 @@ namespace MarkLogic.Client.DataService
 
         public static bool Boolean(string value) => XmlConvert.ToBoolean(value);
 
-        public static async Task<string> String(Stream stream) => await UnmarshalValueTypeFromString(stream, value => String(value));
-
-        public static string String(string value) => value;
+        public static async Task<string> String(Stream stream) => await ReadStreamAsString(stream);
 
         public static async Task<int> Integer(Stream stream) => await UnmarshalValueTypeFromString(stream, value => Integer(value));
 

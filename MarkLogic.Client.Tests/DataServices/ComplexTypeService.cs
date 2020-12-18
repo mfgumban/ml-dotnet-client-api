@@ -20,74 +20,75 @@ namespace MarkLogic.Client.Tests.DataServices
 
         public Task<JArray> ReturnArray(JArray value)
         {
-            return CreateRequest("returnArray.xqy")
+            return CreateRequest("returnArray.sjs")
                 .WithParameters(
-                    new SingleParameter<JArray>("value", false, value, Marshal.JsonArray))
-                .RequestSingle<JArray>(false, Unmarshal.JsonArray);
+                    new SingleParameter<JArray>("value", true, value, Marshal.JsonArray))
+                .RequestSingle<JArray>(true, Unmarshal.JsonArray);
         }
 
         public Task<JObject> ReturnObject(JObject value)
         {
-            return CreateRequest("returnObject.xqy")
+            return CreateRequest("returnObject.sjs")
                 .WithParameters(
-                    new SingleParameter<JObject>("value", false, value, Marshal.JsonObject))
-                .RequestSingle<JObject>(false, Unmarshal.JsonObject);
+                    new SingleParameter<JObject>("value", true, value, Marshal.JsonObject))
+                .RequestSingle<JObject>(true, Unmarshal.JsonObject);
         }
 
         public Task<Stream> ReturnBinary(Stream value)
         {
-            return CreateRequest("returnBinary.xqy")
+            return CreateRequest("returnBinary.sjs")
                 .WithParameters(
-                    new SingleParameter<Stream>("value", false, value, Marshal.StreamAsBinary))
-                .RequestSingle<Stream>(false, Unmarshal.Stream);
+                    new SingleParameter<Stream>("value", true, value, Marshal.StreamAsBinary))
+                .RequestSingle<Stream>(true, Unmarshal.Stream);
         }
 
         public Task<Stream> ReturnTextDoc(Stream value)
         {
-            return CreateRequest("returnTextDoc.xqy")
+            return CreateRequest("returnTextDoc.sjs")
                 .WithParameters(
-                    new SingleParameter<Stream>("value", false, value, Marshal.StreamAsText))
-                .RequestSingle<Stream>(false, Unmarshal.Stream);
+                    new SingleParameter<Stream>("value", true, value, Marshal.StreamAsText))
+                .RequestSingle<Stream>(true, Unmarshal.Stream);
         }
 
         public Task<Stream> ReturnJsonDocFromStream(Stream value)
         {
-            return CreateRequest("returnJsonDoc.xqy")
+            return CreateRequest("returnJsonDoc.sjs")
                 .WithParameters(
-                    new SingleParameter<Stream>("value", false, value, Marshal.StreamAsJson))
-                .RequestSingle<Stream>(false, Unmarshal.Stream);
+                    new SingleParameter<Stream>("value", true, value, Marshal.StreamAsJson))
+                .RequestSingle<Stream>(true, Unmarshal.Stream);
         }
 
         public Task<JObject> ReturnJsonDoc(JObject value)
         {
-            return CreateRequest("returnJsonDoc.xqy")
+            return CreateRequest("returnJsonDoc.sjs")
                 .WithParameters(
-                    new SingleParameter<JObject>("value", false, value, Marshal.JsonObject))
-                .RequestSingle<JObject>(false, Unmarshal.JsonObject);
-        }
-
-        public Task<Stream> ReturnXmlDocFromStream(Stream value)
-        {
-            return CreateRequest("returnXmlDoc.xqy")
-                .WithParameters(
-                    new SingleParameter<Stream>("value", false, value, Marshal.StreamAsXml))
-                .RequestSingle<Stream>(false, Unmarshal.Stream);
+                    new SingleParameter<JObject>("value", true, value, Marshal.JsonObject))
+                .RequestSingle<JObject>(true, Unmarshal.JsonObject);
         }
 
         public Task<XmlDocument> ReturnXmlDoc(XmlDocument value)
         {
-            return CreateRequest("returnXmlDoc.xqy")
+            return CreateRequest("returnXmlDoc.sjs")
                 .WithParameters(
-                    new SingleParameter<XmlDocument>("value", false, value, Marshal.XmlDocument))
-                .RequestSingle<XmlDocument>(false, Unmarshal.XmlDocument);
+                    new SingleParameter<XmlDocument>("value", true, value, Marshal.XmlDocument))
+                .RequestSingle<XmlDocument>(true, Unmarshal.XmlDocument);
         }
+
+        public Task<Stream> ReturnXmlDocFromStream(Stream value)
+        {
+            return CreateRequest("returnXmlDoc.sjs")
+                .WithParameters(
+                    new SingleParameter<Stream>("value", true, value, Marshal.StreamAsXml))
+                .RequestSingle<Stream>(true, Unmarshal.Stream);
+        }
+
 
         public Task<XDocument> ReturnXDoc(XDocument value)
         {
-            return CreateRequest("returnXmlDoc.xqy")
+            return CreateRequest("returnXmlDoc.sjs")
                 .WithParameters(
-                    new SingleParameter<XDocument>("value", false, value, Marshal.XDocument))
-                .RequestSingle<XDocument>(false, Unmarshal.XDocument);
+                    new SingleParameter<XDocument>("value", true, value, Marshal.XDocument))
+                .RequestSingle<XDocument>(true, Unmarshal.XDocument);
         }
     }
 }

@@ -4,10 +4,11 @@
   "params": [{
     "name": "value",
     "datatype": "textDocument",
-    "nullable": false
+    "nullable": true
   }],
   "return": {
-    "datatype": "textDocument"
+    "datatype": "textDocument",
+    "nullable": true
   },
   "errorDetail": "return"
 }

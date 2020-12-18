@@ -1,0 +1,5 @@
+{
+  "endpointDirectory": "/test/nullable-atomics/",
+  "$javaClass": "com.ds.test.AtomicNullableTypeTestsService",
+  "desc": "API endpoints to test nullable atomic data types."
+}

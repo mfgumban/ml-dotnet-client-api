@@ -5,7 +5,7 @@ namespace MarkLogic.Client.DataService
 {
     public class SingleParameter<T> : DataServiceParameter
     {
-        private Marshal _marshalledValue;
+        private readonly Marshal _marshalledValue;
 
         public SingleParameter(string name, bool allowNull, T value, Func<T, Marshal> marshalValue)
             : base(name, allowNull)

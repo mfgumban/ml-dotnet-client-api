@@ -4,10 +4,11 @@
   "params": [{
     "name": "value",
     "datatype": "jsonDocument",
-    "nullable": false
+    "nullable": true
   }],
   "return": {
-    "datatype": "jsonDocument"
+    "datatype": "jsonDocument",
+    "nullable": true
   },
   "errorDetail": "return"
 }

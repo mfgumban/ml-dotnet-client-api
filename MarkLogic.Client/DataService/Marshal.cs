@@ -145,22 +145,22 @@ namespace MarkLogic.Client.DataService
 
         public static Marshal JsonObject(JObject value)
         {
-            return new Marshal(value.ToString(Newtonsoft.Json.Formatting.None), MediaTypes.Json);
+            return value == null ? new Marshal(null) : new Marshal(value.ToString(Newtonsoft.Json.Formatting.None), MediaTypes.Json);
         }
 
         public static Marshal JsonArray(JArray value)
         {
-            return new Marshal(value.ToString(Newtonsoft.Json.Formatting.None), MediaTypes.Json);
+            return value == null ? new Marshal(null) : new Marshal(value.ToString(Newtonsoft.Json.Formatting.None), MediaTypes.Json);
         }
 
         public static Marshal XmlDocument(XmlDocument value)
         {
-            return new Marshal(value.OuterXml, MediaTypes.Xml);
+            return value == null ? new Marshal(null) : new Marshal(value.OuterXml, MediaTypes.Xml);
         }
 
         public static Marshal XDocument(XDocument value)
         {
-            return new Marshal(value.ToString(), MediaTypes.Xml);
+            return value == null ? new Marshal(null) : new Marshal(value.ToString(), MediaTypes.Xml);
         }
     }
 }

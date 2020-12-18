@@ -84,7 +84,7 @@ namespace MarkLogic.Client.Http
         private static List<HttpContent> BuildParameterHttpContent(DataServiceParameter parameter)
         {
             var contents = new List<HttpContent>();
-            foreach(var marshal in parameter.GetMarshals())
+            foreach(var marshal in parameter.GetMarshals().Where(m => m.HasValue))
             {
                 var content = marshal.IsStream ? new StreamContent(marshal.Stream) as HttpContent : new StringContent(marshal.Value);
                 content.Headers.ContentType = new MediaTypeHeaderValue(GetContentType(marshal.MediaType));
@@ -111,13 +111,15 @@ namespace MarkLogic.Client.Http
                     if (requireMultipart)
                     {
                         var multiPartContent = new MultipartFormDataContent(); 
-                        _parameters.ForEach(p => BuildParameterHttpContent(p).ForEach(paramContent => multiPartContent.Add(paramContent, p.Name)));
+                        _parameters
+                            .ForEach(p => BuildParameterHttpContent(p)
+                            .ForEach(paramContent => multiPartContent.Add(paramContent, p.Name)));
                         content = multiPartContent;
                     }
                     else
                     {
                         var formContent = new FormUrlEncodedContent(_parameters
-                            .SelectMany(p => p.GetMarshals(), (p, m) => new { param = p, marshal = m })
+                            .SelectMany(p => p.GetMarshals().Where(m => m.HasValue), (p, m) => new { param = p, marshal = m })
                             .Select(pm => new KeyValuePair<string, string>(pm.param.Name, pm.marshal.Value)));
                         content = formContent;
                     }
@@ -178,7 +180,7 @@ namespace MarkLogic.Client.Http
                 var value = await unmarshalValue(await response.Content.ReadAsStreamAsync());
                 if (!allowNull && value == null)
                 {
-                    throw new HttpDataServiceRequestException("Null return value not allowed");
+                    throw new HttpDataServiceRequestException("Request configured not to allow null return values.  Verify the .api configuration and value passed to function argument 'allowNull'");
                 }
                 response.Dispose();
 
@@ -209,17 +211,21 @@ namespace MarkLogic.Client.Http
                 foreach (var content in contentStream.Contents)
                 {
                     var value = await unmarshalValue(await content.ReadAsStreamAsync());
+                    if (!allowNull && value == null)
+                    {
+                        throw new HttpDataServiceRequestException("Request configured not to allow null return values.  Verify the .api configuration and value passed to function argument 'allowNull'");
+                    }
                     values.Add(value);
                 }
                 response.Dispose();
 
                 return values;
             }
-            catch (HttpDataServiceRequestException e)
+            catch(HttpDataServiceRequestException e)
             {
                 throw e;
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 throw HttpDatabaseClientException.CreateFromClient(_dbClient, e);
             }

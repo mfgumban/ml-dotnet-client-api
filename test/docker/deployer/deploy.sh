@@ -54,7 +54,7 @@ cp /tmp/cert/ml.ext .
 openssl x509 -req -in ml.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out ml.crt -days 3650 -sha256 -extfile ml.ext -passin pass:1234
 
 # register certificate on ML
-echo "Registerting host certificate in ML..."
+echo "Registering host certificate in ML..."
 curl --anyauth -u admin:admin --data-binary @ml.crt -H "Content-Type: text/plain" -X POST http://ml:8002/manage/v2/certificates
 
 echo "End deployment to $ML_HOST"

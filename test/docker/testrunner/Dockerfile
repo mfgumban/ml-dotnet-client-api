@@ -12,5 +12,4 @@ RUN chmod 777 /workspace/run-tests.sh
 
 CMD /workspace/init.sh && \
     echo "Test runner container ready." && \
-    # prevent container exit
     tail -f /dev/null

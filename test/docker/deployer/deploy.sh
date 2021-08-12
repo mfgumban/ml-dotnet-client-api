@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # expected environment vars: ML_HOST, ML_USER, ML_PWD
 # expected directories: /workspace, /tmp/project (read-only)
 

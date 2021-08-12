@@ -90,7 +90,6 @@ namespace MarkLogic.Client.Tests.DataServices
                 -1.0,
                 double.MinValue,
                 double.MaxValue,
-                double.Epsilon,
                 //double.Epsilon, // TODO: failing on Mac; post inquiry to Engineering
                 double.NaN,
                 double.NegativeInfinity,

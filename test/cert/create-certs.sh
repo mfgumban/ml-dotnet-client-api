@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 echo "Creating CA and certificates..."
 echo "Removing old files..."

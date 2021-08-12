@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # (re)deploy test database
 docker-compose exec deployer /workspace/deploy.sh

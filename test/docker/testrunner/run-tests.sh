@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # expected directories: /workspace, /tmp/solution (read-only), /tmp/test-results
 
 # set working directory

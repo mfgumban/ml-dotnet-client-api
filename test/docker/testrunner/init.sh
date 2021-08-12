@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # install root CA certificate
 echo "Installing root CA certificate..."

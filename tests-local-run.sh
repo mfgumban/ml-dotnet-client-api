@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # (re)deploy test database
 cd test

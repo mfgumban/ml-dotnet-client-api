@@ -1,6 +1,5 @@
 .certs
 .gradle
-.vscode
 .settings
 .project
 ._build.gradle

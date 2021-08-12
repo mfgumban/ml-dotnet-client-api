@@ -1,5 +1,0 @@
-{
-  "role-name" : "ml-ds-dotnet-poc-reader",
-  "description" : "Can view documents, but not edit",
-  "role" : [ "rest-reader", "ml-ds-dotnet-poc-nobody" ]
-}

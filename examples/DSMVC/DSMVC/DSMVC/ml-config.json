@@ -1,8 +1,0 @@
-{
-  "dataservices": [
-    {
-      "input": "C:\\Users\\wlaamari\\Documents\\MBO\\DSMVC\\test\\src\\main\\ml-modules\\root\\ServiceTest\\service.json",
-      "output": "./App_Start"
-    }
-  ]
-}
